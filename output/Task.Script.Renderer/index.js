@@ -1,0 +1,797 @@
+"use strict";
+var Concur = require("../Concur/index.js");
+var Concur_Core_Props = require("../Concur.Core.Props/index.js");
+var Concur_Core_Types = require("../Concur.Core.Types/index.js");
+var Concur_Dom_Icon = require("../Concur.Dom.Icon/index.js");
+var Concur_Dom_Input = require("../Concur.Dom.Input/index.js");
+var Concur_Dom_Style = require("../Concur.Dom.Style/index.js");
+var Concur_Dom_Text = require("../Concur.Dom.Text/index.js");
+var Concur_React_Props = require("../Concur.React.Props/index.js");
+var Control_Bind = require("../Control.Bind/index.js");
+var Control_Category = require("../Control.Category/index.js");
+var Control_Plus = require("../Control.Plus/index.js");
+var Data_Array = require("../Data.Array/index.js");
+var Data_Either = require("../Data.Either/index.js");
+var Data_Either_Nested = require("../Data.Either.Nested/index.js");
+var Data_Foldable = require("../Data.Foldable/index.js");
+var Data_Function = require("../Data.Function/index.js");
+var Data_Functor = require("../Data.Functor/index.js");
+var Data_HashMap = require("../Data.HashMap/index.js");
+var Data_Hashable = require("../Data.Hashable/index.js");
+var Data_HeytingAlgebra = require("../Data.HeytingAlgebra/index.js");
+var Data_Maybe = require("../Data.Maybe/index.js");
+var Data_Monoid = require("../Data.Monoid/index.js");
+var Data_Ord = require("../Data.Ord/index.js");
+var Data_Semigroup = require("../Data.Semigroup/index.js");
+var Data_Show = require("../Data.Show/index.js");
+var Data_Tuple = require("../Data.Tuple/index.js");
+var Data_Void = require("../Data.Void/index.js");
+var Preload = require("../Preload/index.js");
+var Task_Script_Annotation = require("../Task.Script.Annotation/index.js");
+var Task_Script_Builder = require("../Task.Script.Builder/index.js");
+var Task_Script_Context = require("../Task.Script.Context/index.js");
+var Task_Script_Error = require("../Task.Script.Error/index.js");
+var Task_Script_Loader = require("../Task.Script.Loader/index.js");
+var Task_Script_Syntax = require("../Task.Script.Syntax/index.js");
+var Task_Script_Type = require("../Task.Script.Type/index.js");
+var Switch = function ($$switch) {
+    this["switch"] = $$switch;
+};
+var Yes = (function () {
+    function Yes(value0) {
+        this.value0 = value0;
+    };
+    Yes.create = function (value0) {
+        return new Yes(value0);
+    };
+    return Yes;
+})();
+var No = (function () {
+    function No(value0) {
+        this.value0 = value0;
+    };
+    No.create = function (value0) {
+        return new No(value0);
+    };
+    return No;
+})();
+var And = (function () {
+    function And() {
+
+    };
+    And.value = new And();
+    return And;
+})();
+var Or = (function () {
+    function Or() {
+
+    };
+    Or.value = new Or();
+    return Or;
+})();
+var Hurry = (function () {
+    function Hurry() {
+
+    };
+    Hurry.value = new Hurry();
+    return Hurry;
+})();
+var Delay = (function () {
+    function Delay() {
+
+    };
+    Delay.value = new Delay();
+    return Delay;
+})();
+var New = (function () {
+    function New() {
+
+    };
+    New.value = new New();
+    return New;
+})();
+var $$this = function (v) {
+    if (v instanceof And) {
+        return Task_Script_Syntax.Pair.create;
+    };
+    if (v instanceof Or) {
+        return Task_Script_Syntax.Choose.create;
+    };
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 620, column 1 - line 620, column 43): " + [ v.constructor.name ]);
+};
+var $$switch = function (dict) {
+    return dict["switch"];
+};
+var style = function (v) {
+    if (v instanceof Hurry) {
+        return Concur_Dom_Style.Filled.value;
+    };
+    if (v instanceof Delay) {
+        return Concur_Dom_Style.Outlined.value;
+    };
+    if (v instanceof New) {
+        return Concur_Dom_Style.Filled.value;
+    };
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 637, column 1 - line 637, column 23): " + [ v.constructor.name ]);
+};
+var stroke = function (v) {
+    if (v instanceof And) {
+        return Concur_Dom_Style.Solid.value;
+    };
+    if (v instanceof Or) {
+        return Concur_Dom_Style.Double.value;
+    };
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 628, column 1 - line 628, column 24): " + [ v.constructor.name ]);
+};
+
+//-- Entries -------------------------------------------------------------------
+// | [[  n  ?]]
+var selectType = function (types) {
+    return function (name) {
+        return Concur_Dom_Input.picker([ new Data_Tuple.Tuple("Builtin", Data_Array.sort(Data_Ord.ordString)(Data_HashMap.keys(Task_Script_Context.aliases))), new Data_Tuple.Tuple("Project", Data_Array.sort(Data_Ord.ordString)(Data_HashMap.keys(types))) ])(name);
+    };
+};
+var selectRef = function (v) {
+    return function (v1) {
+        if (v1 instanceof Task_Script_Syntax.Variable) {
+            return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Input.picker([ new Data_Tuple.Tuple("Shares", Data_Array.sort(Data_Ord.ordString)(Data_HashMap.keys(Data_HashMap.filter(Task_Script_Type.isReference)(v)))) ])(v1.value0))(Task_Script_Syntax.Variable.create);
+        };
+        return Preload.todo()("unnamed references not supported");
+    };
+};
+var reorder4 = function (v) {
+    return new Data_Tuple.Tuple(v.value1.value1.value0, new Data_Tuple.Tuple(v.value1.value1.value1, new Data_Tuple.Tuple(v.value0, v.value1.value0)));
+};
+var reorder3 = function (v) {
+    return new Data_Tuple.Tuple(v.value1.value0, new Data_Tuple.Tuple(v.value1.value1, v.value0));
+};
+var renderTips = Concur_Dom_Text.bullets([ Concur_Dom_Text.item(Concur_Dom_Text.text("Hover over")), Concur_Dom_Text.bullets([ Concur_Dom_Text.item(Concur_Dom_Text.text("arrows to see values in context")), Concur_Dom_Text.item(Concur_Dom_Text.text("arguments to add or remove some")) ]), Concur_Dom_Text.item(Concur_Dom_Text.text("Click on")), Concur_Dom_Text.bullets([ Concur_Dom_Text.item(Concur_Dom_Text.text("arrows to switch between internal/external step")), Concur_Dom_Text.item(Concur_Dom_Text.text("bars to switch between and/or parallel")) ]), Concur_Dom_Text.item(Concur_Dom_Text.text("Double click on")), Concur_Dom_Text.bullets([ Concur_Dom_Text.item(Concur_Dom_Text.text("arrows to add a new hole")), Concur_Dom_Text.item(Concur_Dom_Text.text("bars to add a new branch")) ]) ]);
+var renderStop = Concur_Dom_Style.column([ Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)(Control_Plus.empty(Control_Plus.plusArray)), Concur_Dom_Style.dot(Concur_Dom_Style.Medium.value)(Concur_Dom_Style.Filled.value)(Control_Plus.empty(Control_Plus.plusArray)) ]);
+var renderPossibleArgs = function (status) {
+    return function (v) {
+        var toArgs = function (labels) {
+            return new Task_Script_Syntax.ARecord(Data_HashMap.fromArrayBy(Data_Hashable.hashableString)(Control_Category.identity(Control_Category.categoryFn))(Task_Script_Syntax.Variable.create)(labels));
+        };
+        var labels = Data_Array.sort(Data_Ord.ordString)(Data_HashMap.keys(Data_HashMap.filter((function () {
+            var $284 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
+            return function ($285) {
+                return $284(Task_Script_Type.isFunction($285));
+            };
+        })())(Task_Script_Annotation.extractContext(status))));
+        var action = function (label) {
+            var $66 = Data_HashMap.member(Data_Hashable.hashableString)(label)(v.value0);
+            if ($66) {
+                return Concur_Dom_Input.Remove.value;
+            };
+            return Concur_Dom_Input.Add.value;
+        };
+        var go = function (label) {
+            return Data_Functor.voidLeft(Concur_Core_Types.widgetFunctor)(Concur_Dom_Input.chip(Concur_Dom_Style.Normal.value)(action(label))(label))(label);
+        };
+        return Concur_Dom_Style.row([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur.traverse(Data_Monoid.monoidArray)(go)(labels))(toArgs) ]);
+    };
+};
+var renderNotes = Concur_Dom_Text.text("Editing matches (results) and expressions is currently not supported, as is adding fresh tasks to the library.");
+
+// | || (( a_1 .. a_n ))
+var renderLabels = Data_Functor.map(Data_Functor.functorArray)(Concur_Dom_Input.chip(Concur_Dom_Style.Normal.value)(Concur_Dom_Input.None.value));
+var renderLine = function (labels) {
+    return Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)([ Concur_Dom_Style.place(Concur_Dom_Style.After.value)(Concur_Dom_Style.Small.value)([ Concur_Dom_Style.row(renderLabels(labels)) ]) ]);
+};
+var renderParams = function (params) {
+    return Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)([ Concur_Dom_Style.place(Concur_Dom_Style.Above.value)(Concur_Dom_Style.Small.value)([ Concur_Dom_Style.column(renderLabels(Data_HashMap.keys(params))) ]) ]);
+};
+
+//-- Helpers -------------------------------------------------------------------
+var renderError = function (v) {
+    return function (w) {
+        if (v instanceof Task_Script_Annotation.Failure) {
+            return Concur_Dom_Style.has(Concur_Dom_Style["Error"].value)([ Concur_Dom_Input.tooltip(Concur_Dom_Style.Before.value)(Data_Show.show(Task_Script_Error["$_ShowError_1"])(v.value1))(w) ]);
+        };
+        return Concur_Dom_Style.has(Concur_Dom_Style.Normal.value)([ w ]);
+    };
+};
+
+//-- Editors ----
+// | [[ i |   w   ]]
+var renderEditor = Concur_Dom_Input.addon(Concur_Dom_Style.Medium.value);
+var renderEnter = function (types) {
+    return function (name) {
+        return renderEditor(Concur_Dom_Icon.pen)(selectType(types)(name));
+    };
+};
+
+//-- Shares --------------------------------------------------------------------
+var renderWatch = function (status) {
+    return function (expr) {
+        return renderEditor(Concur_Dom_Icon.eye)(Concur_Dom_Style.place(Concur_Dom_Style.After.value)(Concur_Dom_Style.Large.value)([ Concur_Dom_Style.row([ Concur_Dom_Style.dot(Concur_Dom_Style.Small.value)(Concur_Dom_Style.Filled.value)([  ]), Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)([  ]), renderEditor(Concur_Dom_Icon.database)(Data_Function.flip(selectRef)(expr)(Task_Script_Annotation.extractContext(status))) ]) ]));
+    };
+};
+var renderContext = (function () {
+    var go = function (v) {
+        return v.value0 + (" : " + (Data_Show.show(Task_Script_Type["$_ShowFullType_49"])(v.value1) + "\x0a"));
+    };
+    var $286 = Data_Foldable.foldMap(Data_Foldable.foldableArray)(Data_Monoid.monoidString)(go);
+    var $287 = Data_Array.sortBy(Data_Function.on(Data_Ord.compare(Data_Ord.ordString))(Data_Tuple.fst));
+    var $288 = Data_HashMap.toArrayBy(Data_Tuple.Tuple.create);
+    var $289 = Data_HashMap.filter((function () {
+        var $291 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
+        return function ($292) {
+            return $291(Task_Script_Type.isFunction($292));
+        };
+    })());
+    return function ($290) {
+        return $286($287($288($289(Task_Script_Annotation.extractContext($290)))));
+    };
+})();
+var renderArg = function (sel) {
+    if (sel instanceof Yes) {
+        return Data_Functor.voidLeft(Concur_Core_Types.widgetFunctor)(Concur_Dom_Input.chip(Concur_Dom_Style.Primary.value)(Concur_Dom_Input.Remove.value)(sel.value0))(new No(sel.value0));
+    };
+    if (sel instanceof No) {
+        return Data_Functor.voidLeft(Concur_Core_Types.widgetFunctor)(Concur_Dom_Input.chip(Concur_Dom_Style.Secondary.value)(Concur_Dom_Input.Add.value)(sel.value0))(new Yes(sel.value0));
+    };
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 255, column 17 - line 257, column 47): " + [ sel.constructor.name ]);
+};
+var removeLabels = function (dictFunctor) {
+    return Data_Functor.map(dictFunctor)(Data_Tuple.snd);
+};
+var other = function (v) {
+    if (v instanceof And) {
+        return Task_Script_Syntax.Choose.create;
+    };
+    if (v instanceof Or) {
+        return Task_Script_Syntax.Pair.create;
+    };
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 624, column 1 - line 624, column 44): " + [ v.constructor.name ]);
+};
+
+//-- Combinators ----
+// | ==============
+// |  t_1 ... t_n
+// | =============
+// renderGroup :: forall a. Stroke -> (a -> Widget a) -> Array a -> Widget (Array a)
+var renderGroup = function (par) {
+    return function (trans) {
+        return function (tasks) {
+            return Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onClick))(other(par)(tasks)), Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))($$this(par)(Data_Semigroup.append(Data_Semigroup.semigroupArray)(tasks)([ Task_Script_Builder.item ]))) ])([ Concur_Dom_Style.group(stroke(par))([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur.traverse(Data_Monoid.monoidArray)(trans)(tasks))($$this(par)) ]) ]);
+        };
+    };
+};
+var isYes = function (v) {
+    if (v instanceof Yes) {
+        return true;
+    };
+    if (v instanceof No) {
+        return false;
+    };
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 271, column 9 - line 273, column 16): " + [ v.constructor.name ]);
+};
+var fix4 = function (_1) {
+    return function (_2) {
+        return function (_3) {
+            return function (_4) {
+                return function (v) {
+                    if (v instanceof Data_Either.Left) {
+                        return new Data_Tuple.Tuple(v.value0, new Data_Tuple.Tuple(_2, new Data_Tuple.Tuple(_3, _4)));
+                    };
+                    if (v instanceof Data_Either.Right && v.value0 instanceof Data_Either.Left) {
+                        return new Data_Tuple.Tuple(_1, new Data_Tuple.Tuple(v.value0.value0, new Data_Tuple.Tuple(_3, _4)));
+                    };
+                    if (v instanceof Data_Either.Right && (v.value0 instanceof Data_Either.Right && v.value0.value0 instanceof Data_Either.Left)) {
+                        return new Data_Tuple.Tuple(_1, new Data_Tuple.Tuple(_2, new Data_Tuple.Tuple(v.value0.value0.value0, _4)));
+                    };
+                    if (v instanceof Data_Either.Right && (v.value0 instanceof Data_Either.Right && (v.value0.value0 instanceof Data_Either.Right && v.value0.value0.value0 instanceof Data_Either.Left))) {
+                        return new Data_Tuple.Tuple(_1, new Data_Tuple.Tuple(_2, new Data_Tuple.Tuple(_3, v.value0.value0.value0.value0)));
+                    };
+                    if (v instanceof Data_Either.Right && (v.value0 instanceof Data_Either.Right && (v.value0.value0 instanceof Data_Either.Right && v.value0.value0.value0 instanceof Data_Either.Right))) {
+                        return Data_Void.absurd(v.value0.value0.value0.value0);
+                    };
+                    throw new Error("Failed pattern match at Task.Script.Renderer (line 600, column 20 - line 605, column 56): " + [ v.constructor.name ]);
+                };
+            };
+        };
+    };
+};
+var fix3 = function (_1) {
+    return function (_2) {
+        return function (z) {
+            return function (v) {
+                if (v instanceof Data_Either.Left) {
+                    return new Data_Tuple.Tuple(v.value0, new Data_Tuple.Tuple(_2, z));
+                };
+                if (v instanceof Data_Either.Right && v.value0 instanceof Data_Either.Left) {
+                    return new Data_Tuple.Tuple(_1, new Data_Tuple.Tuple(v.value0.value0, z));
+                };
+                if (v instanceof Data_Either.Right && (v.value0 instanceof Data_Either.Right && v.value0.value0 instanceof Data_Either.Left)) {
+                    return new Data_Tuple.Tuple(_1, new Data_Tuple.Tuple(_2, v.value0.value0.value0));
+                };
+                if (v instanceof Data_Either.Right && (v.value0 instanceof Data_Either.Right && v.value0.value0 instanceof Data_Either.Right)) {
+                    return Data_Void.absurd(v.value0.value0.value0);
+                };
+                throw new Error("Failed pattern match at Task.Script.Renderer (line 593, column 16 - line 597, column 48): " + [ v.constructor.name ]);
+            };
+        };
+    };
+};
+var renderEnd = function (v) {
+    return function (v1) {
+        return function (v2) {
+            return function (v3) {
+                if (v2 instanceof Task_Script_Syntax.MRecord) {
+                    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(v(v3))(Data_Either_Nested.in3), Data_Functor.voidLeft(Concur_Core_Types.widgetFunctor)(renderLine(Data_HashMap.keys(v2.value0)))(Data_Either_Nested.in2(v2)), Concur_Dom_Input.popover(Concur_Dom_Style.Before.value)(Concur_Dom_Text.code("TopHat")(renderContext(v1)))(Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))(Data_Either_Nested.in1(New.value)) ])([ Concur_Dom_Style.triangle(style(Hurry.value))(Control_Plus.empty(Control_Plus.plusArray)) ])) ]))(fix3(Hurry.value)(v2)(v3));
+                };
+                return Preload.todo()("other matches in end rendering");
+            };
+        };
+    };
+};
+var fix2 = function (_1) {
+    return function (_2) {
+        return function (v) {
+            if (v instanceof Data_Either.Left) {
+                return new Data_Tuple.Tuple(v.value0, _2);
+            };
+            if (v instanceof Data_Either.Right && v.value0 instanceof Data_Either.Left) {
+                return new Data_Tuple.Tuple(_1, v.value0.value0);
+            };
+            if (v instanceof Data_Either.Right && v.value0 instanceof Data_Either.Right) {
+                return Data_Void.absurd(v.value0.value0);
+            };
+            throw new Error("Failed pattern match at Task.Script.Renderer (line 587, column 14 - line 590, column 40): " + [ v.constructor.name ]);
+        };
+    };
+};
+var editName = function (name) {
+    return Concur_Dom_Input.entry(Concur_Dom_Style.Medium.value)("enter a name...")(name);
+};
+
+//-- Parts ---------------------------------------------------------------------
+//-- General ----
+// | [[ * |   n   ]]
+// |     ||
+var renderStart = function (name) {
+    return function (params) {
+        return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Concur_Dom_Style.dot(Concur_Dom_Style.Medium.value)(Concur_Dom_Style.Filled.value)([ Concur_Dom_Style.place(Concur_Dom_Style.Before.value)(Concur_Dom_Style.Medium.value)([ Concur_Dom_Style.row([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderEditor(Concur_Dom_Icon.clipboard)(editName(name)))(Data_Either_Nested.in1), Data_Functor.voidLeft(Concur_Core_Types.widgetFunctor)(renderParams(params))(Data_Either_Nested.in2(params)) ]) ]) ]), Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)(Control_Plus.empty(Control_Plus.plusArray)) ]))(fix2(name)(params));
+    };
+};
+var editLabel = function (lbl) {
+    return Concur_Dom_Input.entry(Concur_Dom_Style.Small.value)("enter a label...")(lbl);
+};
+var renderLabel = editLabel;
+var editGuard = function (expr) {
+    return Data_Functor.voidLeft(Concur_Core_Types.widgetFunctor)(Concur_Dom_Input.entry(Concur_Dom_Style.Small.value)("enter an expression...")(Data_Show.show(Task_Script_Syntax["$_ShowExpression_127"])(expr)))(new Task_Script_Syntax.Variable("x"));
+};
+var renderGuard = function (status) {
+    return function (expr) {
+        return renderError(status)(Concur_Dom_Input.addon(Concur_Dom_Style.Small.value)(Concur_Dom_Icon.question)(editGuard(expr)));
+    };
+};
+var renderOption = function (status) {
+    return function (guard) {
+        return Concur_Dom_Style.line(Concur_Dom_Style.Dashed.value)([ Concur_Dom_Style.place(Concur_Dom_Style.After.value)(Concur_Dom_Style.Small.value)([ renderGuard(status)(guard) ]) ]);
+    };
+};
+
+// renderSingleBranch :: Renderer -> Match -> Checked Task -> Expression * Checked Task -> Widget (Match * Checked Task * Checked Task)
+// renderSingleBranch render match sub1 (guard ~ sub2) =
+//   Style.column
+//     [ render sub1 >-> Either.in2
+//     , renderStep Hurry match >-> Either.in1
+//     , render sub2
+//     ]
+//     >-> fix3 match sub1 sub2
+var renderBranch = function (render) {
+    return function (v) {
+        return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderOption(v.value1.value0)(v.value0))(Data_Either_Nested.in1), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(v.value1))(Data_Either_Nested.in2), Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)(Control_Plus.empty(Control_Plus.plusArray)) ]))(fix2(v.value0)(v.value1));
+    };
+};
+var renderOptionWithLabel = function (status) {
+    return function (label) {
+        return function (guard) {
+            return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.line(Concur_Dom_Style.Dashed.value)([ Concur_Dom_Style.place(Concur_Dom_Style.After.value)(Concur_Dom_Style.Small.value)([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderLabel(label))(Data_Either_Nested.in1), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderGuard(status)(guard))(Data_Either_Nested.in2) ]) ]))(fix2(label)(guard));
+        };
+    };
+};
+var renderSelect = function (render) {
+    return function (v) {
+        return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderOptionWithLabel(v.value1.value1.value0)(v.value0)(v.value1.value0))(Data_Either_Nested.in2), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(v.value1.value1))(Data_Either_Nested.in1), Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)(Control_Plus.empty(Control_Plus.plusArray)) ]))(fix2(v.value1.value1)(new Data_Tuple.Tuple(v.value0, v.value1.value0))))(reorder3);
+    };
+};
+
+// | [[  e  ]]
+var editExpression = function (expr) {
+    return Data_Functor.voidLeft(Concur_Core_Types.widgetFunctor)(Concur_Dom_Input.entry(Concur_Dom_Style.Medium.value)("enter an expression...")(Data_Show.show(Task_Script_Syntax["$_ShowExpression_127"])(expr)))(new Task_Script_Syntax.Variable("x"));
+};
+var renderLift = function (expr) {
+    return renderEditor(Concur_Dom_Icon.check_double)(editExpression(expr));
+};
+var renderShare = function (expr) {
+    return renderEditor(Concur_Dom_Icon.retweet)(editExpression(expr));
+};
+var renderUpdate = function (expr) {
+    return renderEditor(Concur_Dom_Icon.edit)(editExpression(expr));
+};
+var renderView = function (expr) {
+    return renderEditor(Concur_Dom_Icon.eye)(editExpression(expr));
+};
+var catYes = Data_Array.concatMap(function (v) {
+    if (v instanceof Yes) {
+        return [ v.value0 ];
+    };
+    if (v instanceof No) {
+        return [  ];
+    };
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 265, column 5 - line 267, column 17): " + [ v.constructor.name ]);
+});
+var renderArgs = function (status) {
+    return function (v) {
+        var unselect = (function () {
+            var $293 = Data_HashMap.fromArray(Data_Hashable.hashableString);
+            var $294 = Data_Functor.map(Data_Functor.functorArray)(function (l) {
+                return new Data_Tuple.Tuple(l, new Task_Script_Syntax.Variable(l));
+            });
+            return function ($295) {
+                return Task_Script_Syntax.ARecord.create($293($294(catYes($295))));
+            };
+        })();
+        var check = function (label) {
+            return (function () {
+                var $137 = Data_HashMap.member(Data_Hashable.hashableString)(label)(v.value0);
+                if ($137) {
+                    return Yes.create;
+                };
+                return No.create;
+            })()(label);
+        };
+        
+        //TODO: renaming of variables
+var select = Data_Functor.map(Data_Functor.functorArray)(check)(Data_HashMap.keys(Data_HashMap.filter((function () {
+            var $296 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
+            return function ($297) {
+                return $296(Task_Script_Type.isFunction($297));
+            };
+        })())(Task_Script_Annotation.extractContext(status))));
+        return Concur_Dom_Input.popover(Concur_Dom_Style.After.value)(Concur_Dom_Input.card([  ])([ Concur_Dom_Style.row([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur.traverse(Data_Monoid.monoidArray)(renderArg)(select))(unselect) ]) ])([  ]))(Concur_Dom_Style.column([ Data_Functor.voidLeft(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)([ Concur_Dom_Style.place(Concur_Dom_Style.After.value)(Concur_Dom_Style.Small.value)([ Concur_Dom_Style.row(renderLabels(Data_HashMap.keys(v.value0))) ]) ]))(v) ]));
+    };
+};
+
+// |      || as
+// |  [[  n  ?]]
+var renderExecute = function (status) {
+    return function (name) {
+        return function (args) {
+            return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderArgs(status)(args))(Data_Either_Nested.in2), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderError(status)(Concur_Dom_Input.picker([ new Data_Tuple.Tuple("Builtin", [ "??" ]), new Data_Tuple.Tuple("Project", Data_Array.sort(Data_Ord.ordString)(Data_HashMap.keys(Data_HashMap.filter(Task_Script_Type.isTask)(Task_Script_Annotation.extractContext(status))))) ])(name)))(Data_Either_Nested.in1) ]))(fix2(name)(args));
+        };
+    };
+};
+var assoc = function (v) {
+    return new Data_Tuple.Tuple(v.value0.value0, new Data_Tuple.Tuple(v.value0.value1, v.value1));
+};
+var addLabels = function (dictFunctor) {
+    return Data_Functor.map(dictFunctor)(function (v) {
+        return new Data_Tuple.Tuple("", v);
+    });
+};
+var $dollar_SwitchPar_41 = new Switch(function (v) {
+    if (v instanceof And) {
+        return Or.value;
+    };
+    if (v instanceof Or) {
+        return And.value;
+    };
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 645, column 1 - line 647, column 18): " + [ v.constructor.name ]);
+});
+var $dollar_SwitchCont_42 = new Switch(function (v) {
+    if (v instanceof Hurry) {
+        return Delay.value;
+    };
+    if (v instanceof Delay) {
+        return Hurry.value;
+    };
+    if (v instanceof New) {
+        return New.value;
+    };
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 649, column 1 - line 652, column 19): " + [ v.constructor.name ]);
+});
+
+//-- Steps ----
+// |   || as
+// |   V
+var renderStep = function (v) {
+    return function (v1) {
+        return function (v2) {
+            if (v2 instanceof Task_Script_Syntax.MRecord) {
+                var getBinds = function (v3) {
+                    if (v3 instanceof Task_Script_Syntax.MBind) {
+                        return new Data_Maybe.Just(v3.value0);
+                    };
+                    return Data_Maybe.Nothing.value;
+                };
+                var labels = Data_Array.catMaybes(Data_Functor.map(Data_Functor.functorArray)(getBinds)(Data_HashMap.values(v2.value0)));
+                return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.voidLeft(Concur_Core_Types.widgetFunctor)(renderLine(labels))(Data_Either_Nested.in2(v2)), Concur_Dom_Input.popover(Concur_Dom_Style.Before.value)(Concur_Dom_Text.code("TopHat")(renderContext(v)))(Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onClick))(Data_Either_Nested.in1($$switch($dollar_SwitchCont_42)(v1))), Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))(Data_Either_Nested.in1(New.value)) ])([ Concur_Dom_Style.triangle(style(v1))(Control_Plus.empty(Control_Plus.plusArray)) ])) ]))(fix2(v1)(v2));
+            };
+            return Preload.todo()("other matches in step rendering");
+        };
+    };
+};
+
+//-- Branches ----
+var renderBranches = function (render) {
+    return function (status) {
+        return function (match) {
+            return function (subtask) {
+                return function (branches) {
+                    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(subtask))(Data_Either_Nested.in1), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStep(status)(Hurry.value)(match))(Data_Either_Nested.in3), Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))(Data_Either_Nested.in2(Data_Semigroup.append(Data_Semigroup.semigroupArray)(branches)([ new Data_Tuple.Tuple(Task_Script_Builder.always, Task_Script_Builder.item) ]))) ])([ Concur_Dom_Style.branch([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur.traverse(Data_Monoid.monoidArray)(renderBranch(render))(branches))(Data_Either_Nested.in2) ]) ]) ]))(fix3(subtask)(branches)(new Data_Tuple.Tuple(Hurry.value, match))))(reorder4);
+                };
+            };
+        };
+    };
+};
+
+//   Style.column
+//     [ Style.line Dashed [ Style.place After (Input.addon Icon.question (Input.entry Small ?holder ?value)) ]
+//     , renderTask task
+//     ]
+var renderSelects = function (render) {
+    return function (status) {
+        return function (match) {
+            return function (subtask) {
+                return function (branches) {
+                    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(subtask))(Data_Either_Nested.in1), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStep(status)(Delay.value)(match))(Data_Either_Nested.in3), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.branch([ Concur.traverse(Data_Monoid.monoidArray)(renderSelect(render))(branches) ]))(Data_Either_Nested.in2) ]))(fix3(subtask)(branches)(new Data_Tuple.Tuple(Delay.value, match))))(reorder4);
+                };
+            };
+        };
+    };
+};
+var renderSingle = function (render) {
+    return function (status) {
+        return function (cont) {
+            return function (match) {
+                return function (sub1) {
+                    return function (sub2) {
+                        return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(sub1))(Data_Either_Nested.in1), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStep(status)(cont)(match))(Data_Either_Nested.in3), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(sub2))(Data_Either_Nested.in2) ]))(fix3(sub1)(sub2)(new Data_Tuple.Tuple(cont, match))))(reorder4);
+                    };
+                };
+            };
+        };
+    };
+};
+var renderTask = function (g) {
+    return function (s) {
+        return function (t) {
+            var go = function (v) {
+                return Data_Functor.map(Concur_Core_Types.widgetFunctor)(Task_Script_Annotation.Annotated.create(v.value0))((function () {
+                    if (v.value1 instanceof Task_Script_Syntax.Step && (v.value1.value2.value1 instanceof Task_Script_Syntax.Branch && (v.value1.value2.value1.value0.length === 1 && (v["value1"]["value2"]["value1"]["value0"][0].value0 instanceof Task_Script_Syntax.Constant && (v["value1"]["value2"]["value1"]["value0"][0].value0.value0 instanceof Task_Script_Syntax.B && (v["value1"]["value2"]["value1"]["value0"][0].value0.value0.value0 && v["value1"]["value2"]["value1"]["value0"][0].value1.value1 instanceof Task_Script_Syntax.Lift)))))) {
+                        return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderEnd(go)(v.value0)(v.value1.value0)(v.value1.value1))(function (v1) {
+                            return Preload.done(Concur_Core_Types.widgetApplicative)(Task_Script_Syntax.Step.create(v1.value1.value0)(v1.value1.value1)((function () {
+                                if (v1.value0 instanceof New) {
+                                    return Task_Script_Builder["new"](v.value1.value2);
+                                };
+                                return v.value1.value2;
+                            })()));
+                        });
+                    };
+                    if (v.value1 instanceof Task_Script_Syntax.Step && (v.value1.value2.value1 instanceof Task_Script_Syntax.Branch && (v.value1.value2.value1.value0.length === 1 && (v["value1"]["value2"]["value1"]["value0"][0].value0 instanceof Task_Script_Syntax.Constant && (v["value1"]["value2"]["value1"]["value0"][0].value0.value0 instanceof Task_Script_Syntax.B && v["value1"]["value2"]["value1"]["value0"][0].value0.value0.value0))))) {
+                        return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingle(go)(v.value0)(Hurry.value)(v.value1.value0)(v.value1.value1)(v["value1"]["value2"]["value1"]["value0"][0].value1))(function (v1) {
+                            return Preload.done(Concur_Core_Types.widgetApplicative)(Task_Script_Syntax.Step.create(v1.value1.value0)(v1.value1.value1.value0)((function () {
+                                if (v1.value0 instanceof Hurry) {
+                                    return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), v1.value1.value1.value1) ]));
+                                };
+                                if (v1.value0 instanceof Delay) {
+                                    return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select([ new Data_Tuple.Tuple("Continue", new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), v1.value1.value1.value1)) ]));
+                                };
+                                if (v1.value0 instanceof New) {
+                                    return Task_Script_Builder["new"](v.value1.value2);
+                                };
+                                throw new Error("Failed pattern match at Task.Script.Renderer (line 97, column 30 - line 100, column 32): " + [ v1.value0.constructor.name ]);
+                            })()));
+                        });
+                    };
+                    if (v.value1 instanceof Task_Script_Syntax.Step && v.value1.value2.value1 instanceof Task_Script_Syntax.Branch) {
+                        return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderBranches(go)(v.value0)(v.value1.value0)(v.value1.value1)(v.value1.value2.value1.value0))(function (v1) {
+                            return Preload.done(Concur_Core_Types.widgetApplicative)(Task_Script_Syntax.Step.create(v1.value1.value0)(v1.value1.value1.value0)((function () {
+                                if (v1.value0 instanceof Hurry) {
+                                    return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch(v1.value1.value1.value1));
+                                };
+                                if (v1.value0 instanceof Delay) {
+                                    return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select(addLabels(Data_Functor.functorArray)(v1.value1.value1.value1)));
+                                };
+                                if (v1.value0 instanceof New) {
+                                    return Task_Script_Builder["new"](v.value1.value2);
+                                };
+                                throw new Error("Failed pattern match at Task.Script.Renderer (line 103, column 30 - line 106, column 32): " + [ v1.value0.constructor.name ]);
+                            })()));
+                        });
+                    };
+                    if (v.value1 instanceof Task_Script_Syntax.Step && (v.value1.value2.value1 instanceof Task_Script_Syntax.Select && (v.value1.value2.value1.value0.length === 1 && (v["value1"]["value2"]["value1"]["value0"][0].value0 === "Continue" && (v["value1"]["value2"]["value1"]["value0"][0].value1.value0 instanceof Task_Script_Syntax.Constant && (v["value1"]["value2"]["value1"]["value0"][0].value1.value0.value0 instanceof Task_Script_Syntax.B && v["value1"]["value2"]["value1"]["value0"][0].value1.value0.value0.value0)))))) {
+                        return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingle(go)(v.value0)(Delay.value)(v.value1.value0)(v.value1.value1)(v["value1"]["value2"]["value1"]["value0"][0].value1.value1))(function (v1) {
+                            return Preload.done(Concur_Core_Types.widgetApplicative)(Task_Script_Syntax.Step.create(v1.value1.value0)(v1.value1.value1.value0)((function () {
+                                if (v1.value0 instanceof Hurry) {
+                                    return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), v1.value1.value1.value1) ]));
+                                };
+                                if (v1.value0 instanceof Delay) {
+                                    return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select([ new Data_Tuple.Tuple("Continue", new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), v1.value1.value1.value1)) ]));
+                                };
+                                if (v1.value0 instanceof New) {
+                                    return Task_Script_Builder["new"](v.value1.value2);
+                                };
+                                throw new Error("Failed pattern match at Task.Script.Renderer (line 110, column 30 - line 113, column 32): " + [ v1.value0.constructor.name ]);
+                            })()));
+                        });
+                    };
+                    if (v.value1 instanceof Task_Script_Syntax.Step && v.value1.value2.value1 instanceof Task_Script_Syntax.Select) {
+                        return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSelects(go)(v.value0)(v.value1.value0)(v.value1.value1)(v.value1.value2.value1.value0))(function (v1) {
+                            return Preload.done(Concur_Core_Types.widgetApplicative)(Task_Script_Syntax.Step.create(v1.value1.value0)(v1.value1.value1.value0)((function () {
+                                if (v1.value0 instanceof Hurry) {
+                                    return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch(removeLabels(Data_Functor.functorArray)(v1.value1.value1.value1)));
+                                };
+                                if (v1.value0 instanceof Delay) {
+                                    return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select(v1.value1.value1.value1));
+                                };
+                                if (v1.value0 instanceof New) {
+                                    return Task_Script_Builder["new"](v.value1.value2);
+                                };
+                                throw new Error("Failed pattern match at Task.Script.Renderer (line 116, column 30 - line 119, column 32): " + [ v1.value0.constructor.name ]);
+                            })()));
+                        });
+                    };
+                    if (v.value1 instanceof Task_Script_Syntax.Step) {
+                        return Preload.panic("invalid single step");
+                    };
+                    if (v.value1 instanceof Task_Script_Syntax.Branch) {
+                        return Preload.panic("invalid single branch");
+                    };
+                    if (v.value1 instanceof Task_Script_Syntax.Select) {
+                        return Preload.panic("invalid single select");
+                    };
+                    if (v.value1 instanceof Task_Script_Syntax.Enter) {
+                        return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderEnter(s)(v.value1.value0))(function (n$prime) {
+                            return Preload.done(Concur_Core_Types.widgetApplicative)(new Task_Script_Syntax.Enter(n$prime));
+                        });
+                    };
+                    if (v.value1 instanceof Task_Script_Syntax.Update) {
+                        return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderUpdate(v.value1.value0))(function (e$prime) {
+                            return Preload.done(Concur_Core_Types.widgetApplicative)(new Task_Script_Syntax.Update(e$prime));
+                        });
+                    };
+                    if (v.value1 instanceof Task_Script_Syntax.Change) {
+                        return Preload.todo()("change");
+                    };
+                    if (v.value1 instanceof Task_Script_Syntax.View) {
+                        return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderView(v.value1.value0))(function (e$prime) {
+                            return Preload.done(Concur_Core_Types.widgetApplicative)(new Task_Script_Syntax.View(e$prime));
+                        });
+                    };
+                    if (v.value1 instanceof Task_Script_Syntax.Watch) {
+                        return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderWatch(v.value0)(v.value1.value0))(function (e$prime) {
+                            return Preload.done(Concur_Core_Types.widgetApplicative)(new Task_Script_Syntax.Watch(e$prime));
+                        });
+                    };
+                    if (v.value1 instanceof Task_Script_Syntax.Lift) {
+                        return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderLift(v.value1.value0))(function (e$prime) {
+                            return Preload.done(Concur_Core_Types.widgetApplicative)(new Task_Script_Syntax.Lift(e$prime));
+                        });
+                    };
+                    if (v.value1 instanceof Task_Script_Syntax.Pair) {
+                        return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderGroup(And.value)(go)(v.value1.value0))(function (t$prime) {
+                            return Preload.done(Concur_Core_Types.widgetApplicative)(t$prime);
+                        });
+                    };
+                    if (v.value1 instanceof Task_Script_Syntax.Choose) {
+                        return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderGroup(Or.value)(go)(v.value1.value0))(function (t$prime) {
+                            return Preload.done(Concur_Core_Types.widgetApplicative)(t$prime);
+                        });
+                    };
+                    if (v.value1 instanceof Task_Script_Syntax.Execute) {
+                        return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderExecute(v.value0)(v.value1.value0)(v.value1.value1))(function (v1) {
+                            return Preload.done(Concur_Core_Types.widgetApplicative)(new Task_Script_Syntax.Execute(v1.value0, v1.value1));
+                        });
+                    };
+                    if (v.value1 instanceof Task_Script_Syntax.Hole) {
+                        return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderExecute(v.value0)("??")(v.value1.value0))(function (v1) {
+                            var $261 = v1.value0 === "??";
+                            if ($261) {
+                                return Preload.done(Concur_Core_Types.widgetApplicative)(new Task_Script_Syntax.Hole(v1.value1));
+                            };
+                            return Preload.done(Concur_Core_Types.widgetApplicative)(new Task_Script_Syntax.Execute(v1.value0, v1.value1));
+                        });
+                    };
+                    if (v.value1 instanceof Task_Script_Syntax.Assign) {
+                        return Preload.todo()("assign");
+                    };
+                    if (v.value1 instanceof Task_Script_Syntax.Share) {
+                        return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderShare(v.value1.value0))(function (e$prime) {
+                            return Preload.done(Concur_Core_Types.widgetApplicative)(new Task_Script_Syntax.Share(e$prime));
+                        });
+                    };
+                    throw new Error("Failed pattern match at Task.Script.Renderer (line 84, column 44 - line 188, column 23): " + [ v.value1.constructor.name ]);
+                })());
+            };
+            return Concur_Dom_Style.column([ go(t) ]);
+        };
+    };
+};
+var main = function (v) {
+    return function (n) {
+        var v1 = Data_HashMap.lookup(Data_Hashable.hashableString)(n)(v.tasks);
+        if (v1 instanceof Data_Maybe.Just) {
+            return Concur.repeat(Concur_Core_Types.widgetBind)(new Data_Tuple.Tuple(n, new Data_Tuple.Tuple(v1.value0.value0, v1.value0.value1)))(function (v2) {
+                var g$prime = Data_HashMap.union(Data_Hashable.hashableString)(v1.value0.value0)(v.context);
+                var t$prime$prime = Task_Script_Loader.validate(v.types)(g$prime)(v2.value1.value1);
+                return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStart(v2.value0)(v2.value1.value0))(Data_Either_Nested.in1), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderTask(g$prime)(v.types)(t$prime$prime))(Data_Either_Nested.in2), renderStop, Concur_Dom_Text.head("\xa0"), Concur_Dom_Text.head("Code"), Concur_Dom_Text.code("TopHat")(Data_Show.show(Task_Script_Annotation["$_ShowUnannotatedTask_11"])(Task_Script_Annotation.unannotate(Task_Script_Syntax["$_FunctorTask_135"])(t$prime$prime))), Concur_Dom_Text.head("Tips"), renderTips, Concur_Dom_Text.head("Notes"), renderNotes ]))(fix2(new Data_Tuple.Tuple(v2.value0, v2.value1.value0))(t$prime$prime)))(assoc);
+            });
+        };
+        if (v1 instanceof Data_Maybe.Nothing) {
+            return Concur_Dom_Text.text("Could not find task " + Preload.quote(n));
+        };
+        throw new Error("Failed pattern match at Task.Script.Renderer (line 34, column 3 - line 54, column 62): " + [ v1.constructor.name ]);
+    };
+};
+module.exports = {
+    "switch": $$switch,
+    main: main,
+    renderTips: renderTips,
+    renderNotes: renderNotes,
+    renderTask: renderTask,
+    renderStart: renderStart,
+    renderParams: renderParams,
+    renderStop: renderStop,
+    renderExecute: renderExecute,
+    renderArgs: renderArgs,
+    renderArg: renderArg,
+    Yes: Yes,
+    No: No,
+    catYes: catYes,
+    isYes: isYes,
+    renderPossibleArgs: renderPossibleArgs,
+    renderLine: renderLine,
+    renderLabels: renderLabels,
+    renderContext: renderContext,
+    renderStep: renderStep,
+    renderOption: renderOption,
+    renderOptionWithLabel: renderOptionWithLabel,
+    renderSingle: renderSingle,
+    renderEnd: renderEnd,
+    renderBranches: renderBranches,
+    renderBranch: renderBranch,
+    renderSelects: renderSelects,
+    renderSelect: renderSelect,
+    renderGroup: renderGroup,
+    renderEditor: renderEditor,
+    renderEnter: renderEnter,
+    renderUpdate: renderUpdate,
+    renderView: renderView,
+    renderLift: renderLift,
+    renderShare: renderShare,
+    renderGuard: renderGuard,
+    renderLabel: renderLabel,
+    renderWatch: renderWatch,
+    renderError: renderError,
+    selectType: selectType,
+    selectRef: selectRef,
+    editExpression: editExpression,
+    editGuard: editGuard,
+    editName: editName,
+    editLabel: editLabel,
+    fix2: fix2,
+    fix3: fix3,
+    fix4: fix4,
+    reorder3: reorder3,
+    reorder4: reorder4,
+    assoc: assoc,
+    And: And,
+    Or: Or,
+    "this": $$this,
+    other: other,
+    stroke: stroke,
+    Hurry: Hurry,
+    Delay: Delay,
+    New: New,
+    style: style,
+    Switch: Switch,
+    addLabels: addLabels,
+    removeLabels: removeLabels,
+    "$_SwitchPar_41": $dollar_SwitchPar_41,
+    "$_SwitchCont_42": $dollar_SwitchCont_42
+};
