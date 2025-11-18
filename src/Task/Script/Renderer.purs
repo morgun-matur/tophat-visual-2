@@ -75,48 +75,61 @@ renderTips = Text.bullets
 renderNotes :: forall a. Widget a
 renderNotes = Text.text "Editing matches (results) and expressions is currently not supported, as is adding fresh tasks to the library."
 
+fixgo :: Widget (Bool * Checked Task) -> Widget (Checked Task)
+fixgo g = do
+  (_~t) <- g 
+  done <| t
+
 renderTask :: Context -> Typtext -> Renderer
 renderTask g s t = Style.column
-  [ go t
+  [ fixgo <| go t
   ]
   where
-  go :: Checked Task -> Widget (Checked Task)
-  go (Annotated a_t t) = Annotated a_t <-< case t of
+  go :: Checked Task -> Widget (ShouldRemove * Checked Task)
+  go (Annotated a_t t) = case t of
     ---- Steps
     -- NOTE:
     -- Be aware of the INVARIANT: Branch and Select need to be inside a Step.
 
     Step m t1 orig@(Annotated a_b (Branch [ Constant (B true) ~ Annotated a_l (Lift e) ])) -> do
-      c' ~ m' ~ t1' <- renderEnd go a_t m t1
-      done <| Step m' t1' <| case c' of
-        New -> Builder.new orig
-        _ -> orig
+      c' ~ m' ~ (b1' ~ t1') <- renderEnd go a_t m t1
+      done <| case b1' of 
+        true -> false ~ (Annotated a_l (Lift e) )
+        false -> false ~ ( Annotated a_t <-< Step m' t1' <| case c' of
+          New -> Builder.new orig
+          _ -> orig)
 
     Step m t1 orig@(Annotated a_b (Branch [ Constant (B true) ~ t2 ])) -> do
-      c' ~ m' ~ t1' ~ t2' <- renderSingle go a_t Hurry m t1 t2
-      done <| Step m' t1' <| case c' of
-        Hurry -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
-        Delay -> Annotated a_b <| Select [ "Continue" ~ Constant (B true) ~ t2' ]
-        New -> Builder.new orig
+      c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') <- renderSingle go a_t Hurry m t1 t2
+      done <| case b1' of
+        true -> false ~ t2'
+        false -> false ~ (Annotated a_t <| Step m' t1' <| case c' of
+            Hurry -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
+            Delay -> Annotated a_b <| Select [ "Continue" ~ Constant (B true) ~ t2' ]
+            New -> Builder.new orig)
+
     Step m t1 orig@(Annotated a_b (Branch bs)) -> do
-      c' ~ m' ~ t1' ~ bs' <- renderBranches go a_t m t1 bs
-      done <| Step m' t1' <| case c' of
+      c' ~ m' ~ t1' ~ bs' <- renderBranches (fixgo << go) a_t m t1 bs
+      done <| false ~ (Annotated a_t <| Step m' t1' <| case c' of
         Hurry -> Annotated a_b <| Branch bs'
         Delay -> Annotated a_b <| Select (addLabels bs')
-        New -> Builder.new orig
+        New -> Builder.new orig)
 
     Step m t1 orig@(Annotated a_b (Select [ "Continue" ~ Constant (B true) ~ t2 ])) -> do
-      c' ~ m' ~ t1' ~ t2' <- renderSingle go a_t Delay m t1 t2
-      done <| Step m' t1' <| case c' of
-        Hurry -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
-        Delay -> Annotated a_b <| Select [ "Continue" ~ Constant (B true) ~ t2' ]
-        New -> Builder.new orig
+      c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') <- renderSingle go a_t Delay m t1 t2
+      done <| case b1' of
+        true -> false ~ t2'
+        false -> false ~ (Annotated a_t <| Step m' t1' <| case c' of
+          Hurry -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
+          Delay -> Annotated a_b <| Select [ "Continue" ~ Constant (B true) ~ t2' ]
+          New -> Builder.new orig)
+
     Step m t1 orig@(Annotated a_b (Select bs)) -> do
-      c' ~ m' ~ t1' ~ bs' <- renderSelects go a_t m t1 bs
-      done <| Step m' t1' <| case c' of
+      c' ~ m' ~ t1' ~ bs' <- renderSelects (fixgo << go) a_t m t1 bs
+      done <| false ~ (Annotated a_t <| Step m' t1' <| case c' of
         Hurry -> Annotated a_b <| Branch (removeLabels bs')
         Delay -> Annotated a_b <| Select bs'
-        New -> Builder.new orig
+        New -> Builder.new orig)
 
     Step _ _ _ -> panic "invalid single step"
     -- m' ~ t1' ~ t2' <- renderSingle Hurry go m t1 t2
@@ -137,44 +150,44 @@ renderTask g s t = Style.column
 
     ---- Editors
     Enter n -> do
-      n' <- renderEnter s n
-      done <| Enter n'
+      n' ~ o <- renderWithOptions n (renderEnter s n)
+      done <| (getFirstUserOption o) ~ (Annotated a_t <| Enter n')
     Update e -> do
-      e' <- renderUpdate e
-      done <| Update e'
+      e' ~ o <- renderWithOptions e (renderUpdate e)
+      done <| (getFirstUserOption o) ~ (Annotated a_t <| Update e')
     Change e -> todo "change"
     -- Change  e -> do
     --   r <- renderConnect style_line Both (editMessage Icon.edit m) (editExpression Icon.database e)
     --   let e' = consolidate m e r
     --   done <| (Change m' e')
     View e -> do
-      e' <- renderView e
-      done <| View e'
+      e' ~ o <- renderWithOptions e (renderView e)
+      done <| (getFirstUserOption o) ~ (Annotated a_t <| View e')
     Watch e -> do
-      e' <- renderWatch a_t e
-      done <| Watch e'
+      e' ~ o <- renderWithOptions e (renderWatch a_t e)
+      done <| (getFirstUserOption o) ~ (Annotated a_t <| Watch e')
 
     ---- Combinators
     Lift e -> do
       e' <- renderLift e
-      done <| Lift e'
+      done <| false ~ (Annotated a_t <| Lift e')
     Pair ts -> do
-      t' <- renderGroup And go ts
-      done <| t'
+      t' <- renderGroup And (fixgo << go) ts
+      done <| (if Array.null ts then true else false) ~ (Annotated a_t <| t')
     Choose ts -> do
-      t' <- renderGroup Or go ts
-      done <| t'
+      t' <- renderGroup Or (fixgo << go) ts
+      done <| (if Array.null ts then true else false) ~ (Annotated a_t <| t')
 
     ---- Extras
     Execute n as -> do
-      n' ~ as' <- renderExecute a_t n as
-      done <| Execute n' as'
+      (n' ~ as') ~ o <- renderWithOptions (n ~ as) (renderExecute a_t n as)
+      done <| (getFirstUserOption o) ~ (Annotated a_t <| Execute n' as') 
     Hole as -> do
-      n' ~ as' <- renderExecute a_t "??" as
+      (n' ~ as') ~ o <- renderWithOptions ("??" ~ as) (renderExecute a_t "??" as)
       if n' == "??" then
-        done <| Hole as'
+        done <| (getFirstUserOption o) ~ (Annotated a_t <| Hole as')
       else
-        done <| Execute n' as'
+        done <| (getFirstUserOption o) ~ (Annotated a_t <| Execute n' as')
 
     ---- Shares
     Assign e1 e2 -> todo "assign"
@@ -185,9 +198,48 @@ renderTask g s t = Style.column
 
     Share e -> do
       e' <- renderShare e
-      done <| Share e'
+      done <| false ~ (Annotated a_t <| Share e')
 
 ---- Parts ---------------------------------------------------------------------
+
+---- Options -------------------------------------------------------------------
+renderWithOptions :: forall a. a -> Widget a -> Widget (a * UserOptions) -- TODO: better hitboxes to avoid confusion with types
+renderWithOptions a widget =
+  let 
+    contents = Style.column 
+      [ renderRemove >-> (\b -> Either.in2 (b~false))
+      , renderTaskSelect false >-> (\b -> Either.in2 (false~b))
+      ]
+  in
+    Input.popover After contents (widget >-> Either.in1)
+    >-> fix2 a defaultOptions --TODO: Cleaner default values
+
+
+renderRemove :: Widget (ShouldRemove)
+renderRemove = 
+  Style.element 
+  [
+    (Attr.onClick ->> true) >-> Either.in1 
+  ] 
+  [ Icon.window_close ]
+  >-> fix1 false 
+
+renderTaskSelect :: IsSelected -> Widget (IsSelected)
+renderTaskSelect s = Input.checkbox "" s
+
+defaultOptions :: ShouldRemove * IsSelected
+defaultOptions = false~false 
+
+type UserOptions = ShouldRemove * IsSelected
+
+type ShouldRemove = Bool 
+type IsSelected = Bool 
+
+getFirstUserOption :: UserOptions -> ShouldRemove 
+getFirstUserOption = fst 
+
+getSecondUserOption :: UserOptions -> IsSelected 
+getSecondUserOption = snd
 
 ---- General ----
 
@@ -332,17 +384,17 @@ renderOptionWithLabel status label guard =
     ]
     >-> fix2 label guard
 
-renderSingle :: forall a. (a -> Widget a) -> Status -> Cont -> Match -> a -> a -> Widget (Cont * Match * a * a)
+renderSingle :: forall a. (a -> Widget (Bool * a)) -> Status -> Cont -> Match -> a -> a -> Widget (Cont * Match * (Bool * a) * (Bool * a))
 renderSingle render status cont match sub1 sub2 =
   Style.column
     [ render sub1 >-> Either.in1
     , renderStep status cont match >-> Either.in3
     , render sub2 >-> Either.in2
     ]
-    >-> fix3 sub1 sub2 (cont ~ match)
+    >-> fix3 (false ~ sub1) (false ~ sub2) (cont ~ match)
     >-> reorder4
 
-renderEnd :: forall a. (a -> Widget a) -> Status -> Match -> a -> Widget (Cont * Match * a)
+renderEnd :: forall a. (a -> Widget (Bool * a)) -> Status -> Match -> a -> Widget (Cont * Match * (Bool * a))
 renderEnd render status args@(MRecord row) subtask =
   Style.column
     [ render subtask >-> Either.in3
@@ -351,7 +403,7 @@ renderEnd render status args@(MRecord row) subtask =
         Style.element [ void Attr.onDoubleClick ->> Either.in1 New ]
           [ Style.triangle (style Hurry) empty ]
     ]
-    >-> fix3 Hurry args subtask
+    >-> fix3 Hurry args (false ~ subtask)
 renderEnd _ _ _ _ = todo "other matches in end rendering"
 
 ---- Branches ----
@@ -582,6 +634,11 @@ editLabels g (ARecord as) =
 
 type Both a
   = Either a a
+
+fix1 :: forall a. a -> a + Void -> a 
+fix1 _1 = case _ of 
+  Left _1' -> _1' 
+  Right _ -> _1 
 
 fix2 :: forall a b. a -> b -> a + b + Void -> a * b
 fix2 _1 _2 = case _ of
