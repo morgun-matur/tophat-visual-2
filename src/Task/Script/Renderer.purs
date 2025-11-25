@@ -208,7 +208,7 @@ renderWithOptions a widget =
   let 
     contents = Style.column 
       [ renderRemove >-> (\b -> Either.in2 (b~false))
-      , renderTaskSelect false >-> (\b -> Either.in2 (false~b))
+      , renderFork >-> (\b -> Either.in2 (false~b))
       ]
   in
     Input.popover After contents (widget >-> Either.in1)
@@ -224,8 +224,14 @@ renderRemove =
   [ Icon.window_close ]
   >-> fix1 false 
 
-renderTaskSelect :: IsSelected -> Widget (IsSelected)
-renderTaskSelect s = Input.checkbox "" s
+renderFork :: Widget 
+renderFork = 
+  Style.element
+  [
+    (Attr.onClick ->>)
+  ]
+  [ Icon.bed --placeholder
+  ]
 
 defaultOptions :: ShouldRemove * IsSelected
 defaultOptions = false~false 
