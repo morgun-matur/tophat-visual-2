@@ -98,7 +98,7 @@ var $$this = function (v) {
     if (v instanceof Or) {
         return Task_Script_Syntax.Choose.create;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 677, column 1 - line 677, column 43): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 747, column 1 - line 747, column 43): " + [ v.constructor.name ]);
 };
 var $$switch = function (dict) {
     return dict["switch"];
@@ -113,7 +113,7 @@ var style = function (v) {
     if (v instanceof New) {
         return Concur_Dom_Style.Filled.value;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 694, column 1 - line 694, column 23): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 764, column 1 - line 764, column 23): " + [ v.constructor.name ]);
 };
 var stroke = function (v) {
     if (v instanceof And) {
@@ -122,7 +122,7 @@ var stroke = function (v) {
     if (v instanceof Or) {
         return Concur_Dom_Style.Double.value;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 685, column 1 - line 685, column 24): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 755, column 1 - line 755, column 24): " + [ v.constructor.name ]);
 };
 var selectType = function (types) {
     return function (name) {
@@ -136,6 +136,9 @@ var selectRef = function (v) {
         };
         return Preload.todo()("unnamed references not supported");
     };
+};
+var reorder6 = function (v) {
+    return new Data_Tuple.Tuple(v.value1.value1.value1.value1.value0, new Data_Tuple.Tuple(v.value1.value1.value1.value1.value1, new Data_Tuple.Tuple(v.value0, new Data_Tuple.Tuple(v.value1.value0, new Data_Tuple.Tuple(v.value1.value1.value0, v.value1.value1.value1.value0)))));
 };
 var reorder4 = function (v) {
     return new Data_Tuple.Tuple(v.value1.value1.value0, new Data_Tuple.Tuple(v.value1.value1.value1, new Data_Tuple.Tuple(v.value0, v.value1.value0)));
@@ -154,14 +157,14 @@ var renderPossibleArgs = function (status) {
             return new Task_Script_Syntax.ARecord(Data_HashMap.fromArrayBy(Data_Hashable.hashableString)(Control_Category.identity(Control_Category.categoryFn))(Task_Script_Syntax.Variable.create)(labels));
         };
         var labels = Data_Array.sort(Data_Ord.ordString)(Data_HashMap.keys(Data_HashMap.filter((function () {
-            var $327 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
-            return function ($328) {
-                return $327(Task_Script_Type.isFunction($328));
+            var $368 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
+            return function ($369) {
+                return $368(Task_Script_Type.isFunction($369));
             };
         })())(Task_Script_Annotation.extractContext(status))));
         var action = function (label) {
-            var $72 = Data_HashMap.member(Data_Hashable.hashableString)(label)(v.value0);
-            if ($72) {
+            var $92 = Data_HashMap.member(Data_Hashable.hashableString)(label)(v.value0);
+            if ($92) {
                 return Concur_Dom_Input.Remove.value;
             };
             return Concur_Dom_Input.Add.value;
@@ -203,17 +206,17 @@ var renderContext = (function () {
     var go = function (v) {
         return v.value0 + (" : " + (Data_Show.show(Task_Script_Type["$_ShowFullType_49"])(v.value1) + "\x0a"));
     };
-    var $329 = Data_Foldable.foldMap(Data_Foldable.foldableArray)(Data_Monoid.monoidString)(go);
-    var $330 = Data_Array.sortBy(Data_Function.on(Data_Ord.compare(Data_Ord.ordString))(Data_Tuple.fst));
-    var $331 = Data_HashMap.toArrayBy(Data_Tuple.Tuple.create);
-    var $332 = Data_HashMap.filter((function () {
-        var $334 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
-        return function ($335) {
-            return $334(Task_Script_Type.isFunction($335));
+    var $370 = Data_Foldable.foldMap(Data_Foldable.foldableArray)(Data_Monoid.monoidString)(go);
+    var $371 = Data_Array.sortBy(Data_Function.on(Data_Ord.compare(Data_Ord.ordString))(Data_Tuple.fst));
+    var $372 = Data_HashMap.toArrayBy(Data_Tuple.Tuple.create);
+    var $373 = Data_HashMap.filter((function () {
+        var $375 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
+        return function ($376) {
+            return $375(Task_Script_Type.isFunction($376));
         };
     })());
-    return function ($333) {
-        return $329($330($331($332(Task_Script_Annotation.extractContext($333)))));
+    return function ($374) {
+        return $370($371($372($373(Task_Script_Annotation.extractContext($374)))));
     };
 })();
 var renderArg = function (sel) {
@@ -235,7 +238,7 @@ var other = function (v) {
     if (v instanceof Or) {
         return Task_Script_Syntax.Pair.create;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 681, column 1 - line 681, column 44): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 751, column 1 - line 751, column 44): " + [ v.constructor.name ]);
 };
 var renderGroup = function (par) {
     return function (trans) {
@@ -255,6 +258,13 @@ var isYes = function (v) {
 };
 var getSecondUserOption = Data_Tuple.snd;
 var getFirstUserOption = Data_Tuple.fst;
+var flat4 = function (a) {
+    return function (b) {
+        return function (v) {
+            return new Data_Tuple.Tuple(a, new Data_Tuple.Tuple(b, new Data_Tuple.Tuple(v.value0, v.value1)));
+        };
+    };
+};
 var fixgo = function (g) {
     return Control_Bind.bind(Concur_Core_Types.widgetBind)(g)(function (v) {
         return Preload.done(Concur_Core_Types.widgetApplicative)(v.value1);
@@ -280,7 +290,7 @@ var fix4 = function (_1) {
                     if (v instanceof Data_Either.Right && (v.value0 instanceof Data_Either.Right && (v.value0.value0 instanceof Data_Either.Right && v.value0.value0.value0 instanceof Data_Either.Right))) {
                         return Data_Void.absurd(v.value0.value0.value0.value0);
                     };
-                    throw new Error("Failed pattern match at Task.Script.Renderer (line 657, column 20 - line 662, column 56): " + [ v.constructor.name ]);
+                    throw new Error("Failed pattern match at Task.Script.Renderer (line 721, column 20 - line 726, column 56): " + [ v.constructor.name ]);
                 };
             };
         };
@@ -302,7 +312,7 @@ var fix3 = function (_1) {
                 if (v instanceof Data_Either.Right && (v.value0 instanceof Data_Either.Right && v.value0.value0 instanceof Data_Either.Right)) {
                     return Data_Void.absurd(v.value0.value0.value0);
                 };
-                throw new Error("Failed pattern match at Task.Script.Renderer (line 650, column 16 - line 654, column 48): " + [ v.constructor.name ]);
+                throw new Error("Failed pattern match at Task.Script.Renderer (line 714, column 16 - line 718, column 48): " + [ v.constructor.name ]);
             };
         };
     };
@@ -331,7 +341,7 @@ var fix2 = function (_1) {
             if (v instanceof Data_Either.Right && v.value0 instanceof Data_Either.Right) {
                 return Data_Void.absurd(v.value0.value0);
             };
-            throw new Error("Failed pattern match at Task.Script.Renderer (line 644, column 14 - line 647, column 40): " + [ v.constructor.name ]);
+            throw new Error("Failed pattern match at Task.Script.Renderer (line 708, column 14 - line 711, column 40): " + [ v.constructor.name ]);
         };
     };
 };
@@ -343,7 +353,7 @@ var fix1 = function (_1) {
         if (v instanceof Data_Either.Right) {
             return _1;
         };
-        throw new Error("Failed pattern match at Task.Script.Renderer (line 639, column 11 - line 641, column 16): " + [ v.constructor.name ]);
+        throw new Error("Failed pattern match at Task.Script.Renderer (line 703, column 11 - line 705, column 16): " + [ v.constructor.name ]);
     };
 };
 var renderRemove = Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(true))(Data_Either_Nested.in1) ])([ Concur_Dom_Icon.window_close ]))(fix1(false));
@@ -427,27 +437,27 @@ var catYes = Data_Array.concatMap(function (v) {
 var renderArgs = function (status) {
     return function (v) {
         var unselect = (function () {
-            var $336 = Data_HashMap.fromArray(Data_Hashable.hashableString);
-            var $337 = Data_Functor.map(Data_Functor.functorArray)(function (l) {
+            var $377 = Data_HashMap.fromArray(Data_Hashable.hashableString);
+            var $378 = Data_Functor.map(Data_Functor.functorArray)(function (l) {
                 return new Data_Tuple.Tuple(l, new Task_Script_Syntax.Variable(l));
             });
-            return function ($338) {
-                return Task_Script_Syntax.ARecord.create($336($337(catYes($338))));
+            return function ($379) {
+                return Task_Script_Syntax.ARecord.create($377($378(catYes($379))));
             };
         })();
         var check = function (label) {
             return (function () {
-                var $149 = Data_HashMap.member(Data_Hashable.hashableString)(label)(v.value0);
-                if ($149) {
+                var $174 = Data_HashMap.member(Data_Hashable.hashableString)(label)(v.value0);
+                if ($174) {
                     return Yes.create;
                 };
                 return No.create;
             })()(label);
         };
         var select = Data_Functor.map(Data_Functor.functorArray)(check)(Data_HashMap.keys(Data_HashMap.filter((function () {
-            var $339 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
-            return function ($340) {
-                return $339(Task_Script_Type.isFunction($340));
+            var $380 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
+            return function ($381) {
+                return $380(Task_Script_Type.isFunction($381));
             };
         })())(Task_Script_Annotation.extractContext(status))));
         return Concur_Dom_Input.popover(Concur_Dom_Style.After.value)(Concur_Dom_Input.card([  ])([ Concur_Dom_Style.row([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur.traverse(Data_Monoid.monoidArray)(renderArg)(select))(unselect) ]) ])([  ]))(Concur_Dom_Style.column([ Data_Functor.voidLeft(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)([ Concur_Dom_Style.place(Concur_Dom_Style.After.value)(Concur_Dom_Style.Small.value)([ Concur_Dom_Style.row(renderLabels(Data_HashMap.keys(v.value0))) ]) ]))(v) ]));
@@ -468,16 +478,25 @@ var addLabels = function (dictFunctor) {
         return new Data_Tuple.Tuple("", v);
     });
 };
-var $dollar_SwitchPar_47 = new Switch(function (v) {
+var $dollar_SwitchPar_55 = new Switch(function (v) {
     if (v instanceof And) {
         return Or.value;
     };
     if (v instanceof Or) {
         return And.value;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 702, column 1 - line 704, column 18): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 775, column 1 - line 777, column 18): " + [ v.constructor.name ]);
 });
-var $dollar_SwitchCont_48 = new Switch(function (v) {
+var $dollar_SwitchIsGuarded_57 = new Switch(function (v) {
+    if (v) {
+        return false;
+    };
+    if (!v) {
+        return true;
+    };
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 784, column 1 - line 786, column 22): " + [ v.constructor.name ]);
+});
+var $dollar_SwitchCont_56 = new Switch(function (v) {
     if (v instanceof Hurry) {
         return Delay.value;
     };
@@ -487,7 +506,7 @@ var $dollar_SwitchCont_48 = new Switch(function (v) {
     if (v instanceof New) {
         return New.value;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 706, column 1 - line 709, column 19): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 779, column 1 - line 782, column 19): " + [ v.constructor.name ]);
 });
 var renderStep = function (v) {
     return function (v1) {
@@ -500,7 +519,7 @@ var renderStep = function (v) {
                     return Data_Maybe.Nothing.value;
                 };
                 var labels = Data_Array.catMaybes(Data_Functor.map(Data_Functor.functorArray)(getBinds)(Data_HashMap.values(v2.value0)));
-                return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.voidLeft(Concur_Core_Types.widgetFunctor)(renderLine(labels))(Data_Either_Nested.in2(v2)), Concur_Dom_Input.popover(Concur_Dom_Style.Before.value)(Concur_Dom_Text.code("TopHat")(renderContext(v)))(Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onClick))(Data_Either_Nested.in1($$switch($dollar_SwitchCont_48)(v1))), Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))(Data_Either_Nested.in1(New.value)) ])([ Concur_Dom_Style.triangle(style(v1))(Control_Plus.empty(Control_Plus.plusArray)) ])) ]))(fix2(v1)(v2));
+                return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.voidLeft(Concur_Core_Types.widgetFunctor)(renderLine(labels))(Data_Either_Nested.in2(v2)), Concur_Dom_Input.popover(Concur_Dom_Style.Before.value)(Concur_Dom_Text.code("TopHat")(renderContext(v)))(Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onClick))(Data_Either_Nested.in1($$switch($dollar_SwitchCont_56)(v1))), Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))(Data_Either_Nested.in1(New.value)) ])([ Concur_Dom_Style.triangle(style(v1))(Control_Plus.empty(Control_Plus.plusArray)) ])) ]))(fix2(v1)(v2));
             };
             return Preload.todo()("other matches in step rendering");
         };
@@ -528,13 +547,38 @@ var renderSelects = function (render) {
         };
     };
 };
+var renderStepWithOptions = function (v) {
+    return function (v1) {
+        return function (v2) {
+            return function (v3) {
+                return function (v4) {
+                    if (v4 instanceof Task_Script_Syntax.MRecord) {
+                        var contents = Concur_Dom_Style.column([ Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(Data_Either_Nested.in1($$switch($dollar_SwitchIsGuarded_57)(v1))) ])([ Concur_Dom_Icon.bed ]) ]);
+                        if (v1) {
+                            return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Concur_Dom_Input.popover(Concur_Dom_Style.After.value)(contents)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStep(v)(v3)(v4))(Data_Either_Nested.in3)), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderOption(v)(v2))(Data_Either_Nested.in2) ]))(fix3(v1)(v2)(new Data_Tuple.Tuple(v3, v4)));
+                        };
+                        if (!v1) {
+                            return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Concur_Dom_Input.popover(Concur_Dom_Style.After.value)(contents)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStep(v)(v3)(v4))(Data_Either_Nested.in3)) ]))(fix3(v1)(v2)(new Data_Tuple.Tuple(v3, v4)));
+                        };
+                        throw new Error("Failed pattern match at Task.Script.Renderer (line 376, column 3 - line 391, column 47): " + [ v1.constructor.name ]);
+                    };
+                    return Preload.todo()("no");
+                };
+            };
+        };
+    };
+};
 var renderSingle = function (render) {
     return function (status) {
-        return function (cont) {
-            return function (match) {
-                return function (sub1) {
-                    return function (sub2) {
-                        return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(sub1))(Data_Either_Nested.in1), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStep(status)(cont)(match))(Data_Either_Nested.in3), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(sub2))(Data_Either_Nested.in2) ]))(fix3(new Data_Tuple.Tuple(false, sub1))(new Data_Tuple.Tuple(false, sub2))(new Data_Tuple.Tuple(cont, match))))(reorder4);
+        return function (isguarded) {
+            return function (expr) {
+                return function (cont) {
+                    return function (match) {
+                        return function (sub1) {
+                            return function (sub2) {
+                                return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(sub1))(Data_Either_Nested.in1), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStepWithOptions(status)(isguarded)(expr)(cont)(match))(Data_Either_Nested.in3), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(sub2))(Data_Either_Nested.in2) ]))(fix3(new Data_Tuple.Tuple(false, sub1))(new Data_Tuple.Tuple(false, sub2))(new Data_Tuple.Tuple(isguarded, new Data_Tuple.Tuple(expr, new Data_Tuple.Tuple(cont, match))))))(reorder6);
+                            };
+                        };
                     };
                 };
             };
@@ -564,18 +608,18 @@ var renderTask = function (g) {
                     });
                 };
                 if (v.value1 instanceof Task_Script_Syntax.Step && (v.value1.value2.value1 instanceof Task_Script_Syntax.Branch && (v.value1.value2.value1.value0.length === 1 && (v["value1"]["value2"]["value1"]["value0"][0].value0 instanceof Task_Script_Syntax.Constant && (v["value1"]["value2"]["value1"]["value0"][0].value0.value0 instanceof Task_Script_Syntax.B && v["value1"]["value2"]["value1"]["value0"][0].value0.value0.value0))))) {
-                    return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingle(go)(v.value0)(Hurry.value)(v.value1.value0)(v.value1.value1)(v["value1"]["value2"]["value1"]["value0"][0].value1))(function (v1) {
+                    return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingle(go)(v.value0)(false)(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)))(Hurry.value)(v.value1.value0)(v.value1.value1)(v["value1"]["value2"]["value1"]["value0"][0].value1))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)((function () {
                             if (v1.value1.value1.value0.value0) {
-                                return new Data_Tuple.Tuple(false, v1.value1.value1.value1.value1);
+                                return new Data_Tuple.Tuple(false, v1.value1.value1.value1.value0.value1);
                             };
                             if (!v1.value1.value1.value0.value0) {
                                 return new Data_Tuple.Tuple(false, Task_Script_Annotation.Annotated.create(v.value0)(Task_Script_Syntax.Step.create(v1.value1.value0)(v1.value1.value1.value0.value1)((function () {
                                     if (v1.value0 instanceof Hurry) {
-                                        return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), v1.value1.value1.value1.value1) ]));
+                                        return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), v1.value1.value1.value1.value0.value1) ]));
                                     };
                                     if (v1.value0 instanceof Delay) {
-                                        return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select([ new Data_Tuple.Tuple("Continue", new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), v1.value1.value1.value1.value1)) ]));
+                                        return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select([ new Data_Tuple.Tuple("Continue", new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), v1.value1.value1.value1.value0.value1)) ]));
                                     };
                                     if (v1.value0 instanceof New) {
                                         return Task_Script_Builder["new"](v.value1.value2);
@@ -588,8 +632,8 @@ var renderTask = function (g) {
                     });
                 };
                 if (v.value1 instanceof Task_Script_Syntax.Step && v.value1.value2.value1 instanceof Task_Script_Syntax.Branch) {
-                    return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderBranches(function ($341) {
-                        return fixgo(go($341));
+                    return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderBranches(function ($382) {
+                        return fixgo(go($382));
                     })(v.value0)(v.value1.value0)(v.value1.value1)(v.value1.value2.value1.value0))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)(new Data_Tuple.Tuple(false, Task_Script_Annotation.Annotated.create(v.value0)(Task_Script_Syntax.Step.create(v1.value1.value0)(v1.value1.value1.value0)((function () {
                             if (v1.value0 instanceof Hurry) {
@@ -606,18 +650,18 @@ var renderTask = function (g) {
                     });
                 };
                 if (v.value1 instanceof Task_Script_Syntax.Step && (v.value1.value2.value1 instanceof Task_Script_Syntax.Select && (v.value1.value2.value1.value0.length === 1 && (v["value1"]["value2"]["value1"]["value0"][0].value0 === "Continue" && (v["value1"]["value2"]["value1"]["value0"][0].value1.value0 instanceof Task_Script_Syntax.Constant && (v["value1"]["value2"]["value1"]["value0"][0].value1.value0.value0 instanceof Task_Script_Syntax.B && v["value1"]["value2"]["value1"]["value0"][0].value1.value0.value0.value0)))))) {
-                    return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingle(go)(v.value0)(Delay.value)(v.value1.value0)(v.value1.value1)(v["value1"]["value2"]["value1"]["value0"][0].value1.value1))(function (v1) {
+                    return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingle(go)(v.value0)(true)(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)))(Delay.value)(v.value1.value0)(v.value1.value1)(v["value1"]["value2"]["value1"]["value0"][0].value1.value1))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)((function () {
                             if (v1.value1.value1.value0.value0) {
-                                return new Data_Tuple.Tuple(false, v1.value1.value1.value1.value1);
+                                return new Data_Tuple.Tuple(false, v1.value1.value1.value1.value0.value1);
                             };
                             if (!v1.value1.value1.value0.value0) {
                                 return new Data_Tuple.Tuple(false, Task_Script_Annotation.Annotated.create(v.value0)(Task_Script_Syntax.Step.create(v1.value1.value0)(v1.value1.value1.value0.value1)((function () {
                                     if (v1.value0 instanceof Hurry) {
-                                        return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), v1.value1.value1.value1.value1) ]));
+                                        return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), v1.value1.value1.value1.value0.value1) ]));
                                     };
                                     if (v1.value0 instanceof Delay) {
-                                        return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select([ new Data_Tuple.Tuple("Continue", new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), v1.value1.value1.value1.value1)) ]));
+                                        return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select([ new Data_Tuple.Tuple("Continue", new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), v1.value1.value1.value1.value0.value1)) ]));
                                     };
                                     if (v1.value0 instanceof New) {
                                         return Task_Script_Builder["new"](v.value1.value2);
@@ -630,8 +674,8 @@ var renderTask = function (g) {
                     });
                 };
                 if (v.value1 instanceof Task_Script_Syntax.Step && v.value1.value2.value1 instanceof Task_Script_Syntax.Select) {
-                    return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSelects(function ($342) {
-                        return fixgo(go($342));
+                    return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSelects(function ($383) {
+                        return fixgo(go($383));
                     })(v.value0)(v.value1.value0)(v.value1.value1)(v.value1.value2.value1.value0))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)(new Data_Tuple.Tuple(false, Task_Script_Annotation.Annotated.create(v.value0)(Task_Script_Syntax.Step.create(v1.value1.value0)(v1.value1.value1.value0)((function () {
                             if (v1.value0 instanceof Hurry) {
@@ -685,12 +729,12 @@ var renderTask = function (g) {
                     });
                 };
                 if (v.value1 instanceof Task_Script_Syntax.Pair) {
-                    return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderGroup(And.value)(function ($343) {
-                        return fixgo(go($343));
+                    return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderGroup(And.value)(function ($384) {
+                        return fixgo(go($384));
                     })(v.value1.value0))(function (t$prime) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)(new Data_Tuple.Tuple((function () {
-                            var $290 = Data_Array["null"](v.value1.value0);
-                            if ($290) {
+                            var $331 = Data_Array["null"](v.value1.value0);
+                            if ($331) {
                                 return true;
                             };
                             return false;
@@ -698,12 +742,12 @@ var renderTask = function (g) {
                     });
                 };
                 if (v.value1 instanceof Task_Script_Syntax.Choose) {
-                    return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderGroup(Or.value)(function ($344) {
-                        return fixgo(go($344));
+                    return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderGroup(Or.value)(function ($385) {
+                        return fixgo(go($385));
                     })(v.value1.value0))(function (t$prime) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)(new Data_Tuple.Tuple((function () {
-                            var $292 = Data_Array["null"](v.value1.value0);
-                            if ($292) {
+                            var $333 = Data_Array["null"](v.value1.value0);
+                            if ($333) {
                                 return true;
                             };
                             return false;
@@ -717,8 +761,8 @@ var renderTask = function (g) {
                 };
                 if (v.value1 instanceof Task_Script_Syntax.Hole) {
                     return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderWithOptions(new Data_Tuple.Tuple("??", v.value1.value0))(renderExecute(v.value0)("??")(v.value1.value0)))(function (v1) {
-                        var $302 = v1.value0.value0 === "??";
-                        if ($302) {
+                        var $343 = v1.value0.value0 === "??";
+                        if ($343) {
                             return Preload.done(Concur_Core_Types.widgetApplicative)(new Data_Tuple.Tuple(getFirstUserOption(v1.value1), Task_Script_Annotation.Annotated.create(v.value0)(new Task_Script_Syntax.Hole(v1.value0.value1))));
                         };
                         return Preload.done(Concur_Core_Types.widgetApplicative)(new Data_Tuple.Tuple(getFirstUserOption(v1.value1), Task_Script_Annotation.Annotated.create(v.value0)(new Task_Script_Syntax.Execute(v1.value0.value0, v1.value0.value1))));
@@ -782,6 +826,7 @@ module.exports = {
     renderLabels: renderLabels,
     renderContext: renderContext,
     renderStep: renderStep,
+    renderStepWithOptions: renderStepWithOptions,
     renderOption: renderOption,
     renderOptionWithLabel: renderOptionWithLabel,
     renderSingle: renderSingle,
@@ -813,7 +858,9 @@ module.exports = {
     fix4: fix4,
     reorder3: reorder3,
     reorder4: reorder4,
+    reorder6: reorder6,
     assoc: assoc,
+    flat4: flat4,
     And: And,
     Or: Or,
     "this": $$this,
@@ -826,6 +873,7 @@ module.exports = {
     Switch: Switch,
     addLabels: addLabels,
     removeLabels: removeLabels,
-    "$_SwitchPar_47": $dollar_SwitchPar_47,
-    "$_SwitchCont_48": $dollar_SwitchCont_48
+    "$_SwitchPar_55": $dollar_SwitchPar_55,
+    "$_SwitchCont_56": $dollar_SwitchCont_56,
+    "$_SwitchIsGuarded_57": $dollar_SwitchIsGuarded_57
 };

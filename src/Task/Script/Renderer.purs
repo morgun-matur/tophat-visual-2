@@ -100,7 +100,7 @@ renderTask g s t = Style.column
           _ -> orig)
 
     Step m t1 orig@(Annotated a_b (Branch [ Constant (B true) ~ t2 ])) -> do
-      c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') <- renderSingle go a_t Hurry m t1 t2
+      c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') ~ g' ~ e' <- renderSingle go a_t false (Constant (B true)) Hurry m t1 t2
       done <| case b1' of
         true -> false ~ t2'
         false -> false ~ (Annotated a_t <| Step m' t1' <| case c' of
@@ -116,7 +116,7 @@ renderTask g s t = Style.column
         New -> Builder.new orig)
 
     Step m t1 orig@(Annotated a_b (Select [ "Continue" ~ Constant (B true) ~ t2 ])) -> do
-      c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') <- renderSingle go a_t Delay m t1 t2
+      c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') ~ g' ~ e' <- renderSingle go a_t false (Constant (B true)) Delay m t1 t2
       done <| case b1' of
         true -> false ~ t2'
         false -> false ~ (Annotated a_t <| Step m' t1' <| case c' of
@@ -371,6 +371,70 @@ renderStep status cont match@(MRecord row) =
     _ -> Nothing
 renderStep _ _ _ = todo "other matches in step rendering"
 
+renderStepWithOptions :: Status -> IsGuarded -> Expression -> Cont -> Match -> Widget (IsGuarded * Expression * (Cont * Match))
+renderStepWithOptions status isguarded expr cont match@(MRecord row) = 
+  case isguarded of 
+    true -> 
+      Style.column
+        [ Input.popover After 
+          contents
+          (renderStep status cont match >-> Either.in3)
+        , renderOption status expr >-> Either.in2 
+        ]
+        >-> fix3 isguarded expr (cont ~ match)
+    false ->
+      Style.column
+        [ Input.popover After 
+          contents 
+          (renderStep status cont match >-> Either.in3) 
+        ]
+        >-> fix3 isguarded expr (cont ~ match)
+  where
+  contents =
+    Style.column
+      [ Style.element 
+        [
+          Attr.onClick ->> Either.in1 (switch isguarded) 
+        ]
+        [
+          Icon.bed
+        ]
+      ]
+renderStepWithOptions _ _ _ _ _ = todo "no"
+{-
+renderStep2 :: Status -> Cont -> IsGuarded -> Match -> Widget (Cont * Match * IsGuarded * Expression)
+renderStepWithOptions status cont isguarded match@(MRecord row) =
+  Style.column
+    [ renderLine labels ->> (Either.in2 match)
+    , Input.popover Before (Text.code "TopHat" (renderContext status)) stepwidget
+    , Input.popover After contents stepwidget ->> (Either.in4)
+    , guarded
+    ]        
+    >-> fix3 cont match isguarded
+  where
+  labels = HashMap.values row |> map getBinds |> Array.catMaybes
+  getBinds = case _ of
+    MBind n -> Just n
+    _ -> Nothing
+  guarded = renderOption status (Constant (B true)) ->> Either.in3
+  stepwidget = 
+    Style.element
+      [ void Attr.onClick ->> Either.in1 (switch cont)
+      , void Attr.onDoubleClick ->> Either.in1 New
+      ]
+      [ Style.triangle (style cont) empty ]
+  contents = 
+    Style.column
+      [ Style.element 
+        [
+          Attr.onClick ->> Either.in3 (switch isguarded) 
+        ]
+        [
+          Icon.bed
+        ]
+      ]
+renderStepWithOptions _ _ _ _ = todo "other matches in step rendering"
+-}
 renderOption :: Status -> Expression -> Widget Expression
 renderOption status guard =
   Style.line Dashed
@@ -384,15 +448,15 @@ renderOptionWithLabel status label guard =
     ]
     >-> fix2 label guard
 
-renderSingle :: forall a. (a -> Widget (Bool * a)) -> Status -> Cont -> Match -> a -> a -> Widget (Cont * Match * (Bool * a) * (Bool * a))
-renderSingle render status cont match sub1 sub2 =
+renderSingle :: forall a. (a -> Widget (Bool * a)) -> Status -> IsGuarded -> Expression -> Cont -> Match -> a -> a -> Widget (Cont * Match * (Bool * a) * (Bool * a) * IsGuarded * Expression)
+renderSingle render status isguarded expr cont match sub1 sub2 =
   Style.column
     [ render sub1 >-> Either.in1
-    , renderStep status cont match >-> Either.in3
+    , renderStepWithOptions status isguarded expr cont match >-> Either.in3
     , render sub2 >-> Either.in2
     ]
-    >-> fix3 (false ~ sub1) (false ~ sub2) (cont ~ match)
-    >-> reorder4
+    >-> fix3 (false ~ sub1) (false ~ sub2) (isguarded ~ expr ~ (cont ~ match))
+    >-> reorder6
 
 renderEnd :: forall a. (a -> Widget (Bool * a)) -> Status -> Match -> a -> Widget (Cont * Match * (Bool * a))
 renderEnd render status args@(MRecord row) subtask =
@@ -426,7 +490,7 @@ renderBranches render status match subtask branches =
 --   Style.column
 --     [ render sub1 >-> Either.in2
 --     , renderStep Hurry match >-> Either.in1
---     , render sub2
+--     , render sub2dget (Cont * Match 
 --     ]
 --     >-> fix3 match sub1 sub2
 
@@ -667,8 +731,14 @@ reorder3 (a ~ b ~ c) = b ~ c ~ a
 reorder4 :: forall a b c d. a * b * c * d -> c * d * a * b
 reorder4 (a ~ b ~ c ~ d) = (c ~ d ~ a ~ b)
 
+reorder6 :: forall a b c d e f. a * b * c * d * e * f -> e * f * a * b * c * d
+reorder6 (a ~ b ~ c ~ d ~ e ~ f) = (e ~ f ~ a ~ b ~ c ~ d)
+
 assoc :: forall a b c. (a * b) * c -> a * (b * c)
 assoc ((a ~ b) ~ c) = a ~ b ~ c
+
+flat4 :: forall a b c d. a -> b -> (c * d) -> a * b * c * d
+flat4 a b (c ~ d) = (a ~ b ~ c ~ d)
 
 data Par
   = And
@@ -696,6 +766,9 @@ style Hurry = Filled
 style Delay = Outlined
 style New = Filled -- NOTE: just to make it total...
 
+type IsGuarded = Bool
+
+
 class Switch a where
   switch :: a -> a
 
@@ -707,6 +780,10 @@ instance Switch Cont where
   switch Hurry = Delay
   switch Delay = Hurry
   switch New = New
+
+instance Switch IsGuarded where
+  switch true = false
+  switch false = true
 
 addLabels :: forall f v. Functor f => f v -> f (String * v)
 addLabels = map ("" ~ _)
