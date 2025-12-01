@@ -90,7 +90,15 @@ renderTask g s t = Style.column
     ---- Steps
     -- NOTE:
     -- Be aware of the INVARIANT: Branch and Select need to be inside a Step.
+    
+    -- m:                           match, aka params next to line
+    -- t1:                          task before the step
+    -- t2/(some task definition):   task after the step
 
+    -- for task types, see Syntax.purs
+
+
+    -- case Branch
     Step m t1 orig@(Annotated a_b (Branch [ Constant (B true) ~ Annotated a_l (Lift e) ])) -> do
       c' ~ m' ~ (b1' ~ t1') <- renderEnd go a_t m t1
       done <| case b1' of 
@@ -100,7 +108,7 @@ renderTask g s t = Style.column
           _ -> orig)
 
     Step m t1 orig@(Annotated a_b (Branch [ Constant (B true) ~ t2 ])) -> do
-      c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') ~ g' ~ e' <- renderSingle go a_t false (Constant (B true)) Hurry m t1 t2
+      c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') ~ g' ~ e' <- renderSingle go a_t true (Constant (B true)) Hurry m t1 t2
       done <| case b1' of
         true -> false ~ t2'
         false -> false ~ (Annotated a_t <| Step m' t1' <| case c' of

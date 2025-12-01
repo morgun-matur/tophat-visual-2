@@ -608,7 +608,7 @@ var renderTask = function (g) {
                     });
                 };
                 if (v.value1 instanceof Task_Script_Syntax.Step && (v.value1.value2.value1 instanceof Task_Script_Syntax.Branch && (v.value1.value2.value1.value0.length === 1 && (v["value1"]["value2"]["value1"]["value0"][0].value0 instanceof Task_Script_Syntax.Constant && (v["value1"]["value2"]["value1"]["value0"][0].value0.value0 instanceof Task_Script_Syntax.B && v["value1"]["value2"]["value1"]["value0"][0].value0.value0.value0))))) {
-                    return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingle(go)(v.value0)(false)(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)))(Hurry.value)(v.value1.value0)(v.value1.value1)(v["value1"]["value2"]["value1"]["value0"][0].value1))(function (v1) {
+                    return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingle(go)(v.value0)(true)(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)))(Hurry.value)(v.value1.value0)(v.value1.value1)(v["value1"]["value2"]["value1"]["value0"][0].value1))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)((function () {
                             if (v1.value1.value1.value0.value0) {
                                 return new Data_Tuple.Tuple(false, v1.value1.value1.value1.value0.value1);
@@ -650,7 +650,7 @@ var renderTask = function (g) {
                     });
                 };
                 if (v.value1 instanceof Task_Script_Syntax.Step && (v.value1.value2.value1 instanceof Task_Script_Syntax.Select && (v.value1.value2.value1.value0.length === 1 && (v["value1"]["value2"]["value1"]["value0"][0].value0 === "Continue" && (v["value1"]["value2"]["value1"]["value0"][0].value1.value0 instanceof Task_Script_Syntax.Constant && (v["value1"]["value2"]["value1"]["value0"][0].value1.value0.value0 instanceof Task_Script_Syntax.B && v["value1"]["value2"]["value1"]["value0"][0].value1.value0.value0.value0)))))) {
-                    return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingle(go)(v.value0)(true)(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)))(Delay.value)(v.value1.value0)(v.value1.value1)(v["value1"]["value2"]["value1"]["value0"][0].value1.value1))(function (v1) {
+                    return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingle(go)(v.value0)(false)(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)))(Delay.value)(v.value1.value0)(v.value1.value1)(v["value1"]["value2"]["value1"]["value0"][0].value1.value1))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)((function () {
                             if (v1.value1.value1.value0.value0) {
                                 return new Data_Tuple.Tuple(false, v1.value1.value1.value1.value0.value1);
