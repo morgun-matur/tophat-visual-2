@@ -98,7 +98,7 @@ renderTask g s t = Style.column
     -- for task types, see Syntax.purs
 
 
-    -- case Branch
+    -- case following subtask::unguarded Branch of Lift (why???)
     Step m t1 orig@(Annotated a_b (Branch [ Constant (B true) ~ Annotated a_l (Lift e) ])) -> do
       c' ~ m' ~ (b1' ~ t1') <- renderEnd go a_t m t1
       done <| case b1' of 
@@ -107,15 +107,31 @@ renderTask g s t = Style.column
           New -> Builder.new orig
           _ -> orig)
 
+    -- case following subtask::unguarded Branch of other
     Step m t1 orig@(Annotated a_b (Branch [ Constant (B true) ~ t2 ])) -> do
-      c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') ~ g' ~ e' <- renderSingle go a_t true (Constant (B true)) Hurry m t1 t2
+      c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') ~ g' ~ e' <- renderSingle go a_t false (Constant (B true)) Hurry m t1 t2
       done <| case b1' of
         true -> false ~ t2'
-        false -> false ~ (Annotated a_t <| Step m' t1' <| case c' of
-            Hurry -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
-            Delay -> Annotated a_b <| Select [ "Continue" ~ Constant (B true) ~ t2' ]
-            New -> Builder.new orig)
+        false -> false ~ (Annotated a_t <| Step m' t1' <| case (c' ~ g') of
+            (Hurry ~ true) -> Annotated a_b <| Branch [ Constant (B false) ~ t2' ]
+            (Hurry ~ false) -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
+            (Delay ~ true) -> Annotated a_b <| Select [ "Continue" ~ Constant (B false) ~ t2' ]
+            (Delay ~ false) -> Annotated a_b <| Select [ "Continue" ~ Constant (B true) ~ t2' ]
+            (New ~ _) -> Builder.new orig)
 
+    -- case following subtask::guarded Branch with 1 branch
+    Step m t1 orig@(Annotated a_b (Branch [ e ~ t2 ])) -> do
+      c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') ~ g' ~ e' <- renderSingle go a_t true e Hurry m t1 t2
+      done <| case b1' of
+        true -> false ~ t2'
+        false -> false ~ (Annotated a_t <| Step m' t1' <| case (c' ~ g') of
+          (Hurry ~ true) -> Annotated a_b <| Branch [Constant (B false) ~ t2']
+          (Hurry ~ false) -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
+          (Delay ~ true) -> Annotated a_b <| Select (addLabels [Constant (B false) ~ t2'])
+          (Delay ~ false) -> Annotated a_b <| Select (addLabels [Constant (B true) ~ t2' ])
+          (New ~ _) -> Builder.new orig)
+
+    -- case following subtask::guarded Branch with more than 1 branch
     Step m t1 orig@(Annotated a_b (Branch bs)) -> do
       c' ~ m' ~ t1' ~ bs' <- renderBranches (fixgo << go) a_t m t1 bs
       done <| false ~ (Annotated a_t <| Step m' t1' <| case c' of
@@ -123,15 +139,31 @@ renderTask g s t = Style.column
         Delay -> Annotated a_b <| Select (addLabels bs')
         New -> Builder.new orig)
 
+    -- case following subtask::unguarded Select
     Step m t1 orig@(Annotated a_b (Select [ "Continue" ~ Constant (B true) ~ t2 ])) -> do
       c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') ~ g' ~ e' <- renderSingle go a_t false (Constant (B true)) Delay m t1 t2
       done <| case b1' of
         true -> false ~ t2'
-        false -> false ~ (Annotated a_t <| Step m' t1' <| case c' of
-          Hurry -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
-          Delay -> Annotated a_b <| Select [ "Continue" ~ Constant (B true) ~ t2' ]
-          New -> Builder.new orig)
+        false -> false ~ (Annotated a_t <| Step m' t1' <| case (c' ~ g') of
+          (Hurry ~ true) -> Annotated a_b <| Branch [ Constant (B false) ~ t2' ]
+          (Hurry ~ false) -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
+          (Delay ~ true) -> Annotated a_b <| Select [ "Continue" ~ Constant (B false) ~ t2' ]
+          (Delay ~ false) -> Annotated a_b <| Select [ "Continue" ~ Constant (B true) ~ t2' ]
+          (New ~ _) -> Builder.new orig)
 
+    --case following subtask::guarded Select with 1 branch
+    Step m t1 orig@(Annotated a_b (Select [l ~ e ~ t2])) -> do
+      c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') ~ g' ~ e' <- renderSingle go a_t true e Delay m t1 t2
+      done <| case b1' of
+        true -> false ~ t2'
+        false -> false ~ (Annotated a_t <| Step m' t1' <| case (c' ~ g') of
+          (Hurry ~ true) -> Annotated a_b <| Branch ([Constant (B false) ~ t2'])
+          (Hurry ~ false) -> Annotated a_b <| Branch ([Constant (B true) ~ t2' ])
+          (Delay ~ true) -> Annotated a_b <| Select [l ~ Constant (B false) ~ t2']
+          (Delay ~ false) -> Annotated a_b <| Select [l ~ Constant (B true) ~ t2' ]
+          (New ~ _) -> Builder.new orig)
+
+    --case following subtask::guarded Select with more than 1 branch
     Step m t1 orig@(Annotated a_b (Select bs)) -> do
       c' ~ m' ~ t1' ~ bs' <- renderSelects (fixgo << go) a_t m t1 bs
       done <| false ~ (Annotated a_t <| Step m' t1' <| case c' of
@@ -492,16 +524,25 @@ renderBranches render status match subtask branches =
     ]
     >-> fix3 subtask branches (Hurry ~ match)
     >-> reorder4
-
--- renderSingleBranch :: Renderer -> Match -> Checked Task -> Expression * Checked Task -> Widget (Match * Checked Task * Checked Task)
--- renderSingleBranch render match sub1 (guard ~ sub2) =
---   Style.column
---     [ render sub1 >-> Either.in2
---     , renderStep Hurry match >-> Either.in1
---     , render sub2dget (Cont * Match 
---     ]
---     >-> fix3 match sub1 sub2
-
+{-}
+renderSingleBranch :: Renderer -> Status -> IsGuarded -> Match -> Checked Task -> Expression * Checked Task -> Widget (Status * IsGuarded * Match * Checked Task * Checked Task)
+renderSingleBranch render status isguarded match sub1 (guard ~ sub2) =
+  case isguarded of 
+    true -> 
+      Style.column
+        [ render sub1 >-> Either.in3
+        , renderStepWithOptions status isguarded guard Hurry match >-> Either.in2
+        , render sub2
+        ]
+        >-> fix3 isguarded match sub1 sub2
+    false ->
+      Style.column
+        [ render sub1 >-> Either.in3
+        , renderStep Hurry match >-> Either.in2
+        , render sub2
+        ]
+        >-> fix3 isguarded match sub1 sub2
+-}
 renderBranch :: Renderer -> Expression * Checked Task -> Widget (Expression * Checked Task)
 renderBranch render (guard ~ subtask@(Annotated status _)) =
   Style.column
@@ -525,6 +566,8 @@ renderSelects render status match subtask branches =
     ]
     >-> fix3 subtask branches (Delay ~ match)
     >-> reorder4
+
+--renderSingleSelect :: Renderer -> Label * Expression * Checked Task
 
 renderSelect :: Renderer -> Label * Expression * Checked Task -> Widget (Label * Expression * Checked Task)
 renderSelect render (label ~ guard ~ subtask@(Annotated status _)) =
