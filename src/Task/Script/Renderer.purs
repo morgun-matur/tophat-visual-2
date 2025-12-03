@@ -127,8 +127,8 @@ renderTask g s t = Style.column
         false -> false ~ (Annotated a_t <| Step m' t1' <| case (c' ~ g') of
           (Hurry ~ true) -> Annotated a_b <| Branch [Constant (B false) ~ t2']
           (Hurry ~ false) -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
-          (Delay ~ true) -> Annotated a_b <| Select (addLabels [Constant (B false) ~ t2'])
-          (Delay ~ false) -> Annotated a_b <| Select (addLabels [Constant (B true) ~ t2' ])
+          (Delay ~ true) -> Annotated a_b <| Select ["Continue" ~ Constant (B false) ~ t2']
+          (Delay ~ false) -> Annotated a_b <| Select ["Continue" ~ Constant (B true) ~ t2' ]
           (New ~ _) -> Builder.new orig)
 
     -- case following subtask::guarded Branch with more than 1 branch
@@ -153,14 +153,14 @@ renderTask g s t = Style.column
 
     --case following subtask::guarded Select with 1 branch
     Step m t1 orig@(Annotated a_b (Select [l ~ e ~ t2])) -> do
-      c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') ~ g' ~ e' <- renderSingle go a_t true e Delay m t1 t2
+      c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') ~ g' ~ l' ~ e' <- renderSingleSelect go a_t true m t1 (l ~ e ~ t2)
       done <| case b1' of
         true -> false ~ t2'
         false -> false ~ (Annotated a_t <| Step m' t1' <| case (c' ~ g') of
           (Hurry ~ true) -> Annotated a_b <| Branch ([Constant (B false) ~ t2'])
           (Hurry ~ false) -> Annotated a_b <| Branch ([Constant (B true) ~ t2' ])
-          (Delay ~ true) -> Annotated a_b <| Select [l ~ Constant (B false) ~ t2']
-          (Delay ~ false) -> Annotated a_b <| Select [l ~ Constant (B true) ~ t2' ]
+          (Delay ~ true) -> Annotated a_b <| Select [l' ~ Constant (B false) ~ t2']
+          (Delay ~ false) -> Annotated a_b <| Select [l' ~ Constant (B true) ~ t2' ]
           (New ~ _) -> Builder.new orig)
 
     --case following subtask::guarded Select with more than 1 branch
@@ -441,6 +441,38 @@ renderStepWithOptions status isguarded expr cont match@(MRecord row) =
         ]
       ]
 renderStepWithOptions _ _ _ _ _ = todo "no"
+
+renderSelectWithOptions :: Status -> IsGuarded -> Label -> Expression -> Cont -> Match -> Widget (IsGuarded * (Label * Expression) * (Cont * Match))
+renderSelectWithOptions status isguarded label expr cont match@(MRecord row) = 
+  case isguarded of 
+    true -> 
+      Style.column
+        [ Input.popover After 
+          contents
+          (renderStep status cont match >-> Either.in3)
+        , renderOptionWithLabel status label expr >-> Either.in2 
+        ]
+        >-> fix3 isguarded (label ~ expr) (cont ~ match)
+    false ->
+      Style.column
+        [ Input.popover After 
+          contents 
+          (renderStep status cont match >-> Either.in3) 
+        ]
+        >-> fix3 isguarded (label ~ expr) (cont ~ match)
+  where
+  contents =
+    Style.column
+      [ Style.element 
+        [
+          Attr.onClick ->> Either.in1 (switch isguarded) 
+        ]
+        [
+          Icon.bed
+        ]
+      ]
+renderSelectWithOptions _ _ _ _ _ _ = todo "no"
+
 {-
 renderStep2 :: Status -> Cont -> IsGuarded -> Match -> Widget (Cont * Match * IsGuarded * Expression)
 renderStepWithOptions status cont isguarded match@(MRecord row) =
@@ -567,7 +599,25 @@ renderSelects render status match subtask branches =
     >-> fix3 subtask branches (Delay ~ match)
     >-> reorder4
 
---renderSingleSelect :: Renderer -> Label * Expression * Checked Task
+renderSingleSelect :: forall a. (a -> Widget (Bool * a)) -> Status -> IsGuarded -> Match -> a -> Label * Expression * a -> Widget (Cont * Match * (Bool * a) * (Bool * a) * IsGuarded * (Label * Expression))
+renderSingleSelect render status isguarded match sub1 (label ~ expr ~ sub2) = 
+  Style.column
+    [ render sub1 >-> Either.in1
+    , renderSelectWithOptions status isguarded label expr Delay match >-> Either.in3
+    , render sub2 >-> Either.in2
+    ]
+    >-> fix3 (false ~ sub1) (false ~ sub2) (isguarded ~ (label ~ expr) ~ (Delay ~ match))
+    >-> reorder6
+
+renderSelect2 :: Renderer -> Checked Task -> Widget (Bool * Checked Task)
+renderSelect2 render subtask =
+  Style.column
+    [ --renderOptionWithLabel status label guard >-> Either.in2
+    -- , Style.line Solid empty
+    render subtask >-> Either.in2
+    , Style.line Solid empty
+    ]
+    >-> fix2 false subtask
 
 renderSelect :: Renderer -> Label * Expression * Checked Task -> Widget (Label * Expression * Checked Task)
 renderSelect render (label ~ guard ~ subtask@(Annotated status _)) =
