@@ -248,12 +248,11 @@ renderWithOptions a widget =
   let 
     contents = Style.column 
       [ renderRemove >-> (\b -> Either.in2 (b~false))
-      , renderTaskSelect false >-> (\b -> Either.in2 (false~b))
+      --, renderTaskSelect false >-> (\b -> Either.in2 (false~b))
       ]
   in
     Input.popover After contents (widget >-> Either.in1)
     >-> fix2 a defaultOptions --TODO: Cleaner default values
-
 
 renderRemove :: Widget (ShouldRemove)
 renderRemove = 
@@ -264,22 +263,18 @@ renderRemove =
   [ Icon.window_close ]
   >-> fix1 false 
 
-renderTaskSelect :: IsSelected -> Widget (IsSelected)
-renderTaskSelect s = Input.checkbox "" s
+--renderTaskSelect :: IsSelected -> Widget (IsSelected)
+--renderTaskSelect s = Input.checkbox "" s
 
-defaultOptions :: ShouldRemove * IsSelected
-defaultOptions = false~false 
+defaultOptions :: ShouldRemove * Bool --placeholder Bool
+defaultOptions = false ~ false
 
-type UserOptions = ShouldRemove * IsSelected
+type UserOptions = ShouldRemove * Bool --placeholder Bool
 
 type ShouldRemove = Bool 
-type IsSelected = Bool 
 
 getFirstUserOption :: UserOptions -> ShouldRemove 
 getFirstUserOption = fst 
-
-getSecondUserOption :: UserOptions -> IsSelected 
-getSecondUserOption = snd
 
 ---- General ----
 
@@ -411,102 +406,19 @@ renderStep status cont match@(MRecord row) =
     _ -> Nothing
 renderStep _ _ _ = todo "other matches in step rendering"
 
-renderStepWithOptions :: Status -> IsGuarded -> Expression -> Cont -> Match -> Widget (IsGuarded * Expression * (Cont * Match))
-renderStepWithOptions status isguarded expr cont match@(MRecord row) = 
-  case isguarded of 
-    true -> 
-      Style.column
-        [ Input.popover After 
-          contents
-          (renderStep status cont match >-> Either.in3)
-        , renderOption status expr >-> Either.in2 
-        ]
-        >-> fix3 isguarded expr (cont ~ match)
-    false ->
-      Style.column
-        [ Input.popover After 
-          contents 
-          (renderStep status cont match >-> Either.in3) 
-        ]
-        >-> fix3 isguarded expr (cont ~ match)
-  where
-  contents =
-    Style.column
-      [ Style.element 
-        [
-          Attr.onClick ->> Either.in1 (switch isguarded) 
-        ]
-        [
-          Icon.bed
-        ]
-      ]
-renderStepWithOptions _ _ _ _ _ = todo "no"
-
-renderSelectWithOptions :: Status -> IsGuarded -> Label -> Expression -> Cont -> Match -> Widget (IsGuarded * (Label * Expression) * (Cont * Match))
-renderSelectWithOptions status isguarded label expr cont match@(MRecord row) = 
-  case isguarded of 
-    true -> 
-      Style.column
-        [ Input.popover After 
-          contents
-          (renderStep status cont match >-> Either.in3)
-        , renderOptionWithLabel status label expr >-> Either.in2 
-        ]
-        >-> fix3 isguarded (label ~ expr) (cont ~ match)
-    false ->
-      Style.column
-        [ Input.popover After 
-          contents 
-          (renderStep status cont match >-> Either.in3) 
-        ]
-        >-> fix3 isguarded (label ~ expr) (cont ~ match)
-  where
-  contents =
-    Style.column
-      [ Style.element 
-        [
-          Attr.onClick ->> Either.in1 (switch isguarded) 
-        ]
-        [
-          Icon.bed
-        ]
-      ]
-renderSelectWithOptions _ _ _ _ _ _ = todo "no"
-
-{-
-renderStep2 :: Status -> Cont -> IsGuarded -> Match -> Widget (Cont * Match * IsGuarded * Expression)
-renderStepWithOptions status cont isguarded match@(MRecord row) =
+renderGuardedStep :: Status -> IsGuarded -> Expression -> Cont -> Match -> Widget (IsGuarded * Expression * (Cont * Match))
+renderGuardedStep status isguarded expr cont match@(MRecord row) = 
   Style.column
-    [ renderLine labels ->> (Either.in2 match)
-    , Input.popover Before (Text.code "TopHat" (renderContext status)) stepwidget
-    , Input.popover After contents stepwidget ->> (Either.in4)
-    , guarded
-    ]        
-    >-> fix3 cont match isguarded
+    ( [Input.popover After (renderGuardButton isguarded >-> Either.in1) (renderStep status cont match >-> Either.in3)]
+      ++ guard
+    )
+    >-> fix3 isguarded expr (cont ~ match)
   where
-  labels = HashMap.values row |> map getBinds |> Array.catMaybes
-  getBinds = case _ of
-    MBind n -> Just n
-    _ -> Nothing
-  guarded = renderOption status (Constant (B true)) ->> Either.in3
-  stepwidget = 
-    Style.element
-      [ void Attr.onClick ->> Either.in1 (switch cont)
-      , void Attr.onDoubleClick ->> Either.in1 New
-      ]
-      [ Style.triangle (style cont) empty ]
-  contents = 
-    Style.column
-      [ Style.element 
-        [
-          Attr.onClick ->> Either.in3 (switch isguarded) 
-        ]
-        [
-          Icon.bed
-        ]
-      ]
-renderStepWithOptions _ _ _ _ = todo "other matches in step rendering"
--}
+  guard = case isguarded of
+    true -> [(renderOption status expr) >-> Either.in2] 
+    false -> []
+renderGuardedStep _ _ _ _ _ = todo "no"
+
 renderOption :: Status -> Expression -> Widget Expression
 renderOption status guard =
   Style.line Dashed
@@ -524,7 +436,7 @@ renderSingle :: forall a. (a -> Widget (Bool * a)) -> Status -> IsGuarded -> Exp
 renderSingle render status isguarded expr cont match sub1 sub2 =
   Style.column
     [ render sub1 >-> Either.in1
-    , renderStepWithOptions status isguarded expr cont match >-> Either.in3
+    , renderGuardedStep status isguarded expr cont match >-> Either.in3
     , render sub2 >-> Either.in2
     ]
     >-> fix3 (false ~ sub1) (false ~ sub2) (isguarded ~ expr ~ (cont ~ match))
@@ -556,25 +468,7 @@ renderBranches render status match subtask branches =
     ]
     >-> fix3 subtask branches (Hurry ~ match)
     >-> reorder4
-{-}
-renderSingleBranch :: Renderer -> Status -> IsGuarded -> Match -> Checked Task -> Expression * Checked Task -> Widget (Status * IsGuarded * Match * Checked Task * Checked Task)
-renderSingleBranch render status isguarded match sub1 (guard ~ sub2) =
-  case isguarded of 
-    true -> 
-      Style.column
-        [ render sub1 >-> Either.in3
-        , renderStepWithOptions status isguarded guard Hurry match >-> Either.in2
-        , render sub2
-        ]
-        >-> fix3 isguarded match sub1 sub2
-    false ->
-      Style.column
-        [ render sub1 >-> Either.in3
-        , renderStep Hurry match >-> Either.in2
-        , render sub2
-        ]
-        >-> fix3 isguarded match sub1 sub2
--}
+
 renderBranch :: Renderer -> Expression * Checked Task -> Widget (Expression * Checked Task)
 renderBranch render (guard ~ subtask@(Annotated status _)) =
   Style.column
@@ -594,30 +488,13 @@ renderSelects render status match subtask branches =
   Style.column
     [ render subtask >-> Either.in1
     , renderStep status Delay match >-> Either.in3
-    , Style.branch [ Concur.traverse (renderSelect render) branches ] >-> Either.in2
+    , Style.element [ void Attr.onDoubleClick ->> Either.in2 (branches ++ [ "Continue" ~ Builder.always ~ Builder.item ]) ]
+      [ Style.branch 
+          [ Concur.traverse (renderSelect render) branches  >-> Either.in2 ]
+      ]
     ]
     >-> fix3 subtask branches (Delay ~ match)
     >-> reorder4
-
-renderSingleSelect :: forall a. (a -> Widget (Bool * a)) -> Status -> IsGuarded -> Match -> a -> Label * Expression * a -> Widget (Cont * Match * (Bool * a) * (Bool * a) * IsGuarded * (Label * Expression))
-renderSingleSelect render status isguarded match sub1 (label ~ expr ~ sub2) = 
-  Style.column
-    [ render sub1 >-> Either.in1
-    , renderSelectWithOptions status isguarded label expr Delay match >-> Either.in3
-    , render sub2 >-> Either.in2
-    ]
-    >-> fix3 (false ~ sub1) (false ~ sub2) (isguarded ~ (label ~ expr) ~ (Delay ~ match))
-    >-> reorder6
-
-renderSelect2 :: Renderer -> Checked Task -> Widget (Bool * Checked Task)
-renderSelect2 render subtask =
-  Style.column
-    [ --renderOptionWithLabel status label guard >-> Either.in2
-    -- , Style.line Solid empty
-    render subtask >-> Either.in2
-    , Style.line Solid empty
-    ]
-    >-> fix2 false subtask
 
 renderSelect :: Renderer -> Label * Expression * Checked Task -> Widget (Label * Expression * Checked Task)
 renderSelect render (label ~ guard ~ subtask@(Annotated status _)) =
@@ -630,6 +507,40 @@ renderSelect render (label ~ guard ~ subtask@(Annotated status _)) =
     >-> fix2 subtask (label ~ guard)
     >-> reorder3
 
+renderSingleSelect :: forall a. (a -> Widget (Bool * a)) -> Status -> IsGuarded -> Match -> a -> Label * Expression * a -> Widget (Cont * Match * (Bool * a) * (Bool * a) * IsGuarded * (Label * Expression))
+renderSingleSelect render status isguarded match sub1 (label ~ expr ~ sub2) = 
+  Style.column
+    [ render sub1 >-> Either.in1
+    , renderGuardedSelect status isguarded label expr Delay match >-> Either.in3
+    , render sub2 >-> Either.in2
+    ]
+    >-> fix3 (false ~ sub1) (false ~ sub2) (isguarded ~ (label ~ expr) ~ (Delay ~ match))
+    >-> reorder6
+
+renderGuardedSelect :: Status -> IsGuarded -> Label -> Expression -> Cont -> Match -> Widget (IsGuarded * (Label * Expression) * (Cont * Match))
+renderGuardedSelect status isguarded label expr cont match@(MRecord row) = 
+  Style.column
+    ([ Input.popover After (renderGuardButton isguarded >-> Either.in1) (renderStep status cont match >-> Either.in3)]
+    ++ guard ) 
+        >-> fix3 isguarded (label ~ expr) (cont ~ match)
+  where
+  guard = case isguarded of
+    true -> [renderOptionWithLabel status label expr >-> Either.in2]
+    false -> []
+renderGuardedSelect _ _ _ _ _ _ = todo "no"
+
+renderGuardButton :: IsGuarded -> Widget(IsGuarded)
+renderGuardButton isguarded = 
+  Style.column
+      [ Style.element 
+        [
+          Attr.onClick ->> Either.in1 (switch isguarded) 
+        ]
+        [
+          Icon.question
+        ]
+      ]
+    >-> fix1 isguarded
 ---- Combinators ----
 
 -- | ==============
