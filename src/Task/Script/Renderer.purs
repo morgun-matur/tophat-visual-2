@@ -99,6 +99,11 @@ renderTask g s t = Style.column
 
     -- for task types, see Syntax.purs
 
+    -- case for moving: 
+    -- Step m t1 x@(Annotated a_b (Step t2 t3)) -> do
+    -- case x of 
+    -- all the rest... 
+    -- not forget: give 2 extra parameters to all render fujnction: canMoveUp and canMoveDown
 
     -- case following subtask::unguarded Branch of Lift (why???)
     Step m t1 orig@(Annotated a_b (Branch [ Constant (B true) ~ Annotated a_l (Lift e) ])) -> do
