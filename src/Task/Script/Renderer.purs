@@ -98,7 +98,7 @@ renderTask g s t = Style.column
     -- for task types, see Syntax.purs
 
 
-    -- case following subtask::unguarded Branch of Lift (why???)
+    -- case following subtask::unguarded Branch of Lift. This is the end step of choose/pair combinators or final of functions
     Step m t1 orig@(Annotated a_b (Branch [ Constant (B true) ~ Annotated a_l (Lift e) ])) -> do
       c' ~ m' ~ (b1' ~ t1') <- renderEnd go a_t m t1
       done <| case b1' of 
@@ -190,44 +190,105 @@ renderTask g s t = Style.column
 
     ---- Editors
     Enter n -> do
-      n' ~ o <- renderWithOptions n (renderEnter s n)
-      done <| (getFirstUserOption o) ~ (Annotated a_t <| Enter n')
+      n' ~ o <- renderWithOptions n false (renderEnter s n)
+      done <| case getSecondUserOption o of 
+        true -> (getFirstUserOption o) ~ renderNewFork (Annotated a_t t) (Enter n')
+        false -> (getFirstUserOption o) ~ (Annotated a_t <| Enter n')
+   
     Update e -> do
-      e' ~ o <- renderWithOptions e (renderUpdate e)
-      done <| (getFirstUserOption o) ~ (Annotated a_t <| Update e')
+      e' ~ o <- renderWithOptions e false (renderUpdate e)
+      done <| case getSecondUserOption o of 
+        true -> (getFirstUserOption o) ~ renderNewFork (Annotated a_t t) (Update e')
+        false -> (getFirstUserOption o) ~ (Annotated a_t <| Update e')
+    
     Change e -> todo "change"
     -- Change  e -> do
     --   r <- renderConnect style_line Both (editMessage Icon.edit m) (editExpression Icon.database e)
     --   let e' = consolidate m e r
     --   done <| (Change m' e')
+    
     View e -> do
-      e' ~ o <- renderWithOptions e (renderView e)
-      done <| (getFirstUserOption o) ~ (Annotated a_t <| View e')
+      e' ~ o <- renderWithOptions e false (renderView e)
+      done <| case getSecondUserOption o of
+        true -> (getFirstUserOption o) ~ renderNewFork (Annotated a_t t) (View e')
+        false -> (getFirstUserOption o) ~ (Annotated a_t <| View e')
+    
     Watch e -> do
-      e' ~ o <- renderWithOptions e (renderWatch a_t e)
-      done <| (getFirstUserOption o) ~ (Annotated a_t <| Watch e')
+      e' ~ o <- renderWithOptions e false (renderWatch a_t e)
+      done <| case getSecondUserOption o of
+        true -> (getFirstUserOption o) ~ renderNewFork (Annotated a_t t) (Watch e')
+        false -> (getFirstUserOption o) ~ (Annotated a_t <| Watch e')
 
     ---- Combinators
     Lift e -> do
       e' <- renderLift e
       done <| false ~ (Annotated a_t <| Lift e')
+    
     Pair ts -> do
       t' <- renderGroup And (fixgo << go) ts
-      done <| (if Array.null ts then true else false) ~ (Annotated a_t <| t')
+      done <| (if Array.null ts then true else false) ~ (Annotated a_t <| t') --only here unfork?
+    
     Choose ts -> do
       t' <- renderGroup Or (fixgo << go) ts
-      done <| (if Array.null ts then true else false) ~ (Annotated a_t <| t')
+      done <| (if Array.null ts then true else false) ~ (Annotated a_t <| t') --and here obv
 
     ---- Extras
     Execute n as -> do
-      (n' ~ as') ~ o <- renderWithOptions (n ~ as) (renderExecute a_t n as)
-      done <| (getFirstUserOption o) ~ (Annotated a_t <| Execute n' as') 
+      (n' ~ as') ~ o <- renderWithOptions (n ~ as) false (renderExecute a_t n as)
+      done <| case getSecondUserOption o of
+        true -> (getFirstUserOption o) ~ 
+          (Annotated a_t <| 
+            Pair [
+              Annotated a_t <| 
+                (Step 
+                  (MIgnore) 
+                  (Annotated a_t <| Execute n' as') 
+                  (Annotated a_t <| 
+                    Branch ([Constant (B true) ~ (Annotated a_t <| Lift Wildcard)])
+                  )
+                ) 
+            , Builder.item 
+            ]
+          )
+        false -> (getFirstUserOption o) ~ (Annotated a_t <| Execute n' as') 
     Hole as -> do
-      (n' ~ as') ~ o <- renderWithOptions ("??" ~ as) (renderExecute a_t "??" as)
+      (n' ~ as') ~ o <- renderWithOptions ("??" ~ as) false (renderExecute a_t "??" as)
       if n' == "??" then
-        done <| (getFirstUserOption o) ~ (Annotated a_t <| Hole as')
+        done <| case getSecondUserOption o of
+          --true -> (getFirstUserOption o) ~ (Annotated a_t <| Pair [Annotated a_t <| Hole as', Builder.item])
+          true -> (getFirstUserOption o) ~ 
+            (Annotated a_t <| 
+              Pair [
+                Annotated a_t <| 
+                  (Step 
+                    (MIgnore) 
+                    (Annotated a_t <| Hole as') 
+                    (Annotated a_t <| 
+                      Branch ([Constant (B true) ~ (Annotated a_t <| Lift Wildcard)])
+                    )
+                  ) 
+              , Builder.item 
+              ]
+            )
+          false -> (getFirstUserOption o) ~ (Annotated a_t <| Hole as')
       else
-        done <| (getFirstUserOption o) ~ (Annotated a_t <| Execute n' as')
+        done <| case getSecondUserOption o of
+          --true -> (getFirstUserOption o) ~ (Annotated a_t <| Pair [Annotated a_t <| Execute n' as', Builder.item])
+          true -> (getFirstUserOption o) ~ 
+            (Annotated a_t <| 
+              Pair [
+                Annotated a_t <| 
+                  (Step 
+                    (MIgnore) 
+                    (Annotated a_t <| Execute n' as') 
+                    (Annotated a_t <| 
+                      Branch ([Constant (B true) ~ (Annotated a_t <| Lift Wildcard)])
+                    )
+                  ) 
+              , Builder.item 
+              ]
+            )
+          false -> (getFirstUserOption o) ~ (Annotated a_t <| Execute n' as')
 
     ---- Shares
     Assign e1 e2 -> todo "assign"
@@ -241,13 +302,37 @@ renderTask g s t = Style.column
       done <| false ~ (Annotated a_t <| Share e')
 
 ---- Parts ---------------------------------------------------------------------
+renderNewFork :: forall a. Annotated a Task -> Task (Annotated a Task) -> Annotated a Task 
+renderNewFork (Annotated a_t _) task = 
+  (Annotated a_t <| 
+    Pair [
+    -- below is the first pair branch, with the original task in it  
+      Annotated a_t <| 
+        (Step 
+          (MIgnore) 
+          (Annotated a_t <| task) 
+          (Annotated a_t <| 
+            Branch ([Constant (B true) ~ (Annotated a_t <| Lift Wildcard)]))
+        ) 
+    -- below is manual derivation of Builder.item, aka a new branch of hole
+    , Annotated a_t <| 
+        Step 
+          (MIgnore)
+          (Annotated a_t <| 
+            Hole (ARecord <| from []))
+          (Annotated a_t <| 
+            Branch ([Constant (B true) ~ (Annotated a_t <| Lift Wildcard)]))
+    ]
+  )
+
 
 ---- Options -------------------------------------------------------------------
-renderWithOptions :: forall a. a -> Widget a -> Widget (a * UserOptions) -- TODO: better hitboxes to avoid confusion with types
-renderWithOptions a widget =
+renderWithOptions :: forall a. a -> IsForked -> Widget a -> Widget (a * UserOptions) -- TODO: better hitboxes to avoid confusion with types
+renderWithOptions a isforked widget =
   let 
     contents = Style.column 
-      [ renderRemove >-> (\b -> Either.in2 (b~false))
+      [ renderRemove >-> (\b -> Either.in2 (b ~ false))
+      , renderForked isforked >-> (\b -> Either.in2 (false ~ b))
       --, renderTaskSelect false >-> (\b -> Either.in2 (false~b))
       ]
   in
@@ -263,18 +348,32 @@ renderRemove =
   [ Icon.window_close ]
   >-> fix1 false 
 
---renderTaskSelect :: IsSelected -> Widget (IsSelected)
---renderTaskSelect s = Input.checkbox "" s
+renderForked :: IsForked -> Widget (IsForked)
+renderForked isforked = 
+  Style.element 
+  [
+    (Attr.onClick ->> not isforked) >-> Either.in1
+  ]
+  [ forkedSymbol ]
+  >-> fix1 isforked
+  where
+  forkedSymbol = case isforked of
+    true -> Icon.code_branch -- note: should be flipped code_fork
+    false -> Icon.stroopwafel
 
-defaultOptions :: ShouldRemove * Bool --placeholder Bool
+defaultOptions :: ShouldRemove * IsForked --placeholder Bool
 defaultOptions = false ~ false
 
-type UserOptions = ShouldRemove * Bool --placeholder Bool
+type UserOptions = ShouldRemove * IsForked
 
 type ShouldRemove = Bool 
+type IsForked = Bool
 
 getFirstUserOption :: UserOptions -> ShouldRemove 
 getFirstUserOption = fst 
+
+getSecondUserOption :: UserOptions -> IsForked
+getSecondUserOption = snd
 
 ---- General ----
 
@@ -452,6 +551,15 @@ renderEnd render status args@(MRecord row) subtask =
           [ Style.triangle (style Hurry) empty ]
     ]
     >-> fix3 Hurry args (false ~ subtask)
+renderEnd render status args@(MIgnore) subtask =
+  Style.column
+    [ render subtask >-> Either.in3
+    , renderLine [] ->> Either.in2 args
+    , Input.popover Before (Text.code "TopHat" (renderContext status)) <|
+        Style.element [ void Attr.onDoubleClick ->> Either.in1 New ]
+          [ Style.triangle (style Hurry) empty ]
+    ]
+    >-> fix3 Hurry args (false ~ subtask)
 renderEnd _ _ _ _ = todo "other matches in end rendering"
 
 ---- Branches ----
@@ -534,7 +642,7 @@ renderGuardButton isguarded =
   Style.column
       [ Style.element 
         [
-          Attr.onClick ->> Either.in1 (switch isguarded) 
+          Attr.onClick ->> Either.in1 (not isguarded) 
         ]
         [
           Icon.question
@@ -780,7 +888,6 @@ style New = Filled -- NOTE: just to make it total...
 
 type IsGuarded = Bool
 
-
 class Switch a where
   switch :: a -> a
 
@@ -792,10 +899,6 @@ instance Switch Cont where
   switch Hurry = Delay
   switch Delay = Hurry
   switch New = New
-
-instance Switch IsGuarded where
-  switch true = false
-  switch false = true
 
 addLabels :: forall f v. Functor f => f v -> f (String * v)
 addLabels = map ("" ~ _)
