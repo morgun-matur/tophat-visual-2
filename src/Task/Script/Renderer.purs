@@ -97,7 +97,6 @@ renderTask g s t = Style.column
 
     -- for task types, see Syntax.purs
 
-
     -- case following subtask::unguarded Branch of Lift. This is the end step of choose/pair combinators or final of functions
     Step m t1 orig@(Annotated a_b (Branch [ Constant (B true) ~ Annotated a_l (Lift e) ])) -> do
       c' ~ m' ~ (b1' ~ t1') <- renderEnd go a_t m t1
@@ -236,58 +235,17 @@ renderTask g s t = Style.column
     Execute n as -> do
       (n' ~ as') ~ o <- renderWithOptions (n ~ as) false (renderExecute a_t n as)
       done <| case getSecondUserOption o of
-        true -> (getFirstUserOption o) ~ 
-          (Annotated a_t <| 
-            Pair [
-              Annotated a_t <| 
-                (Step 
-                  (MIgnore) 
-                  (Annotated a_t <| Execute n' as') 
-                  (Annotated a_t <| 
-                    Branch ([Constant (B true) ~ (Annotated a_t <| Lift Wildcard)])
-                  )
-                ) 
-            , Builder.item 
-            ]
-          )
+        true -> (getFirstUserOption o) ~ renderNewFork (Annotated a_t t) (Execute n' as')
         false -> (getFirstUserOption o) ~ (Annotated a_t <| Execute n' as') 
     Hole as -> do
       (n' ~ as') ~ o <- renderWithOptions ("??" ~ as) false (renderExecute a_t "??" as)
       if n' == "??" then
         done <| case getSecondUserOption o of
-          --true -> (getFirstUserOption o) ~ (Annotated a_t <| Pair [Annotated a_t <| Hole as', Builder.item])
-          true -> (getFirstUserOption o) ~ 
-            (Annotated a_t <| 
-              Pair [
-                Annotated a_t <| 
-                  (Step 
-                    (MIgnore) 
-                    (Annotated a_t <| Hole as') 
-                    (Annotated a_t <| 
-                      Branch ([Constant (B true) ~ (Annotated a_t <| Lift Wildcard)])
-                    )
-                  ) 
-              , Builder.item 
-              ]
-            )
+          true -> (getFirstUserOption o) ~ renderNewFork (Annotated a_t t) (Hole as')
           false -> (getFirstUserOption o) ~ (Annotated a_t <| Hole as')
       else
         done <| case getSecondUserOption o of
-          --true -> (getFirstUserOption o) ~ (Annotated a_t <| Pair [Annotated a_t <| Execute n' as', Builder.item])
-          true -> (getFirstUserOption o) ~ 
-            (Annotated a_t <| 
-              Pair [
-                Annotated a_t <| 
-                  (Step 
-                    (MIgnore) 
-                    (Annotated a_t <| Execute n' as') 
-                    (Annotated a_t <| 
-                      Branch ([Constant (B true) ~ (Annotated a_t <| Lift Wildcard)])
-                    )
-                  ) 
-              , Builder.item 
-              ]
-            )
+          true -> (getFirstUserOption o) ~ renderNewFork (Annotated a_t t) (Execute n' as')
           false -> (getFirstUserOption o) ~ (Annotated a_t <| Execute n' as')
 
     ---- Shares
