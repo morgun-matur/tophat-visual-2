@@ -104,6 +104,34 @@ renderTask g s t = Style.column
     -- case x of 
     -- all the rest... 
     -- not forget: give 2 extra parameters to all render fujnction: canMoveUp and canMoveDown
+    -- GIVE RENDERER go WITH TO RENDER SUBSTEPS!!
+
+    -- todo: retype all isforked, isguarded, isremoved to smth like:
+    --  type IsForked  
+    --      = Forked
+    --      | NotForked
+    --  case IsForked of
+    --    Forked -> blabla
+    --    NotForked -> blabla
+
+    -- case: Step inside Step
+    Step m1 t1 x@(Annotated a_b (Step m2 t2 t3)) -> do
+      c1' m1' c2' m2' ~ mu ~ md b1' t1' b2' t2' b3' t3' <- renderMovingStep (t1 ~ canMoveDown) (t2~canMoveUp)
+      done <| case b1' of 
+        true -> false ~ (Annotated a_b <| (Step m2' t2' t3'))
+        false -> case b2' of
+          true -> 
+          false -> case b3' of 
+            true ->
+            false -> case (c1' ~ c2' ~ mu ~ md) of
+              (Delay ~ Hurry ~ false ~ false)
+              (Hurry ~ Delay ~ false ~ false)
+              (Hurry ~ Hurry ~ true ~ false)
+              (Hurry ~ Hurry ~ false ~ true)
+              --...
+              (_ ~ _ ~ _ ~) -> panic "impossible"
+
+    -- case: Select inside Select
 
     -- case following subtask::unguarded Branch of Lift (why???)
     Step m t1 orig@(Annotated a_b (Branch [ Constant (B true) ~ Annotated a_l (Lift e) ])) -> do
@@ -476,6 +504,8 @@ renderEnd render status args@(MRecord row) subtask =
     ]
     >-> fix3 Hurry args (NotRemoved ~ subtask)
 renderEnd _ _ _ _ = todo "other matches in end rendering"
+
+renderMovingStep :: Renderer -> Widget()
 
 ---- Branches ----
 
