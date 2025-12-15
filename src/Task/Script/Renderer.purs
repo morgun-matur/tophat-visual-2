@@ -415,7 +415,7 @@ renderGuardedStep status isguarded expr cont match@(MRecord row) =
     >-> fix3 isguarded expr (cont ~ match)
   where
   guard = case isguarded of
-    true -> [(renderOption status expr) >-> Either.in2] 
+    true -> [(renderOption status expr) >-> Either.in2, Style.line Solid empty] -- extra line for consistency with renderGuardedSelect
     false -> []
 renderGuardedStep _ _ _ _ _ = todo "no"
 
@@ -520,12 +520,12 @@ renderSingleSelect render status isguarded match sub1 (label ~ expr ~ sub2) =
 renderGuardedSelect :: Status -> IsGuarded -> Label -> Expression -> Cont -> Match -> Widget (IsGuarded * (Label * Expression) * (Cont * Match))
 renderGuardedSelect status isguarded label expr cont match@(MRecord row) = 
   Style.column
-    ([ Input.popover After (renderGuardButton isguarded >-> Either.in1) (renderStep status cont match >-> Either.in3)]
+    ([ Input.popover After (renderGuardButton isguarded >-> Either.in1) <| (renderStep status cont match >-> Either.in3)]
     ++ guard ) 
         >-> fix3 isguarded (label ~ expr) (cont ~ match)
   where
   guard = case isguarded of
-    true -> [renderOptionWithLabel status label expr >-> Either.in2]
+    true -> [renderOptionWithLabel status label expr >-> Either.in2, Style.line Dashed empty] --hacky extra line to ensure enough space
     false -> []
 renderGuardedSelect _ _ _ _ _ _ = todo "no"
 

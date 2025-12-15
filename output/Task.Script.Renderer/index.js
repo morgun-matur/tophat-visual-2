@@ -542,7 +542,7 @@ var renderGuardedSelect = function (v) {
                         if (v5 instanceof Task_Script_Syntax.MRecord) {
                             var guard = (function () {
                                 if (v1) {
-                                    return [ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderOptionWithLabel(v)(v2)(v3))(Data_Either_Nested.in2) ];
+                                    return [ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderOptionWithLabel(v)(v2)(v3))(Data_Either_Nested.in2), Concur_Dom_Style.line(Concur_Dom_Style.Dashed.value)(Control_Plus.empty(Control_Plus.plusArray)) ];
                                 };
                                 if (!v1) {
                                     return [  ];
@@ -579,7 +579,7 @@ var renderGuardedStep = function (v) {
                     if (v4 instanceof Task_Script_Syntax.MRecord) {
                         var guard = (function () {
                             if (v1) {
-                                return [ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderOption(v)(v2))(Data_Either_Nested.in2) ];
+                                return [ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderOption(v)(v2))(Data_Either_Nested.in2), Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)(Control_Plus.empty(Control_Plus.plusArray)) ];
                             };
                             if (!v1) {
                                 return [  ];
