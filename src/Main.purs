@@ -13,4 +13,4 @@ import Task.Script.Example.Subsidy as Example
 
 main :: Effect Unit
 -- main = runWidgetInDom "root" <| Test.main
-main = runWidgetInDom "root" <| Renderer.main Example.world "request subsidy partial"
+main = runWidgetInDom "root" <| Renderer.main Example.world "request subsidy"

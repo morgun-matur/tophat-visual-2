@@ -317,7 +317,7 @@ renderForked isforked =
   where
   forkedSymbol = case isforked of
     true -> Icon.code_branch -- note: should be flipped code_fork
-    false -> Icon.stroopwafel
+    false -> Icon.code_branch
 
 defaultOptions :: ShouldRemove * IsForked --placeholder Bool
 defaultOptions = false ~ false

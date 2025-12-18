@@ -3,7 +3,7 @@
 var Concur_Dom = require("../Concur.Dom/index.js");
 var Task_Script_Example_Subsidy = require("../Task.Script.Example.Subsidy/index.js");
 var Task_Script_Renderer = require("../Task.Script.Renderer/index.js");
-var main = Concur_Dom.runWidgetInDom("root")(Task_Script_Renderer.main(Task_Script_Example_Subsidy.world)("request subsidy partial"));
+var main = Concur_Dom.runWidgetInDom("root")(Task_Script_Renderer.main(Task_Script_Example_Subsidy.world)("request subsidy"));
 module.exports = {
     main: main
 };
