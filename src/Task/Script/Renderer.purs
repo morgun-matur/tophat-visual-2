@@ -109,26 +109,26 @@ renderTask g s t = Style.column
 
     -- case following subtask::unguarded Branch of other
     Step m t1 orig@(Annotated a_b (Branch [ Constant (B true) ~ t2 ])) -> do
-      c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') ~ g' ~ e' <- renderSingle go a_t false (Constant (B true)) Hurry m t1 t2
+      c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') ~ g' ~ e' <- renderSingle go a_t NotGuarded (Constant (B true)) Hurry m t1 t2
       done <| case b1' of
         true -> false ~ t2'
         false -> false ~ (Annotated a_t <| Step m' t1' <| case (c' ~ g') of
-            (Hurry ~ true) -> Annotated a_b <| Branch [ Constant (B false) ~ t2' ]
-            (Hurry ~ false) -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
-            (Delay ~ true) -> Annotated a_b <| Select [ "Continue" ~ Constant (B false) ~ t2' ]
-            (Delay ~ false) -> Annotated a_b <| Select [ "Continue" ~ Constant (B true) ~ t2' ]
+            (Hurry ~ Guarded) -> Annotated a_b <| Branch [ Constant (B false) ~ t2' ]
+            (Hurry ~ NotGuarded) -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
+            (Delay ~ Guarded) -> Annotated a_b <| Select [ "Continue" ~ Constant (B false) ~ t2' ]
+            (Delay ~ NotGuarded) -> Annotated a_b <| Select [ "Continue" ~ Constant (B true) ~ t2' ]
             (New ~ _) -> Builder.new orig)
 
     -- case following subtask::guarded Branch with 1 branch
     Step m t1 orig@(Annotated a_b (Branch [ e ~ t2 ])) -> do
-      c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') ~ g' ~ e' <- renderSingle go a_t true e Hurry m t1 t2
+      c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') ~ g' ~ e' <- renderSingle go a_t Guarded e Hurry m t1 t2
       done <| case b1' of
         true -> false ~ t2'
         false -> false ~ (Annotated a_t <| Step m' t1' <| case (c' ~ g') of
-          (Hurry ~ true) -> Annotated a_b <| Branch [Constant (B false) ~ t2']
-          (Hurry ~ false) -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
-          (Delay ~ true) -> Annotated a_b <| Select ["Continue" ~ Constant (B false) ~ t2']
-          (Delay ~ false) -> Annotated a_b <| Select ["Continue" ~ Constant (B true) ~ t2' ]
+          (Hurry ~ Guarded) -> Annotated a_b <| Branch [Constant (B false) ~ t2']
+          (Hurry ~ NotGuarded) -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
+          (Delay ~ Guarded) -> Annotated a_b <| Select ["Continue" ~ Constant (B false) ~ t2']
+          (Delay ~ NotGuarded)-> Annotated a_b <| Select ["Continue" ~ Constant (B true) ~ t2' ]
           (New ~ _) -> Builder.new orig)
 
     -- case following subtask::guarded Branch with more than 1 branch
@@ -141,26 +141,26 @@ renderTask g s t = Style.column
 
     -- case following subtask::unguarded Select
     Step m t1 orig@(Annotated a_b (Select [ "Continue" ~ Constant (B true) ~ t2 ])) -> do
-      c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') ~ g' ~ e' <- renderSingle go a_t false (Constant (B true)) Delay m t1 t2
+      c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') ~ g' ~ e' <- renderSingle go a_t NotGuarded (Constant (B true)) Delay m t1 t2
       done <| case b1' of
         true -> false ~ t2'
         false -> false ~ (Annotated a_t <| Step m' t1' <| case (c' ~ g') of
-          (Hurry ~ true) -> Annotated a_b <| Branch [ Constant (B false) ~ t2' ]
-          (Hurry ~ false) -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
-          (Delay ~ true) -> Annotated a_b <| Select [ "Continue" ~ Constant (B false) ~ t2' ]
-          (Delay ~ false) -> Annotated a_b <| Select [ "Continue" ~ Constant (B true) ~ t2' ]
+          (Hurry ~ Guarded) -> Annotated a_b <| Branch [ Constant (B false) ~ t2' ]
+          (Hurry ~ NotGuarded) -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
+          (Delay ~ Guarded) -> Annotated a_b <| Select [ "Continue" ~ Constant (B false) ~ t2' ]
+          (Delay ~ NotGuarded) -> Annotated a_b <| Select [ "Continue" ~ Constant (B true) ~ t2' ]
           (New ~ _) -> Builder.new orig)
 
     --case following subtask::guarded Select with 1 branch
     Step m t1 orig@(Annotated a_b (Select [l ~ e ~ t2])) -> do
-      c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') ~ g' ~ l' ~ e' <- renderSingleSelect go a_t true m t1 (l ~ e ~ t2)
+      c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') ~ g' ~ l' ~ e' <- renderSingleSelect go a_t Guarded m t1 (l ~ e ~ t2)
       done <| case b1' of
         true -> false ~ t2'
         false -> false ~ (Annotated a_t <| Step m' t1' <| case (c' ~ g') of
-          (Hurry ~ true) -> Annotated a_b <| Branch ([Constant (B false) ~ t2'])
-          (Hurry ~ false) -> Annotated a_b <| Branch ([Constant (B true) ~ t2' ])
-          (Delay ~ true) -> Annotated a_b <| Select [l' ~ Constant (B false) ~ t2']
-          (Delay ~ false) -> Annotated a_b <| Select [l' ~ Constant (B true) ~ t2' ]
+          (Hurry ~ Guarded) -> Annotated a_b <| Branch ([Constant (B false) ~ t2'])
+          (Hurry ~ NotGuarded) -> Annotated a_b <| Branch ([Constant (B true) ~ t2' ])
+          (Delay ~ Guarded) -> Annotated a_b <| Select [l' ~ Constant (B false) ~ t2']
+          (Delay ~ NotGuarded) -> Annotated a_b <| Select [l' ~ Constant (B true) ~ t2' ]
           (New ~ _) -> Builder.new orig)
 
     --case following subtask::guarded Select with more than 1 branch
@@ -415,8 +415,8 @@ renderGuardedStep status isguarded expr cont match@(MRecord row) =
     >-> fix3 isguarded expr (cont ~ match)
   where
   guard = case isguarded of
-    true -> [(renderOption status expr) >-> Either.in2, Style.line Solid empty] -- extra line for consistency with renderGuardedSelect
-    false -> []
+    Guarded -> [(renderOption status expr) >-> Either.in2, Style.line Solid empty] -- extra line for consistency with renderGuardedSelect
+    NotGuarded -> []
 renderGuardedStep _ _ _ _ _ = todo "no"
 
 renderOption :: Status -> Expression -> Widget Expression
@@ -525,8 +525,8 @@ renderGuardedSelect status isguarded label expr cont match@(MRecord row) =
         >-> fix3 isguarded (label ~ expr) (cont ~ match)
   where
   guard = case isguarded of
-    true -> [renderOptionWithLabel status label expr >-> Either.in2, Style.line Dashed empty] --hacky extra line to ensure enough space
-    false -> []
+    Guarded -> [renderOptionWithLabel status label expr >-> Either.in2, Style.line Dashed empty] --hacky extra line to ensure enough space
+    NotGuarded -> []
 renderGuardedSelect _ _ _ _ _ _ = todo "no"
 
 renderGuardButton :: IsGuarded -> Widget(IsGuarded)
@@ -778,8 +778,9 @@ style Hurry = Filled
 style Delay = Outlined
 style New = Filled -- NOTE: just to make it total...
 
-type IsGuarded = Bool
-
+data IsGuarded 
+  = Guarded
+  | NotGuarded
 
 class Switch a where
   switch :: a -> a
@@ -794,8 +795,8 @@ instance Switch Cont where
   switch New = New
 
 instance Switch IsGuarded where
-  switch true = false
-  switch false = true
+  switch Guarded = NotGuarded
+  switch NotGuarded = Guarded
 
 addLabels :: forall f v. Functor f => f v -> f (String * v)
 addLabels = map ("" ~ _)

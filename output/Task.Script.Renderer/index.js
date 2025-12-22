@@ -70,6 +70,20 @@ var Or = (function () {
     Or.value = new Or();
     return Or;
 })();
+var Guarded = (function () {
+    function Guarded() {
+
+    };
+    Guarded.value = new Guarded();
+    return Guarded;
+})();
+var NotGuarded = (function () {
+    function NotGuarded() {
+
+    };
+    NotGuarded.value = new NotGuarded();
+    return NotGuarded;
+})();
 var Hurry = (function () {
     function Hurry() {
 
@@ -479,16 +493,16 @@ var $dollar_SwitchPar_64 = new Switch(function (v) {
     if (v instanceof Or) {
         return And.value;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 787, column 1 - line 789, column 18): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 788, column 1 - line 790, column 18): " + [ v.constructor.name ]);
 });
 var $dollar_SwitchIsGuarded_66 = new Switch(function (v) {
-    if (v) {
-        return false;
+    if (v instanceof Guarded) {
+        return NotGuarded.value;
     };
-    if (!v) {
-        return true;
+    if (v instanceof NotGuarded) {
+        return Guarded.value;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 796, column 1 - line 798, column 22): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 797, column 1 - line 799, column 30): " + [ v.constructor.name ]);
 });
 var renderGuardButton = function (isguarded) {
     return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(Data_Either_Nested.in1($$switch($dollar_SwitchIsGuarded_66)(isguarded))) ])([ Concur_Dom_Icon.question ]) ]))(fix1(isguarded));
@@ -503,7 +517,7 @@ var $dollar_SwitchCont_65 = new Switch(function (v) {
     if (v instanceof New) {
         return New.value;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 791, column 1 - line 794, column 19): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 792, column 1 - line 795, column 19): " + [ v.constructor.name ]);
 });
 var renderStep = function (v) {
     return function (v1) {
@@ -541,13 +555,13 @@ var renderGuardedSelect = function (v) {
                     return function (v5) {
                         if (v5 instanceof Task_Script_Syntax.MRecord) {
                             var guard = (function () {
-                                if (v1) {
+                                if (v1 instanceof Guarded) {
                                     return [ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderOptionWithLabel(v)(v2)(v3))(Data_Either_Nested.in2), Concur_Dom_Style.line(Concur_Dom_Style.Dashed.value)(Control_Plus.empty(Control_Plus.plusArray)) ];
                                 };
-                                if (!v1) {
+                                if (v1 instanceof NotGuarded) {
                                     return [  ];
                                 };
-                                throw new Error("Failed pattern match at Task.Script.Renderer (line 527, column 11 - line 529, column 16): " + [ v1.constructor.name ]);
+                                throw new Error("Failed pattern match at Task.Script.Renderer (line 527, column 11 - line 529, column 21): " + [ v1.constructor.name ]);
                             })();
                             return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column(Data_Semigroup.append(Data_Semigroup.semigroupArray)([ Concur_Dom_Input.popover(Concur_Dom_Style.After.value)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderGuardButton(v1))(Data_Either_Nested.in1))(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStep(v)(v4)(v5))(Data_Either_Nested.in3)) ])(guard)))(fix3(v1)(new Data_Tuple.Tuple(v2, v3))(new Data_Tuple.Tuple(v4, v5)));
                         };
@@ -578,13 +592,13 @@ var renderGuardedStep = function (v) {
                 return function (v4) {
                     if (v4 instanceof Task_Script_Syntax.MRecord) {
                         var guard = (function () {
-                            if (v1) {
+                            if (v1 instanceof Guarded) {
                                 return [ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderOption(v)(v2))(Data_Either_Nested.in2), Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)(Control_Plus.empty(Control_Plus.plusArray)) ];
                             };
-                            if (!v1) {
+                            if (v1 instanceof NotGuarded) {
                                 return [  ];
                             };
-                            throw new Error("Failed pattern match at Task.Script.Renderer (line 417, column 11 - line 419, column 16): " + [ v1.constructor.name ]);
+                            throw new Error("Failed pattern match at Task.Script.Renderer (line 417, column 11 - line 419, column 21): " + [ v1.constructor.name ]);
                         })();
                         return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column(Data_Semigroup.append(Data_Semigroup.semigroupArray)([ Concur_Dom_Input.popover(Concur_Dom_Style.After.value)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderGuardButton(v1))(Data_Either_Nested.in1))(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStep(v)(v3)(v4))(Data_Either_Nested.in3)) ])(guard)))(fix3(v1)(v2)(new Data_Tuple.Tuple(v3, v4)));
                     };
@@ -645,7 +659,7 @@ var renderTask = function (g) {
                     });
                 };
                 if (v.value1 instanceof Task_Script_Syntax.Step && (v.value1.value2.value1 instanceof Task_Script_Syntax.Branch && (v.value1.value2.value1.value0.length === 1 && (v["value1"]["value2"]["value1"]["value0"][0].value0 instanceof Task_Script_Syntax.Constant && (v["value1"]["value2"]["value1"]["value0"][0].value0.value0 instanceof Task_Script_Syntax.B && v["value1"]["value2"]["value1"]["value0"][0].value0.value0.value0))))) {
-                    return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingle(go)(v.value0)(false)(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)))(Hurry.value)(v.value1.value0)(v.value1.value1)(v["value1"]["value2"]["value1"]["value0"][0].value1))(function (v1) {
+                    return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingle(go)(v.value0)(NotGuarded.value)(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)))(Hurry.value)(v.value1.value0)(v.value1.value1)(v["value1"]["value2"]["value1"]["value0"][0].value1))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)((function () {
                             if (v1.value1.value1.value0.value0) {
                                 return new Data_Tuple.Tuple(false, v1.value1.value1.value1.value0.value1);
@@ -653,16 +667,16 @@ var renderTask = function (g) {
                             if (!v1.value1.value1.value0.value0) {
                                 return new Data_Tuple.Tuple(false, Task_Script_Annotation.Annotated.create(v.value0)(Task_Script_Syntax.Step.create(v1.value1.value0)(v1.value1.value1.value0.value1)((function () {
                                     var v2 = new Data_Tuple.Tuple(v1.value0, v1.value1.value1.value1.value1.value0);
-                                    if (v2.value0 instanceof Hurry && v2.value1) {
+                                    if (v2.value0 instanceof Hurry && v2.value1 instanceof Guarded) {
                                         return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(false)), v1.value1.value1.value1.value0.value1) ]));
                                     };
-                                    if (v2.value0 instanceof Hurry && !v2.value1) {
+                                    if (v2.value0 instanceof Hurry && v2.value1 instanceof NotGuarded) {
                                         return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), v1.value1.value1.value1.value0.value1) ]));
                                     };
-                                    if (v2.value0 instanceof Delay && v2.value1) {
+                                    if (v2.value0 instanceof Delay && v2.value1 instanceof Guarded) {
                                         return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select([ new Data_Tuple.Tuple("Continue", new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(false)), v1.value1.value1.value1.value0.value1)) ]));
                                     };
-                                    if (v2.value0 instanceof Delay && !v2.value1) {
+                                    if (v2.value0 instanceof Delay && v2.value1 instanceof NotGuarded) {
                                         return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select([ new Data_Tuple.Tuple("Continue", new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), v1.value1.value1.value1.value0.value1)) ]));
                                     };
                                     if (v2.value0 instanceof New) {
@@ -676,7 +690,7 @@ var renderTask = function (g) {
                     });
                 };
                 if (v.value1 instanceof Task_Script_Syntax.Step && (v.value1.value2.value1 instanceof Task_Script_Syntax.Branch && v.value1.value2.value1.value0.length === 1)) {
-                    return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingle(go)(v.value0)(true)(v["value1"]["value2"]["value1"]["value0"][0].value0)(Hurry.value)(v.value1.value0)(v.value1.value1)(v["value1"]["value2"]["value1"]["value0"][0].value1))(function (v1) {
+                    return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingle(go)(v.value0)(Guarded.value)(v["value1"]["value2"]["value1"]["value0"][0].value0)(Hurry.value)(v.value1.value0)(v.value1.value1)(v["value1"]["value2"]["value1"]["value0"][0].value1))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)((function () {
                             if (v1.value1.value1.value0.value0) {
                                 return new Data_Tuple.Tuple(false, v1.value1.value1.value1.value0.value1);
@@ -684,16 +698,16 @@ var renderTask = function (g) {
                             if (!v1.value1.value1.value0.value0) {
                                 return new Data_Tuple.Tuple(false, Task_Script_Annotation.Annotated.create(v.value0)(Task_Script_Syntax.Step.create(v1.value1.value0)(v1.value1.value1.value0.value1)((function () {
                                     var v2 = new Data_Tuple.Tuple(v1.value0, v1.value1.value1.value1.value1.value0);
-                                    if (v2.value0 instanceof Hurry && v2.value1) {
+                                    if (v2.value0 instanceof Hurry && v2.value1 instanceof Guarded) {
                                         return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(false)), v1.value1.value1.value1.value0.value1) ]));
                                     };
-                                    if (v2.value0 instanceof Hurry && !v2.value1) {
+                                    if (v2.value0 instanceof Hurry && v2.value1 instanceof NotGuarded) {
                                         return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), v1.value1.value1.value1.value0.value1) ]));
                                     };
-                                    if (v2.value0 instanceof Delay && v2.value1) {
+                                    if (v2.value0 instanceof Delay && v2.value1 instanceof Guarded) {
                                         return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select([ new Data_Tuple.Tuple("Continue", new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(false)), v1.value1.value1.value1.value0.value1)) ]));
                                     };
-                                    if (v2.value0 instanceof Delay && !v2.value1) {
+                                    if (v2.value0 instanceof Delay && v2.value1 instanceof NotGuarded) {
                                         return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select([ new Data_Tuple.Tuple("Continue", new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), v1.value1.value1.value1.value0.value1)) ]));
                                     };
                                     if (v2.value0 instanceof New) {
@@ -725,7 +739,7 @@ var renderTask = function (g) {
                     });
                 };
                 if (v.value1 instanceof Task_Script_Syntax.Step && (v.value1.value2.value1 instanceof Task_Script_Syntax.Select && (v.value1.value2.value1.value0.length === 1 && (v["value1"]["value2"]["value1"]["value0"][0].value0 === "Continue" && (v["value1"]["value2"]["value1"]["value0"][0].value1.value0 instanceof Task_Script_Syntax.Constant && (v["value1"]["value2"]["value1"]["value0"][0].value1.value0.value0 instanceof Task_Script_Syntax.B && v["value1"]["value2"]["value1"]["value0"][0].value1.value0.value0.value0)))))) {
-                    return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingle(go)(v.value0)(false)(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)))(Delay.value)(v.value1.value0)(v.value1.value1)(v["value1"]["value2"]["value1"]["value0"][0].value1.value1))(function (v1) {
+                    return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingle(go)(v.value0)(NotGuarded.value)(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)))(Delay.value)(v.value1.value0)(v.value1.value1)(v["value1"]["value2"]["value1"]["value0"][0].value1.value1))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)((function () {
                             if (v1.value1.value1.value0.value0) {
                                 return new Data_Tuple.Tuple(false, v1.value1.value1.value1.value0.value1);
@@ -733,16 +747,16 @@ var renderTask = function (g) {
                             if (!v1.value1.value1.value0.value0) {
                                 return new Data_Tuple.Tuple(false, Task_Script_Annotation.Annotated.create(v.value0)(Task_Script_Syntax.Step.create(v1.value1.value0)(v1.value1.value1.value0.value1)((function () {
                                     var v2 = new Data_Tuple.Tuple(v1.value0, v1.value1.value1.value1.value1.value0);
-                                    if (v2.value0 instanceof Hurry && v2.value1) {
+                                    if (v2.value0 instanceof Hurry && v2.value1 instanceof Guarded) {
                                         return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(false)), v1.value1.value1.value1.value0.value1) ]));
                                     };
-                                    if (v2.value0 instanceof Hurry && !v2.value1) {
+                                    if (v2.value0 instanceof Hurry && v2.value1 instanceof NotGuarded) {
                                         return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), v1.value1.value1.value1.value0.value1) ]));
                                     };
-                                    if (v2.value0 instanceof Delay && v2.value1) {
+                                    if (v2.value0 instanceof Delay && v2.value1 instanceof Guarded) {
                                         return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select([ new Data_Tuple.Tuple("Continue", new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(false)), v1.value1.value1.value1.value0.value1)) ]));
                                     };
-                                    if (v2.value0 instanceof Delay && !v2.value1) {
+                                    if (v2.value0 instanceof Delay && v2.value1 instanceof NotGuarded) {
                                         return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select([ new Data_Tuple.Tuple("Continue", new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), v1.value1.value1.value1.value0.value1)) ]));
                                     };
                                     if (v2.value0 instanceof New) {
@@ -756,7 +770,7 @@ var renderTask = function (g) {
                     });
                 };
                 if (v.value1 instanceof Task_Script_Syntax.Step && (v.value1.value2.value1 instanceof Task_Script_Syntax.Select && v.value1.value2.value1.value0.length === 1)) {
-                    return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingleSelect(go)(v.value0)(true)(v.value1.value0)(v.value1.value1)(new Data_Tuple.Tuple(v["value1"]["value2"]["value1"]["value0"][0].value0, new Data_Tuple.Tuple(v["value1"]["value2"]["value1"]["value0"][0].value1.value0, v["value1"]["value2"]["value1"]["value0"][0].value1.value1))))(function (v1) {
+                    return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingleSelect(go)(v.value0)(Guarded.value)(v.value1.value0)(v.value1.value1)(new Data_Tuple.Tuple(v["value1"]["value2"]["value1"]["value0"][0].value0, new Data_Tuple.Tuple(v["value1"]["value2"]["value1"]["value0"][0].value1.value0, v["value1"]["value2"]["value1"]["value0"][0].value1.value1))))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)((function () {
                             if (v1.value1.value1.value0.value0) {
                                 return new Data_Tuple.Tuple(false, v1.value1.value1.value1.value0.value1);
@@ -764,16 +778,16 @@ var renderTask = function (g) {
                             if (!v1.value1.value1.value0.value0) {
                                 return new Data_Tuple.Tuple(false, Task_Script_Annotation.Annotated.create(v.value0)(Task_Script_Syntax.Step.create(v1.value1.value0)(v1.value1.value1.value0.value1)((function () {
                                     var v2 = new Data_Tuple.Tuple(v1.value0, v1.value1.value1.value1.value1.value0);
-                                    if (v2.value0 instanceof Hurry && v2.value1) {
+                                    if (v2.value0 instanceof Hurry && v2.value1 instanceof Guarded) {
                                         return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(false)), v1.value1.value1.value1.value0.value1) ]));
                                     };
-                                    if (v2.value0 instanceof Hurry && !v2.value1) {
+                                    if (v2.value0 instanceof Hurry && v2.value1 instanceof NotGuarded) {
                                         return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), v1.value1.value1.value1.value0.value1) ]));
                                     };
-                                    if (v2.value0 instanceof Delay && v2.value1) {
+                                    if (v2.value0 instanceof Delay && v2.value1 instanceof Guarded) {
                                         return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select([ new Data_Tuple.Tuple(v1.value1.value1.value1.value1.value1.value0, new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(false)), v1.value1.value1.value1.value0.value1)) ]));
                                     };
-                                    if (v2.value0 instanceof Delay && !v2.value1) {
+                                    if (v2.value0 instanceof Delay && v2.value1 instanceof NotGuarded) {
                                         return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select([ new Data_Tuple.Tuple(v1.value1.value1.value1.value1.value1.value0, new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), v1.value1.value1.value1.value0.value1)) ]));
                                     };
                                     if (v2.value0 instanceof New) {
@@ -984,6 +998,8 @@ module.exports = {
     Delay: Delay,
     New: New,
     style: style,
+    Guarded: Guarded,
+    NotGuarded: NotGuarded,
     Switch: Switch,
     addLabels: addLabels,
     removeLabels: removeLabels,
