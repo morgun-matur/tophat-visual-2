@@ -634,6 +634,10 @@ renderEditor =
 
 renderEnter :: Labeled BasicType -> Name -> Widget Name
 renderEnter types name =
+  --Style.column
+  --[ Style.line Solid []
+  --, renderEditor Icon.pen (selectType types name)
+  --]
   renderEditor Icon.pen (selectType types name)
 
 renderUpdate :: Expression -> Widget Expression
