@@ -133,7 +133,7 @@ request_subsidy =
 
 request_subsidy_partial :: Checked Task
 request_subsidy_partial =
-  cont (MRecord <| from [ "value" ~ MBind "details" ]) (enter "Citizen")
+  cont (MRecord <| from [ "value" ~ MBind "details" ]) (enter "Citizen") --cont = step, branch = select
     <| branch (MRecord <| from [ "approved" ~ MBind "approved" ]) (execute "check conditions" (ARecord <| from [ "details" ~ Variable "details" ]))
       [ Variable "not" `Apply` Variable "approved"
           ~

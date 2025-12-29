@@ -28,6 +28,7 @@ import Task.Script.World (World, Parameters)
 ---- Rendering -----------------------------------------------------------------
 
 type Renderer = Checked Task -> Widget (Checked Task)
+type RemovedRenderer = Checked Task -> Widget (ShouldRemove * Checked Task)
 
 main :: World -> Name -> Widget (Name * Parameters * Checked Task)
 main { types: s, context: g, tasks: ts } n =
@@ -75,10 +76,11 @@ renderTips = Text.bullets
 renderNotes :: forall a. Widget a
 renderNotes = Text.text "Editing matches (results) and expressions is currently not supported, as is adding fresh tasks to the library."
 
-fixgo :: Widget (Bool * Checked Task) -> Widget (Checked Task)
+fixgo :: Widget (ShouldRemove * Checked Task) -> Widget (Checked Task)
 fixgo g = do
   (_~t) <- g 
   done <| t
+-- TODO: case distinciton ?
 
 renderTask :: Context -> Typtext -> Renderer
 renderTask g s t = Style.column
@@ -101,18 +103,20 @@ renderTask g s t = Style.column
     -- case following subtask::unguarded Branch of Lift (why???)
     Step m t1 orig@(Annotated a_b (Branch [ Constant (B true) ~ Annotated a_l (Lift e) ])) -> do
       c' ~ m' ~ (b1' ~ t1') <- renderEnd go a_t m t1
-      done <| case b1' of 
-        true -> false ~ (Annotated a_l (Lift e) )
-        false -> false ~ ( Annotated a_t <-< Step m' t1' <| case c' of
+      done <| case b1' of
+        Removed -> NotRemoved ~ (Annotated a_l (Lift e) )
+        NotRemoved -> NotRemoved ~ (Annotated a_t <| Step m' t1' <| case c' of
           New -> Builder.new orig
           _ -> orig)
 
     -- case following subtask::unguarded Branch of other
     Step m t1 orig@(Annotated a_b (Branch [ Constant (B true) ~ t2 ])) -> do
-      c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') ~ g' ~ e' <- renderSingle go a_t NotGuarded (Constant (B true)) Hurry m t1 t2
-      done <| case b1' of
-        true -> false ~ t2'
-        false -> false ~ (Annotated a_t <| Step m' t1' <| case (c' ~ g') of
+      c' ~ m' ~ (b1' ~ t1') ~ (b2' ~ t2') ~ g' ~ e' <- renderSingle go a_t NotGuarded (Constant (B true)) Hurry m t1 t2
+      done <| NotRemoved ~ case b1' of
+        Removed -> t2'
+        NotRemoved -> (Annotated a_t <| Step m' t1' <| case b2' of
+          Removed -> t2'
+          NotRemoved -> case (c' ~ g') of
             (Hurry ~ Guarded) -> Annotated a_b <| Branch [ Constant (B false) ~ t2' ]
             (Hurry ~ NotGuarded) -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
             (Delay ~ Guarded) -> Annotated a_b <| Select [ "Continue" ~ Constant (B false) ~ t2' ]
@@ -121,55 +125,69 @@ renderTask g s t = Style.column
 
     -- case following subtask::guarded Branch with 1 branch
     Step m t1 orig@(Annotated a_b (Branch [ e ~ t2 ])) -> do
-      c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') ~ g' ~ e' <- renderSingle go a_t Guarded e Hurry m t1 t2
-      done <| case b1' of
-        true -> false ~ t2'
-        false -> false ~ (Annotated a_t <| Step m' t1' <| case (c' ~ g') of
-          (Hurry ~ Guarded) -> Annotated a_b <| Branch [Constant (B false) ~ t2']
-          (Hurry ~ NotGuarded) -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
-          (Delay ~ Guarded) -> Annotated a_b <| Select ["Continue" ~ Constant (B false) ~ t2']
-          (Delay ~ NotGuarded)-> Annotated a_b <| Select ["Continue" ~ Constant (B true) ~ t2' ]
-          (New ~ _) -> Builder.new orig)
+      c' ~ m' ~ (b1' ~ t1') ~ (b2' ~ t2') ~ g' ~ e' <- renderSingle go a_t Guarded e Hurry m t1 t2
+      done <| NotRemoved ~ case b1' of
+        Removed -> t2'
+        NotRemoved -> (Annotated a_t <| Step m' t1' <| case b2' of
+          Removed ->  t2'
+          NotRemoved -> case (c' ~ g') of
+            (Hurry ~ Guarded) -> Annotated a_b <| Branch [e' ~ t2']
+            (Hurry ~ NotGuarded) -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
+            (Delay ~ Guarded) -> Annotated a_b <| Select ["Continue" ~ e' ~ t2']
+            (Delay ~ NotGuarded)-> Annotated a_b <| Select ["Continue" ~ Constant (B true) ~ t2' ]
+            (New ~ _) -> Builder.new orig)
 
     -- case following subtask::guarded Branch with more than 1 branch
     Step m t1 orig@(Annotated a_b (Branch bs)) -> do
-      c' ~ m' ~ t1' ~ bs' <- renderBranches (fixgo << go) a_t m t1 bs
-      done <| false ~ (Annotated a_t <| Step m' t1' <| case c' of
+      c' ~ m' ~ (b1' ~ t1') ~ bs' <- renderBranches go a_t m t1 bs
+      done <| case b1' of
+        Removed -> Removed ~ (subtask a_b c' bs')
+        NotRemoved -> NotRemoved ~ (Annotated a_t <| Step m' t1' <| subtask a_b c' bs')
+      where
+      subtask a_b c' bs' = case c' of
         Hurry -> Annotated a_b <| Branch bs'
         Delay -> Annotated a_b <| Select (addLabels bs')
-        New -> Builder.new orig)
+        New -> Builder.new orig
 
     -- case following subtask::unguarded Select
     Step m t1 orig@(Annotated a_b (Select [ "Continue" ~ Constant (B true) ~ t2 ])) -> do
-      c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') ~ g' ~ e' <- renderSingle go a_t NotGuarded (Constant (B true)) Delay m t1 t2
-      done <| case b1' of
-        true -> false ~ t2'
-        false -> false ~ (Annotated a_t <| Step m' t1' <| case (c' ~ g') of
-          (Hurry ~ Guarded) -> Annotated a_b <| Branch [ Constant (B false) ~ t2' ]
-          (Hurry ~ NotGuarded) -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
-          (Delay ~ Guarded) -> Annotated a_b <| Select [ "Continue" ~ Constant (B false) ~ t2' ]
-          (Delay ~ NotGuarded) -> Annotated a_b <| Select [ "Continue" ~ Constant (B true) ~ t2' ]
-          (New ~ _) -> Builder.new orig)
+      c' ~ m' ~ (b1' ~ t1') ~ (b2' ~ t2') ~ g' ~ e' <- renderSingle go a_t NotGuarded (Constant (B true)) Delay m t1 t2
+      done <| NotRemoved ~ case b1' of
+        Removed -> t2'
+        NotRemoved -> (Annotated a_t <| Step m' t1' <| case b2' of
+          Removed -> t2'
+          NotRemoved -> case (c' ~ g') of
+            (Hurry ~ Guarded) -> Annotated a_b <| Branch [ Constant (B false) ~ t2' ]
+            (Hurry ~ NotGuarded) -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
+            (Delay ~ Guarded) -> Annotated a_b <| Select [ "Continue" ~ Constant (B false) ~ t2' ]
+            (Delay ~ NotGuarded) -> Annotated a_b <| Select [ "Continue" ~ Constant (B true) ~ t2' ]
+            (New ~ _) -> Builder.new orig)
 
     --case following subtask::guarded Select with 1 branch
     Step m t1 orig@(Annotated a_b (Select [l ~ e ~ t2])) -> do
-      c' ~ m' ~ (b1' ~ t1') ~ (_ ~ t2') ~ g' ~ l' ~ e' <- renderSingleSelect go a_t Guarded m t1 (l ~ e ~ t2)
-      done <| case b1' of
-        true -> false ~ t2'
-        false -> false ~ (Annotated a_t <| Step m' t1' <| case (c' ~ g') of
-          (Hurry ~ Guarded) -> Annotated a_b <| Branch ([Constant (B false) ~ t2'])
-          (Hurry ~ NotGuarded) -> Annotated a_b <| Branch ([Constant (B true) ~ t2' ])
-          (Delay ~ Guarded) -> Annotated a_b <| Select [l' ~ Constant (B false) ~ t2']
-          (Delay ~ NotGuarded) -> Annotated a_b <| Select [l' ~ Constant (B true) ~ t2' ]
-          (New ~ _) -> Builder.new orig)
+      c' ~ m' ~ (b1' ~ t1') ~ (b2' ~ t2') ~ g' ~ l' ~ e' <- renderSingleSelect go a_t Guarded m t1 (l ~ e ~ t2)
+      done <| NotRemoved ~ case b1' of
+        Removed -> t2'
+        NotRemoved -> (Annotated a_t <| Step m' t1' <| case b2' of
+          Removed -> t2'
+          NotRemoved -> case (c' ~ g') of
+            (Hurry ~ Guarded) -> Annotated a_b <| Branch ([e' ~ t2'])
+            (Hurry ~ NotGuarded) -> Annotated a_b <| Branch ([Constant (B true) ~ t2' ])
+            (Delay ~ Guarded) -> Annotated a_b <| Select [l' ~ e' ~ t2']
+            (Delay ~ NotGuarded) -> Annotated a_b <| Select [l' ~ Constant (B true) ~ t2' ]
+            (New ~ _) -> Builder.new orig)
 
     --case following subtask::guarded Select with more than 1 branch
     Step m t1 orig@(Annotated a_b (Select bs)) -> do
-      c' ~ m' ~ t1' ~ bs' <- renderSelects (fixgo << go) a_t m t1 bs
-      done <| false ~ (Annotated a_t <| Step m' t1' <| case c' of
+      c' ~ m' ~ (b1' ~ t1') ~ bs' <- renderSelects go a_t m t1 bs
+      done <| case b1' of
+        Removed -> Removed ~ (subtask a_b c' bs') -- pass Removed to do case distinction to satisfy invariant 
+        NotRemoved -> NotRemoved ~ (Annotated a_t <| Step m' t1' <| subtask a_b c' bs')
+      where 
+      subtask a_b c' bs' = case c' of
         Hurry -> Annotated a_b <| Branch (removeLabels bs')
         Delay -> Annotated a_b <| Select bs'
-        New -> Builder.new orig)
+        New -> Builder.new orig
 
     Step _ _ _ -> panic "invalid single step"
     -- m' ~ t1' ~ t2' <- renderSingle Hurry go m t1 t2
@@ -210,13 +228,13 @@ renderTask g s t = Style.column
     ---- Combinators
     Lift e -> do
       e' <- renderLift e
-      done <| false ~ (Annotated a_t <| Lift e')
+      done <| NotRemoved ~ (Annotated a_t <| Lift e')
     Pair ts -> do
       t' <- renderGroup And (fixgo << go) ts
-      done <| (if Array.null ts then true else false) ~ (Annotated a_t <| t')
+      done <| (if Array.null ts then Removed else NotRemoved) ~ (Annotated a_t <| t')
     Choose ts -> do
       t' <- renderGroup Or (fixgo << go) ts
-      done <| (if Array.null ts then true else false) ~ (Annotated a_t <| t')
+      done <| (if Array.null ts then Removed else NotRemoved) ~ (Annotated a_t <| t')
 
     ---- Extras
     Execute n as -> do
@@ -238,7 +256,7 @@ renderTask g s t = Style.column
 
     Share e -> do
       e' <- renderShare e
-      done <| false ~ (Annotated a_t <| Share e')
+      done <| NotRemoved ~ (Annotated a_t <| Share e')
 
 ---- Parts ---------------------------------------------------------------------
 
@@ -258,20 +276,20 @@ renderRemove :: Widget (ShouldRemove)
 renderRemove = 
   Style.element 
   [
-    (Attr.onClick ->> true) >-> Either.in1 
+    (Attr.onClick ->> Removed) >-> Either.in1 
   ] 
   [ Icon.window_close ]
-  >-> fix1 false 
+  >-> fix1 NotRemoved 
 
 --renderTaskSelect :: IsSelected -> Widget (IsSelected)
 --renderTaskSelect s = Input.checkbox "" s
 
 defaultOptions :: ShouldRemove * Bool --placeholder Bool
-defaultOptions = false ~ false
+defaultOptions = NotRemoved ~ false
 
 type UserOptions = ShouldRemove * Bool --placeholder Bool
 
-type ShouldRemove = Bool 
+--type ShouldRemove = Bool 
 
 getFirstUserOption :: UserOptions -> ShouldRemove 
 getFirstUserOption = fst 
@@ -432,17 +450,17 @@ renderOptionWithLabel status label guard =
     ]
     >-> fix2 label guard
 
-renderSingle :: forall a. (a -> Widget (Bool * a)) -> Status -> IsGuarded -> Expression -> Cont -> Match -> a -> a -> Widget (Cont * Match * (Bool * a) * (Bool * a) * IsGuarded * Expression)
+renderSingle :: forall a. (a -> Widget (ShouldRemove * a)) -> Status -> IsGuarded -> Expression -> Cont -> Match -> a -> a -> Widget (Cont * Match * (ShouldRemove * a) * (ShouldRemove * a) * IsGuarded * Expression)
 renderSingle render status isguarded expr cont match sub1 sub2 =
   Style.column
     [ render sub1 >-> Either.in1
     , renderGuardedStep status isguarded expr cont match >-> Either.in3
     , render sub2 >-> Either.in2
     ]
-    >-> fix3 (false ~ sub1) (false ~ sub2) (isguarded ~ expr ~ (cont ~ match))
+    >-> fix3 (NotRemoved ~ sub1) (NotRemoved ~ sub2) (isguarded ~ expr ~ (cont ~ match))
     >-> reorder6
 
-renderEnd :: forall a. (a -> Widget (Bool * a)) -> Status -> Match -> a -> Widget (Cont * Match * (Bool * a))
+renderEnd :: forall a. (a -> Widget (ShouldRemove * a)) -> Status -> Match -> a -> Widget (Cont * Match * (ShouldRemove * a))
 renderEnd render status args@(MRecord row) subtask =
   Style.column
     [ render subtask >-> Either.in3
@@ -451,22 +469,22 @@ renderEnd render status args@(MRecord row) subtask =
         Style.element [ void Attr.onDoubleClick ->> Either.in1 New ]
           [ Style.triangle (style Hurry) empty ]
     ]
-    >-> fix3 Hurry args (false ~ subtask)
+    >-> fix3 Hurry args (NotRemoved ~ subtask)
 renderEnd _ _ _ _ = todo "other matches in end rendering"
 
 ---- Branches ----
 
-renderBranches :: Renderer -> Status -> Match -> Checked Task -> Branches (Checked Task) -> Widget (Cont * Match * Checked Task * Branches (Checked Task))
+renderBranches :: RemovedRenderer -> Status -> Match -> Checked Task -> Branches (Checked Task) -> Widget (Cont * Match * (ShouldRemove * Checked Task) * Branches (Checked Task))
 renderBranches render status match subtask branches =
   Style.column
     [ render subtask >-> Either.in1
     , renderStep status Hurry match >-> Either.in3
     , Style.element [ void Attr.onDoubleClick ->> Either.in2 (branches ++ [ Builder.always ~ Builder.item ]) ]
         [ Style.branch
-            [ Concur.traverse (renderBranch render) branches >-> Either.in2 ]
+            [ Concur.traverse (renderBranch (fixgo << render)) branches >-> Either.in2 ]
         ]
     ]
-    >-> fix3 subtask branches (Hurry ~ match)
+    >-> fix3 (NotRemoved ~ subtask) branches (Hurry ~ match)
     >-> reorder4
 
 renderBranch :: Renderer -> Expression * Checked Task -> Widget (Expression * Checked Task)
@@ -483,38 +501,38 @@ renderBranch render (guard ~ subtask@(Annotated status _)) =
 --     , renderTask task
 --     ]
 
-renderSelects :: Renderer -> Status -> Match -> Checked Task -> LabeledBranches (Checked Task) -> Widget (Cont * Match * Checked Task * LabeledBranches (Checked Task))
+renderSelects :: RemovedRenderer -> Status -> Match -> Checked Task -> LabeledBranches (Checked Task) -> Widget (Cont * Match * (ShouldRemove * Checked Task) * LabeledBranches (Checked Task))
 renderSelects render status match subtask branches =
   Style.column
     [ render subtask >-> Either.in1
     , renderStep status Delay match >-> Either.in3
     , Style.element [ void Attr.onDoubleClick ->> Either.in2 (branches ++ [ "Continue" ~ Builder.always ~ Builder.item ]) ]
       [ Style.branch 
-          [ Concur.traverse (renderSelect render) branches  >-> Either.in2 ]
+          [ Concur.traverse (renderSelect (fixgo << render)) branches >-> Either.in2 ]  -- fixgo ignores ShouldRemove inside subtasks; is handled in renderTask
       ]
     ]
-    >-> fix3 subtask branches (Delay ~ match)
+    >-> fix3 (NotRemoved ~ subtask) branches (Delay ~ match)
     >-> reorder4
 
-renderSelect :: Renderer -> Label * Expression * Checked Task -> Widget (Label * Expression * Checked Task)
+renderSelect :: Renderer -> Label * Expression * Checked Task -> Widget (Label * Expression *  Checked Task)
 renderSelect render (label ~ guard ~ subtask@(Annotated status _)) =
   Style.column
-    [ renderOptionWithLabel status label guard >-> Either.in2
+    [ renderOptionWithLabel status label guard >-> Either.in1
     -- , Style.line Solid empty
-    , render subtask >-> Either.in1
+    , render subtask >-> Either.in2    --ignores ShouldRemove
     , Style.line Solid empty
     ]
-    >-> fix2 subtask (label ~ guard)
-    >-> reorder3
+    >-> fix2 (label ~ guard) subtask
+    >-> assoc
 
-renderSingleSelect :: forall a. (a -> Widget (Bool * a)) -> Status -> IsGuarded -> Match -> a -> Label * Expression * a -> Widget (Cont * Match * (Bool * a) * (Bool * a) * IsGuarded * (Label * Expression))
+renderSingleSelect :: forall a. (a -> Widget (ShouldRemove * a)) -> Status -> IsGuarded -> Match -> a -> Label * Expression * a -> Widget (Cont * Match * (ShouldRemove * a) * (ShouldRemove * a) * IsGuarded * (Label * Expression))
 renderSingleSelect render status isguarded match sub1 (label ~ expr ~ sub2) = 
   Style.column
     [ render sub1 >-> Either.in1
     , renderGuardedSelect status isguarded label expr Delay match >-> Either.in3
     , render sub2 >-> Either.in2
     ]
-    >-> fix3 (false ~ sub1) (false ~ sub2) (isguarded ~ (label ~ expr) ~ (Delay ~ match))
+    >-> fix3 (NotRemoved ~ sub1) (NotRemoved ~ sub2) (isguarded ~ (label ~ expr) ~ (Delay ~ match))
     >-> reorder6
 
 renderGuardedSelect :: Status -> IsGuarded -> Label -> Expression -> Cont -> Match -> Widget (IsGuarded * (Label * Expression) * (Cont * Match))
@@ -782,6 +800,10 @@ data IsGuarded
   = Guarded
   | NotGuarded
 
+data ShouldRemove
+  = Removed
+  | NotRemoved
+
 class Switch a where
   switch :: a -> a
 
@@ -797,6 +819,10 @@ instance Switch Cont where
 instance Switch IsGuarded where
   switch Guarded = NotGuarded
   switch NotGuarded = Guarded
+
+instance Switch ShouldRemove where
+  switch Removed = NotRemoved
+  switch NotRemoved = Removed
 
 addLabels :: forall f v. Functor f => f v -> f (String * v)
 addLabels = map ("" ~ _)
