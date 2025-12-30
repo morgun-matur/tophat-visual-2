@@ -166,7 +166,7 @@ renderTask g s t = Style.column
     --case following subtask::guarded Select with 1 branch
     Step m t1 orig@(Annotated a_b (Select [l ~ e ~ t2])) -> do
 --Widget ((Cont * Match) * (ShouldRemove * Checked Task) * (IsGuarded * LabeledBranches(ShouldRemove * Checked Task)))
-      (c' ~ m') ~ (b1' ~ t1') ~ (g' ~ bs) <- renderSingleSelect go a_t Guarded m t1 (l ~ e ~ t2)
+      (c' ~ m') ~ (b1' ~ t1') ~ (g' ~ bs) <- renderSingleSelect go a_t m t1 (l ~ e ~ t2)
 --      c' ~ m' ~ (b1' ~ t1') ~ (b2' ~ t2') ~ g' ~ l' ~ e' <- renderSingleSelect go a_t Guarded m t1 (l ~ e ~ t2)
       done <| NotRemoved ~ case Array.uncons bs of
           Nothing -> panic "invalid empty select branch"
@@ -475,6 +475,25 @@ renderSingleBranch render status expr cont match sub1 sub2 =
     >-> fix3 (NotRemoved ~ sub1) (NotRemoved ~ sub2) (Guarded ~ expr ~ (cont ~ match))
     >-> reorder6
 
+{-
+
+renderSingleSelect :: RemovedRenderer -> Status -> IsGuarded -> Match -> Checked Task -> Label * Expression * Checked Task -> Widget ((Cont * Match) * (ShouldRemove * Checked Task) * (IsGuarded * LabeledBranches(ShouldRemove * Checked Task)))
+renderSingleSelect render status isguarded match sub1 branch@(label ~ expr ~ sub2) = 
+  Style.element [
+    void Attr.onDoubleClick ->> Either.in3 (isguarded ~ [label ~ expr ~ (Delay ~ match), "Continue" ~ Builder.always ~ (Delay ~ match)])
+  ]
+  [ Style.column
+      [ render sub1 >-> Either.in1
+      , renderGuardedSelect status isguarded label expr Delay match >-> Either.in3
+      , render sub2 >-> Either.in2
+      ]
+  ]
+    >-> fix3 (NotRemoved ~ sub1) (NotRemoved ~ sub2) (isguarded ~ [(label ~ expr ~ (Delay ~ match))])
+    >-> reorder9
+
+-}
+
+
 renderEnd :: forall a. (a -> Widget (ShouldRemove * a)) -> Status -> Match -> a -> Widget (Cont * Match * (ShouldRemove * a))
 renderEnd render status args@(MRecord row) subtask =
   Style.column
@@ -540,18 +559,18 @@ renderSelect render (label ~ guard ~ subtask@(Annotated status _)) =
     >-> fix2 (label ~ guard) subtask
     >-> assoc
 
-renderSingleSelect :: RemovedRenderer -> Status -> IsGuarded -> Match -> Checked Task -> Label * Expression * Checked Task -> Widget ((Cont * Match) * (ShouldRemove * Checked Task) * (IsGuarded * LabeledBranches(ShouldRemove * Checked Task)))
-renderSingleSelect render status isguarded match sub1 branch@(label ~ expr ~ sub2) = 
+renderSingleSelect :: RemovedRenderer -> Status -> Match -> Checked Task -> Label * Expression * Checked Task -> Widget ((Cont * Match) * (ShouldRemove * Checked Task) * (IsGuarded * LabeledBranches(ShouldRemove * Checked Task)))
+renderSingleSelect render status match sub1 branch@(label ~ expr ~ sub2) = 
   Style.element [
-    void Attr.onDoubleClick ->> Either.in3 (isguarded ~ [label ~ expr ~ (Delay ~ match), "Continue" ~ Builder.always ~ (Delay ~ match)])
+    void Attr.onDoubleClick ->> Either.in3 (Guarded ~ [label ~ expr ~ (Delay ~ match), "Continue" ~ Builder.always ~ (Delay ~ match)])
   ]
   [ Style.column
       [ render sub1 >-> Either.in1
-      , renderGuardedSelect status isguarded label expr Delay match >-> Either.in3
+      , renderGuardedSelect status Guarded label expr Delay match >-> Either.in3
       , render sub2 >-> Either.in2
       ]
   ]
-    >-> fix3 (NotRemoved ~ sub1) (NotRemoved ~ sub2) (isguarded ~ [(label ~ expr ~ (Delay ~ match))])
+    >-> fix3 (NotRemoved ~ sub1) (NotRemoved ~ sub2) (Guarded ~ [(label ~ expr ~ (Delay ~ match))])
     >-> reorder9   -- reorders to (Delay ~ match) (NotRemoved ~ sub1) ([isguarded ~ (label ~ expr ~ (NotRemoved ~ sub2))])
     {-
 
