@@ -517,7 +517,9 @@ renderBranches render status match subtask branches =
   Style.column
     [ render subtask >-> Either.in1
     , renderStep status Hurry match >-> Either.in3
-    , Style.element [ void Attr.onDoubleClick ->> Either.in2 (branches ++ [ Builder.always ~ Builder.item ]) ]
+    , Style.element 
+        [ void Attr.onDoubleClick ->> Either.in2 (branches ++ [ Builder.always ~ Builder.item ]) 
+        ]
         [ Style.branch
             [ Concur.traverse (renderBranch (fixgo << render)) branches >-> Either.in2 ]
         ]
@@ -528,7 +530,16 @@ renderBranches render status match subtask branches =
 renderBranch :: Renderer -> Expression * Checked Task -> Widget (Expression * Checked Task)
 renderBranch render (guard ~ subtask@(Annotated status _)) =
   Style.column
-    [ renderOption status guard >-> Either.in1
+    [ Style.place Above Small 
+      [ Style.element 
+        [
+          
+        ]
+        [
+          Icon.code_branch
+        ]
+      ]
+    , renderOption status guard >-> Either.in1
     , render subtask >-> Either.in2
     , Style.line Solid empty
     ]

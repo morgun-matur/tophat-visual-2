@@ -126,7 +126,7 @@ var $$this = function (v) {
     if (v instanceof Or) {
         return Task_Script_Syntax.Choose.create;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 868, column 1 - line 868, column 43): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 861, column 1 - line 861, column 43): " + [ v.constructor.name ]);
 };
 var $$switch = function (dict) {
     return dict["switch"];
@@ -141,7 +141,7 @@ var style = function (v) {
     if (v instanceof New) {
         return Concur_Dom_Style.Filled.value;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 885, column 1 - line 885, column 23): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 878, column 1 - line 878, column 23): " + [ v.constructor.name ]);
 };
 var stroke = function (v) {
     if (v instanceof And) {
@@ -150,7 +150,7 @@ var stroke = function (v) {
     if (v instanceof Or) {
         return Concur_Dom_Style.Double.value;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 876, column 1 - line 876, column 24): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 869, column 1 - line 869, column 24): " + [ v.constructor.name ]);
 };
 var selectType = function (types) {
     return function (name) {
@@ -272,7 +272,7 @@ var renderArg = function (sel) {
     if (sel instanceof No) {
         return Data_Functor.voidLeft(Concur_Core_Types.widgetFunctor)(Concur_Dom_Input.chip(Concur_Dom_Style.Secondary.value)(Concur_Dom_Input.Add.value)(sel.value0))(new Yes(sel.value0));
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 384, column 17 - line 386, column 47): " + [ sel.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 366, column 17 - line 368, column 47): " + [ sel.constructor.name ]);
 };
 var removeLabels = function (dictFunctor) {
     return Data_Functor.map(dictFunctor)(Data_Tuple.snd);
@@ -284,7 +284,7 @@ var other = function (v) {
     if (v instanceof Or) {
         return Task_Script_Syntax.Pair.create;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 872, column 1 - line 872, column 44): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 865, column 1 - line 865, column 44): " + [ v.constructor.name ]);
 };
 var renderGroup = function (par) {
     return function (trans) {
@@ -300,7 +300,7 @@ var isYes = function (v) {
     if (v instanceof No) {
         return false;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 400, column 9 - line 402, column 16): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 382, column 9 - line 384, column 16): " + [ v.constructor.name ]);
 };
 var getFirstUserOption = Data_Tuple.fst;
 var flat4 = function (a) {
@@ -335,7 +335,7 @@ var fix4 = function (_1) {
                     if (v instanceof Data_Either.Right && (v.value0 instanceof Data_Either.Right && (v.value0.value0 instanceof Data_Either.Right && v.value0.value0.value0 instanceof Data_Either.Right))) {
                         return Data_Void.absurd(v.value0.value0.value0.value0);
                     };
-                    throw new Error("Failed pattern match at Task.Script.Renderer (line 829, column 20 - line 834, column 56): " + [ v.constructor.name ]);
+                    throw new Error("Failed pattern match at Task.Script.Renderer (line 822, column 20 - line 827, column 56): " + [ v.constructor.name ]);
                 };
             };
         };
@@ -357,7 +357,7 @@ var fix3 = function (_1) {
                 if (v instanceof Data_Either.Right && (v.value0 instanceof Data_Either.Right && v.value0.value0 instanceof Data_Either.Right)) {
                     return Data_Void.absurd(v.value0.value0.value0);
                 };
-                throw new Error("Failed pattern match at Task.Script.Renderer (line 822, column 16 - line 826, column 48): " + [ v.constructor.name ]);
+                throw new Error("Failed pattern match at Task.Script.Renderer (line 815, column 16 - line 819, column 48): " + [ v.constructor.name ]);
             };
         };
     };
@@ -386,7 +386,7 @@ var fix2 = function (_1) {
             if (v instanceof Data_Either.Right && v.value0 instanceof Data_Either.Right) {
                 return Data_Void.absurd(v.value0.value0);
             };
-            throw new Error("Failed pattern match at Task.Script.Renderer (line 816, column 14 - line 819, column 40): " + [ v.constructor.name ]);
+            throw new Error("Failed pattern match at Task.Script.Renderer (line 809, column 14 - line 812, column 40): " + [ v.constructor.name ]);
         };
     };
 };
@@ -398,7 +398,7 @@ var fix1 = function (_1) {
         if (v instanceof Data_Either.Right) {
             return _1;
         };
-        throw new Error("Failed pattern match at Task.Script.Renderer (line 811, column 11 - line 813, column 16): " + [ v.constructor.name ]);
+        throw new Error("Failed pattern match at Task.Script.Renderer (line 804, column 11 - line 806, column 16): " + [ v.constructor.name ]);
     };
 };
 var renderRemove = Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(Removed.value))(Data_Either_Nested.in1) ])([ Concur_Dom_Icon.window_close ]))(fix1(NotRemoved.value));
@@ -429,7 +429,7 @@ var renderOption = function (status) {
 };
 var renderBranch = function (render) {
     return function (v) {
-        return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderOption(v.value1.value0)(v.value0))(Data_Either_Nested.in1), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(v.value1))(Data_Either_Nested.in2), Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)(Control_Plus.empty(Control_Plus.plusArray)) ]))(fix2(v.value0)(v.value1));
+        return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Concur_Dom_Style.place(Concur_Dom_Style.Above.value)(Concur_Dom_Style.Small.value)([ Concur_Dom_Style.element([  ])([ Concur_Dom_Icon.code_branch ]) ]), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderOption(v.value1.value0)(v.value0))(Data_Either_Nested.in1), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(v.value1))(Data_Either_Nested.in2), Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)(Control_Plus.empty(Control_Plus.plusArray)) ]))(fix2(v.value0)(v.value1));
     };
 };
 var renderOptionWithLabel = function (status) {
@@ -470,7 +470,7 @@ var catYes = Data_Array.concatMap(function (v) {
     if (v instanceof No) {
         return [  ];
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 394, column 5 - line 396, column 17): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 376, column 5 - line 378, column 17): " + [ v.constructor.name ]);
 });
 var renderArgs = function (status) {
     return function (v) {
@@ -528,7 +528,7 @@ var $dollar_SwitchShouldRemove_73 = new Switch(function (v) {
     if (v instanceof NotRemoved) {
         return Removed.value;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 914, column 1 - line 916, column 30): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 907, column 1 - line 909, column 30): " + [ v.constructor.name ]);
 });
 var $dollar_SwitchPar_70 = new Switch(function (v) {
     if (v instanceof And) {
@@ -537,7 +537,7 @@ var $dollar_SwitchPar_70 = new Switch(function (v) {
     if (v instanceof Or) {
         return And.value;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 901, column 1 - line 903, column 18): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 894, column 1 - line 896, column 18): " + [ v.constructor.name ]);
 });
 var $dollar_SwitchIsGuarded_72 = new Switch(function (v) {
     if (v instanceof Guarded) {
@@ -546,7 +546,7 @@ var $dollar_SwitchIsGuarded_72 = new Switch(function (v) {
     if (v instanceof NotGuarded) {
         return Guarded.value;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 910, column 1 - line 912, column 30): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 903, column 1 - line 905, column 30): " + [ v.constructor.name ]);
 });
 var renderGuardButton = function (isguarded) {
     return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(Data_Either_Nested.in1($$switch($dollar_SwitchIsGuarded_72)(isguarded))) ])([ Concur_Dom_Icon.question ]) ]))(fix1(isguarded));
@@ -561,7 +561,7 @@ var $dollar_SwitchCont_71 = new Switch(function (v) {
     if (v instanceof New) {
         return New.value;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 905, column 1 - line 908, column 19): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 898, column 1 - line 901, column 19): " + [ v.constructor.name ]);
 });
 var renderStep = function (v) {
     return function (v1) {
@@ -607,7 +607,7 @@ var renderGuardedSelect = function (v) {
                                 if (v1 instanceof NotGuarded) {
                                     return [  ];
                                 };
-                                throw new Error("Failed pattern match at Task.Script.Renderer (line 615, column 11 - line 620, column 21): " + [ v1.constructor.name ]);
+                                throw new Error("Failed pattern match at Task.Script.Renderer (line 608, column 11 - line 613, column 21): " + [ v1.constructor.name ]);
                             })();
                             return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column(Data_Semigroup.append(Data_Semigroup.semigroupArray)([ Concur_Dom_Input.popover(Concur_Dom_Style.After.value)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderGuardButton(v1))(Data_Either_Nested.in1))(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStep(v)(v4)(v5))(Data_Either_Nested.in3)) ])(guard)))(fix3(v1)(new Data_Tuple.Tuple(v2, v3))(new Data_Tuple.Tuple(v4, v5))))(reorder5);
                         };
@@ -642,7 +642,7 @@ var renderGuardedStep = function (v) {
                             if (v1 instanceof NotGuarded) {
                                 return [  ];
                             };
-                            throw new Error("Failed pattern match at Task.Script.Renderer (line 459, column 11 - line 461, column 21): " + [ v1.constructor.name ]);
+                            throw new Error("Failed pattern match at Task.Script.Renderer (line 441, column 11 - line 443, column 21): " + [ v1.constructor.name ]);
                         })();
                         return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column(Data_Semigroup.append(Data_Semigroup.semigroupArray)([ Concur_Dom_Input.popover(Concur_Dom_Style.After.value)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderGuardButton(v1))(Data_Either_Nested.in1))(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStep(v)(v3)(v4))(Data_Either_Nested.in3)) ])(guard)))(fix3(v1)(v2)(new Data_Tuple.Tuple(v3, v4)));
                     };
@@ -785,17 +785,17 @@ var renderTask = function (g) {
                                             if (v3.value0 instanceof New) {
                                                 return Task_Script_Builder["new"](v.value1.value2);
                                             };
-                                            throw new Error("Failed pattern match at Task.Script.Renderer (line 151, column 27 - line 156, column 44): " + [ v3.constructor.name ]);
+                                            throw new Error("Failed pattern match at Task.Script.Renderer (line 135, column 27 - line 140, column 44): " + [ v3.constructor.name ]);
                                         };
-                                        throw new Error("Failed pattern match at Task.Script.Renderer (line 149, column 57 - line 156, column 44): " + [ v2.value0.head.value1.value0.constructor.name ]);
+                                        throw new Error("Failed pattern match at Task.Script.Renderer (line 133, column 57 - line 140, column 44): " + [ v2.value0.head.value1.value0.constructor.name ]);
                                     })()));
                                 };
-                                throw new Error("Failed pattern match at Task.Script.Renderer (line 147, column 52 - line 156, column 44): " + [ v1.value1.value0.value0.constructor.name ]);
+                                throw new Error("Failed pattern match at Task.Script.Renderer (line 131, column 52 - line 140, column 44): " + [ v1.value1.value0.value0.constructor.name ]);
                             };
                             if (v2 instanceof Data_Maybe.Just) {
                                 return Task_Script_Annotation.Annotated.create(v.value0)(Task_Script_Syntax.Step.create(v1.value0.value1)(v1.value1.value0.value1)(Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(v2.value0.head.value0, v2.value0.head.value1.value1), new Data_Tuple.Tuple(Task_Script_Builder.always, Task_Script_Builder.item) ]))));
                             };
-                            throw new Error("Failed pattern match at Task.Script.Renderer (line 145, column 28 - line 157, column 150): " + [ v2.constructor.name ]);
+                            throw new Error("Failed pattern match at Task.Script.Renderer (line 129, column 28 - line 141, column 150): " + [ v2.constructor.name ]);
                         })()));
                     });
                 };
@@ -812,7 +812,7 @@ var renderTask = function (g) {
                                 if (c$prime instanceof New) {
                                     return Task_Script_Builder["new"](v.value1.value2);
                                 };
-                                throw new Error("Failed pattern match at Task.Script.Renderer (line 166, column 28 - line 169, column 32): " + [ c$prime.constructor.name ]);
+                                throw new Error("Failed pattern match at Task.Script.Renderer (line 150, column 28 - line 153, column 32): " + [ c$prime.constructor.name ]);
                             };
                         };
                     };
@@ -824,7 +824,7 @@ var renderTask = function (g) {
                             if (v1.value1.value1.value0.value0 instanceof NotRemoved) {
                                 return new Data_Tuple.Tuple(NotRemoved.value, Task_Script_Annotation.Annotated.create(v.value0)(Task_Script_Syntax.Step.create(v1.value1.value0)(v1.value1.value1.value0.value1)(subtask(v.value1.value2.value0)(v1.value0)(v1.value1.value1.value1))));
                             };
-                            throw new Error("Failed pattern match at Task.Script.Renderer (line 162, column 15 - line 164, column 88): " + [ v1.value1.value1.value0.value0.constructor.name ]);
+                            throw new Error("Failed pattern match at Task.Script.Renderer (line 146, column 15 - line 148, column 88): " + [ v1.value1.value1.value0.value0.constructor.name ]);
                         })());
                     });
                 };
@@ -856,12 +856,12 @@ var renderTask = function (g) {
                                         if (v2.value0 instanceof New) {
                                             return Task_Script_Builder["new"](v.value1.value2);
                                         };
-                                        throw new Error("Failed pattern match at Task.Script.Renderer (line 178, column 25 - line 183, column 42): " + [ v2.constructor.name ]);
+                                        throw new Error("Failed pattern match at Task.Script.Renderer (line 162, column 25 - line 167, column 42): " + [ v2.constructor.name ]);
                                     };
-                                    throw new Error("Failed pattern match at Task.Script.Renderer (line 176, column 56 - line 183, column 42): " + [ v1.value1.value1.value1.value0.value0.constructor.name ]);
+                                    throw new Error("Failed pattern match at Task.Script.Renderer (line 160, column 56 - line 167, column 42): " + [ v1.value1.value1.value1.value0.value0.constructor.name ]);
                                 })()));
                             };
-                            throw new Error("Failed pattern match at Task.Script.Renderer (line 174, column 28 - line 183, column 43): " + [ v1.value1.value1.value0.value0.constructor.name ]);
+                            throw new Error("Failed pattern match at Task.Script.Renderer (line 158, column 28 - line 167, column 43): " + [ v1.value1.value1.value0.value0.constructor.name ]);
                         })()));
                     });
                 };
@@ -870,7 +870,7 @@ var renderTask = function (g) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)(new Data_Tuple.Tuple(NotRemoved.value, (function () {
                             var v2 = Data_Array.uncons(v1.value1.value1.value1);
                             if (v2 instanceof Data_Maybe.Nothing) {
-                                return Preload.panic("invalid empty select branch");
+                                return Preload.panic("invalid empty select");
                             };
                             if (v2 instanceof Data_Maybe.Just && v2.value0.tail.length === 0) {
                                 if (v1.value1.value0.value0 instanceof Removed) {
@@ -898,17 +898,17 @@ var renderTask = function (g) {
                                             if (v3.value0 instanceof New) {
                                                 return Task_Script_Builder["new"](v.value1.value2);
                                             };
-                                            throw new Error("Failed pattern match at Task.Script.Renderer (line 196, column 29 - line 201, column 46): " + [ v3.constructor.name ]);
+                                            throw new Error("Failed pattern match at Task.Script.Renderer (line 178, column 29 - line 183, column 46): " + [ v3.constructor.name ]);
                                         };
-                                        throw new Error("Failed pattern match at Task.Script.Renderer (line 194, column 59 - line 201, column 46): " + [ v2.value0.head.value1.value1.value0.constructor.name ]);
+                                        throw new Error("Failed pattern match at Task.Script.Renderer (line 176, column 59 - line 183, column 46): " + [ v2.value0.head.value1.value1.value0.constructor.name ]);
                                     })()));
                                 };
-                                throw new Error("Failed pattern match at Task.Script.Renderer (line 192, column 58 - line 201, column 46): " + [ v1.value1.value0.value0.constructor.name ]);
+                                throw new Error("Failed pattern match at Task.Script.Renderer (line 174, column 58 - line 183, column 46): " + [ v1.value1.value0.value0.constructor.name ]);
                             };
                             if (v2 instanceof Data_Maybe.Just) {
                                 return Task_Script_Annotation.Annotated.create(v.value0)(Task_Script_Syntax.Step.create(v1.value0.value1)(v1.value1.value0.value1)(Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select([ new Data_Tuple.Tuple(v2.value0.head.value0, new Data_Tuple.Tuple(v2.value0.head.value1.value0, v2.value0.head.value1.value1.value1)), new Data_Tuple.Tuple("Continue", new Data_Tuple.Tuple(Task_Script_Builder.always, Task_Script_Builder.item)) ]))));
                             };
-                            throw new Error("Failed pattern match at Task.Script.Renderer (line 190, column 28 - line 202, column 175): " + [ v2.constructor.name ]);
+                            throw new Error("Failed pattern match at Task.Script.Renderer (line 172, column 28 - line 184, column 175): " + [ v2.constructor.name ]);
                         })()));
                     });
                 };
@@ -925,7 +925,7 @@ var renderTask = function (g) {
                                 if (c$prime instanceof New) {
                                     return Task_Script_Builder["new"](v.value1.value2);
                                 };
-                                throw new Error("Failed pattern match at Task.Script.Renderer (line 211, column 28 - line 214, column 32): " + [ c$prime.constructor.name ]);
+                                throw new Error("Failed pattern match at Task.Script.Renderer (line 193, column 28 - line 196, column 32): " + [ c$prime.constructor.name ]);
                             };
                         };
                     };
@@ -937,7 +937,7 @@ var renderTask = function (g) {
                             if (v1.value1.value1.value0.value0 instanceof NotRemoved) {
                                 return new Data_Tuple.Tuple(NotRemoved.value, Task_Script_Annotation.Annotated.create(v.value0)(Task_Script_Syntax.Step.create(v1.value1.value0)(v1.value1.value1.value0.value1)(subtask(v.value1.value2.value0)(v1.value0)(v1.value1.value1.value1))));
                             };
-                            throw new Error("Failed pattern match at Task.Script.Renderer (line 207, column 15 - line 209, column 88): " + [ v1.value1.value1.value0.value0.constructor.name ]);
+                            throw new Error("Failed pattern match at Task.Script.Renderer (line 189, column 15 - line 191, column 88): " + [ v1.value1.value1.value0.value0.constructor.name ]);
                         })());
                     });
                 };
@@ -1026,7 +1026,7 @@ var renderTask = function (g) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)(new Data_Tuple.Tuple(NotRemoved.value, Task_Script_Annotation.Annotated.create(v.value0)(new Task_Script_Syntax.Share(e$prime))));
                     });
                 };
-                throw new Error("Failed pattern match at Task.Script.Renderer (line 91, column 26 - line 283, column 55): " + [ v.value1.constructor.name ]);
+                throw new Error("Failed pattern match at Task.Script.Renderer (line 91, column 26 - line 265, column 55): " + [ v.value1.constructor.name ]);
             };
             return Concur_Dom_Style.column([ fixgo(go(t)) ]);
         };
