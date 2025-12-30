@@ -165,17 +165,22 @@ renderTask g s t = Style.column
 
     --case following subtask::guarded Select with 1 branch
     Step m t1 orig@(Annotated a_b (Select [l ~ e ~ t2])) -> do
-      c' ~ m' ~ (b1' ~ t1') ~ (b2' ~ t2') ~ g' ~ l' ~ e' <- renderSingleSelect go a_t Guarded m t1 (l ~ e ~ t2)
-      done <| NotRemoved ~ case b1' of
-        Removed -> t2'
-        NotRemoved -> (Annotated a_t <| Step m' t1' <| case b2' of
-          Removed -> t2'
-          NotRemoved -> case (c' ~ g') of
-            (Hurry ~ Guarded) -> Annotated a_b <| Branch ([e' ~ t2'])
-            (Hurry ~ NotGuarded) -> Annotated a_b <| Branch ([Constant (B true) ~ t2' ])
-            (Delay ~ Guarded) -> Annotated a_b <| Select [l' ~ e' ~ t2']
-            (Delay ~ NotGuarded) -> Annotated a_b <| Select [l' ~ Constant (B true) ~ t2' ]
-            (New ~ _) -> Builder.new orig)
+--Widget ((Cont * Match) * (ShouldRemove * Checked Task) * (IsGuarded * LabeledBranches(ShouldRemove * Checked Task)))
+      (c' ~ m') ~ (b1' ~ t1') ~ (g' ~ bs) <- renderSingleSelect go a_t Guarded m t1 (l ~ e ~ t2)
+--      c' ~ m' ~ (b1' ~ t1') ~ (b2' ~ t2') ~ g' ~ l' ~ e' <- renderSingleSelect go a_t Guarded m t1 (l ~ e ~ t2)
+      done <| NotRemoved ~ case Array.uncons bs of
+          Nothing -> panic "invalid empty select branch"
+          Just {head: l' ~ e' ~ (b2' ~ t2'), tail:[]} -> case b1' of
+            Removed -> t2'
+            NotRemoved -> Annotated a_t <| Step m' t1' <| case b2' of
+              Removed -> t2'
+              NotRemoved -> case (c' ~ g') of
+                (Hurry ~ Guarded) -> Annotated a_b <| Branch ([e' ~ t2'])
+                (Hurry ~ NotGuarded) -> Annotated a_b <| Branch ([Constant (B true) ~ t2' ])
+                (Delay ~ Guarded) -> Annotated a_b <| Select [l' ~ e' ~ t2']
+                (Delay ~ NotGuarded) -> Annotated a_b <| Select [l' ~ Constant (B true) ~ t2' ]
+                (New ~ _) -> Builder.new orig
+          Just {head: l' ~ e' ~ (b2' ~ t2'), tail: _} -> Annotated a_t <| Step m' t1' <| Annotated a_b <| Select([l' ~ e' ~ t2', "Continue" ~ Builder.always ~ Builder.item ])
 
     --case following subtask::guarded Select with more than 1 branch
     Step m t1 orig@(Annotated a_b (Select bs)) -> do
@@ -514,7 +519,7 @@ renderSelects render status match subtask branches =
     >-> fix3 (NotRemoved ~ subtask) branches (Delay ~ match)
     >-> reorder4
 
-renderSelect :: Renderer -> Label * Expression * Checked Task -> Widget (Label * Expression *  Checked Task)
+renderSelect :: Renderer -> Label * Expression * Checked Task -> Widget (Label * Expression * Checked Task)
 renderSelect render (label ~ guard ~ subtask@(Annotated status _)) =
   Style.column
     [ renderOptionWithLabel status label guard >-> Either.in1
@@ -525,27 +530,49 @@ renderSelect render (label ~ guard ~ subtask@(Annotated status _)) =
     >-> fix2 (label ~ guard) subtask
     >-> assoc
 
-renderSingleSelect :: forall a. (a -> Widget (ShouldRemove * a)) -> Status -> IsGuarded -> Match -> a -> Label * Expression * a -> Widget (Cont * Match * (ShouldRemove * a) * (ShouldRemove * a) * IsGuarded * (Label * Expression))
-renderSingleSelect render status isguarded match sub1 (label ~ expr ~ sub2) = 
-  Style.column
-    [ render sub1 >-> Either.in1
-    , renderGuardedSelect status isguarded label expr Delay match >-> Either.in3
-    , render sub2 >-> Either.in2
-    ]
-    >-> fix3 (NotRemoved ~ sub1) (NotRemoved ~ sub2) (isguarded ~ (label ~ expr) ~ (Delay ~ match))
-    >-> reorder6
+renderSingleSelect :: RemovedRenderer -> Status -> IsGuarded -> Match -> Checked Task -> Label * Expression * Checked Task -> Widget ((Cont * Match) * (ShouldRemove * Checked Task) * (IsGuarded * LabeledBranches(ShouldRemove * Checked Task)))
+renderSingleSelect render status isguarded match sub1 branch@(label ~ expr ~ sub2) = 
+  Style.element [
+    void Attr.onDoubleClick ->> Either.in3 (isguarded ~ [label ~ expr ~ (Delay ~ match), "Continue" ~ Builder.always ~ (Delay ~ match)])
+  ]
+  [ Style.column
+      [ render sub1 >-> Either.in1
+      , renderGuardedSelect status isguarded label expr Delay match >-> Either.in3
+      , render sub2 >-> Either.in2
+      ]
+  ]
+    >-> fix3 (NotRemoved ~ sub1) (NotRemoved ~ sub2) (isguarded ~ [(label ~ expr ~ (Delay ~ match))])
+    >-> reorder9   -- reorders to (Delay ~ match) (NotRemoved ~ sub1) ([isguarded ~ (label ~ expr ~ (NotRemoved ~ sub2))])
+    {-
 
-renderGuardedSelect :: Status -> IsGuarded -> Label -> Expression -> Cont -> Match -> Widget (IsGuarded * (Label * Expression) * (Cont * Match))
+    
+    reorder6 (a ~ b ~ c ~ d ~ e ~ f) = (e ~ f ~ a ~ b ~ c ~ d)
+
+      Style.element 
+        [ void Attr.onDoubleClick ->> Either.in2 (branch ++ [ "Continue" ~ Builder.always ~ Builder.item ]) 
+        ]
+    -}
+
+renderGuardedSelect :: Status -> IsGuarded -> Label -> Expression -> Cont -> Match -> Widget (IsGuarded * LabeledBranches(Cont * Match))
 renderGuardedSelect status isguarded label expr cont match@(MRecord row) = 
   Style.column
     ([ Input.popover After (renderGuardButton isguarded >-> Either.in1) <| (renderStep status cont match >-> Either.in3)]
     ++ guard ) 
         >-> fix3 isguarded (label ~ expr) (cont ~ match)
+        >-> reorder5
   where
   guard = case isguarded of
-    Guarded -> [renderOptionWithLabel status label expr >-> Either.in2, Style.line Dashed empty] --hacky extra line to ensure enough space
+    Guarded -> 
+      [ renderOptionWithLabel status label expr >-> Either.in2
+        , Style.line Dashed empty                                 --hacky extra line to ensure enough space
+      ] 
     NotGuarded -> []
 renderGuardedSelect _ _ _ _ _ _ = todo "no"
+
+{-
+
+a~(b~c)~(d~e) -> a~(b~c~(d~e))
+-}
 
 renderGuardButton :: IsGuarded -> Widget(IsGuarded)
 renderGuardButton isguarded = 
@@ -761,8 +788,16 @@ reorder3 (a ~ b ~ c) = b ~ c ~ a
 reorder4 :: forall a b c d. a * b * c * d -> c * d * a * b
 reorder4 (a ~ b ~ c ~ d) = (c ~ d ~ a ~ b)
 
+reorder5 :: forall a b c d e. a * (b * c) * (d * e) -> a * Array (b * c * (d * e))
+reorder5 (a ~ (b ~ c) ~ (d ~ e)) = (a ~ [b ~ c ~ (d ~ e)])
+
 reorder6 :: forall a b c d e f. a * b * c * d * e * f -> e * f * a * b * c * d
 reorder6 (a ~ b ~ c ~ d ~ e ~ f) = (e ~ f ~ a ~ b ~ c ~ d)
+
+reorder9 :: forall a b c d e f g h i. (a * b) * (c * d) * (e * Array (f * g * (h * i))) -> (h * i) * (a * b) * (e * Array (f * g * (c * d)))
+reorder9 ((a ~ b) ~ (c ~ d) ~ (e ~ [f ~ g ~ (h ~ i)])) = ((h ~ i) ~ (a ~ b) ~ (e ~ [f ~ g ~ (c ~ d)]))
+reorder9 ((a ~ b) ~ (c ~ d) ~ (e ~ [f1 ~ g1 ~ (h1 ~ i1), f2 ~ g2 ~ (h2 ~ i2)])) = ((h1 ~ i1) ~ (a ~ b) ~ (e ~ [f1 ~ g1 ~ (c ~ d), f2 ~ g2 ~ (c ~ d)]))
+reorder9 ( _ ~ _ ~ _ ) = panic "test"
 
 assoc :: forall a b c. (a * b) * c -> a * (b * c)
 assoc ((a ~ b) ~ c) = a ~ b ~ c
