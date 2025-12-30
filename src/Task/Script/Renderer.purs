@@ -111,7 +111,7 @@ renderTask g s t = Style.column
 
     -- case following subtask::unguarded Branch of other
     Step m t1 orig@(Annotated a_b (Branch [ Constant (B true) ~ t2 ])) -> do
-      c' ~ m' ~ (b1' ~ t1') ~ (b2' ~ t2') ~ g' ~ e' <- renderSingle go a_t NotGuarded (Constant (B true)) Hurry m t1 t2
+      c' ~ m' ~ (b1' ~ t1') ~ (b2' ~ t2') ~ g' ~ e' <- renderSingleUnguarded go a_t (Constant (B true)) Hurry m t1 t2
       done <| NotRemoved ~ case b1' of
         Removed -> t2'
         NotRemoved -> (Annotated a_t <| Step m' t1' <| case b2' of
@@ -125,7 +125,7 @@ renderTask g s t = Style.column
 
     -- case following subtask::guarded Branch with 1 branch
     Step m t1 orig@(Annotated a_b (Branch [ e ~ t2 ])) -> do
-      c' ~ m' ~ (b1' ~ t1') ~ (b2' ~ t2') ~ g' ~ e' <- renderSingle go a_t Guarded e Hurry m t1 t2
+      c' ~ m' ~ (b1' ~ t1') ~ (b2' ~ t2') ~ g' ~ e' <- renderSingleBranch go a_t e Hurry m t1 t2
       done <| NotRemoved ~ case b1' of
         Removed -> t2'
         NotRemoved -> (Annotated a_t <| Step m' t1' <| case b2' of
@@ -151,7 +151,7 @@ renderTask g s t = Style.column
 
     -- case following subtask::unguarded Select
     Step m t1 orig@(Annotated a_b (Select [ "Continue" ~ Constant (B true) ~ t2 ])) -> do
-      c' ~ m' ~ (b1' ~ t1') ~ (b2' ~ t2') ~ g' ~ e' <- renderSingle go a_t NotGuarded (Constant (B true)) Delay m t1 t2
+      c' ~ m' ~ (b1' ~ t1') ~ (b2' ~ t2') ~ g' ~ e' <- renderSingleUnguarded go a_t (Constant (B true)) Delay m t1 t2
       done <| NotRemoved ~ case b1' of
         Removed -> t2'
         NotRemoved -> (Annotated a_t <| Step m' t1' <| case b2' of
@@ -455,14 +455,24 @@ renderOptionWithLabel status label guard =
     ]
     >-> fix2 label guard
 
-renderSingle :: forall a. (a -> Widget (ShouldRemove * a)) -> Status -> IsGuarded -> Expression -> Cont -> Match -> a -> a -> Widget (Cont * Match * (ShouldRemove * a) * (ShouldRemove * a) * IsGuarded * Expression)
-renderSingle render status isguarded expr cont match sub1 sub2 =
+renderSingleUnguarded :: forall a. (a -> Widget (ShouldRemove * a)) -> Status -> Expression -> Cont -> Match -> a -> a -> Widget (Cont * Match * (ShouldRemove * a) * (ShouldRemove * a) * IsGuarded * Expression)
+renderSingleUnguarded render status expr cont match sub1 sub2 =
   Style.column
     [ render sub1 >-> Either.in1
-    , renderGuardedStep status isguarded expr cont match >-> Either.in3
+    , renderGuardedStep status NotGuarded expr cont match >-> Either.in3
     , render sub2 >-> Either.in2
     ]
-    >-> fix3 (NotRemoved ~ sub1) (NotRemoved ~ sub2) (isguarded ~ expr ~ (cont ~ match))
+    >-> fix3 (NotRemoved ~ sub1) (NotRemoved ~ sub2) (NotGuarded ~ expr ~ (cont ~ match))
+    >-> reorder6
+
+renderSingleBranch :: RemovedRenderer -> Status -> Expression -> Cont -> Match -> Checked Task -> Checked Task -> Widget(Cont * Match * (ShouldRemove * Checked Task) * (ShouldRemove * Checked Task) * IsGuarded * Expression)
+renderSingleBranch render status expr cont match sub1 sub2 = 
+  Style.column
+    [ render sub1 >-> Either.in1
+    , renderGuardedStep status Guarded expr cont match >-> Either.in3
+    , render sub2 >-> Either.in2
+    ]
+    >-> fix3 (NotRemoved ~ sub1) (NotRemoved ~ sub2) (Guarded ~ expr ~ (cont ~ match))
     >-> reorder6
 
 renderEnd :: forall a. (a -> Widget (ShouldRemove * a)) -> Status -> Match -> a -> Widget (Cont * Match * (ShouldRemove * a))
