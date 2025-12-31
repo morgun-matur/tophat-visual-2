@@ -534,8 +534,9 @@ renderBranches render status match subtask branches =
 renderBranch :: Renderer -> IsCondensed * Expression * Checked Task -> Widget (IsCondensed * Expression * Checked Task)
 renderBranch render (iscondensed ~ guard ~ subtask@(Annotated status _)) =
   Style.column
-  [ Input.popover Above contents <| Style.column [renderOption status guard >-> Either.in2]
-  --, renderOption status guard >-> Either.in2
+  [ Input.popover Above contents <| Style.element [] [renderOption status guard >-> Either.in2]
+  , Style.line Dashed empty
+  , Style.line Dashed empty
   , render subtask >-> Either.in3
   , Style.line Solid empty
   ]
@@ -562,22 +563,36 @@ renderSelects render status match subtask branches =
     , renderStep status Delay match >-> Either.in3
     , Style.element [ void Attr.onDoubleClick ->> Either.in2 (branches ++ [ "Continue" ~ Builder.always ~ Builder.item ]) ]
       [ Style.branch 
-          [ Concur.traverse (renderSelect (fixgo << render)) branches >-> Either.in2 ]  -- fixgo ignores ShouldRemove inside subtasks; is handled in renderTask
+          [ Concur.traverse (renderSelect (fixgo << render)) ((\(l ~ e ~ t) -> NotCondensed ~ l ~ e ~ t) <-< branches) >-> mapping >-> Either.in2 ]  
       ]
     ]
     >-> fix3 (NotRemoved ~ subtask) branches (Delay ~ match)
     >-> reorder4
+  where 
+  mapping = (\arr -> arr
+    |> Array.filter (\(con ~ _ ~ _ ~ _) -> con == NotCondensed) 
+    >-> (\(_ ~ l ~ e ~ t) -> l ~ e ~ t)) 
 
-renderSelect :: Renderer -> Label * Expression * Checked Task -> Widget (Label * Expression * Checked Task)
-renderSelect render (label ~ guard ~ subtask@(Annotated status _)) =
+renderSelect :: Renderer -> IsCondensed * Label * Expression * Checked Task -> Widget (IsCondensed * Label * Expression * Checked Task)
+renderSelect render (iscondensed ~ label ~ guard ~ subtask@(Annotated status _)) =
   Style.column
-    [ renderOptionWithLabel status label guard >-> Either.in1
-    -- , Style.line Solid empty
-    , render subtask >-> Either.in2    --ignores ShouldRemove
+    [ Input.popover Above contents <| Style.element [] [renderOptionWithLabel status label guard >-> Either.in2]
+    , Style.line Dashed empty
+    , Style.line Dashed empty
+    , render subtask >-> Either.in3
     , Style.line Solid empty
     ]
-    >-> fix2 (label ~ guard) subtask
-    >-> assoc
+    >-> fix3 NotCondensed (label ~ guard) subtask
+    >-> assoc4
+  where
+  contents = 
+    Style.element 
+      [
+        Attr.onClick ->> Condensed >-> Either.in1 
+      ]
+      [
+        Icon.code_branch
+      ]
 
 renderSingleSelect :: RemovedRenderer -> Status -> Match -> Checked Task -> Label * Expression * Checked Task -> Widget ((Cont * Match) * (ShouldRemove * Checked Task) * (IsGuarded * LabeledBranches(ShouldRemove * Checked Task)))
 renderSingleSelect render status match sub1 branch@(label ~ expr ~ sub2) = 
@@ -855,6 +870,9 @@ reorder9 ( _ ~ _ ~ _ ) = panic "test"
 
 assoc :: forall a b c. (a * b) * c -> a * (b * c)
 assoc ((a ~ b) ~ c) = a ~ b ~ c
+
+assoc4 :: forall a b c d. a * (b * c) * d -> a * b * c * d
+assoc4 (a ~ (b ~ c) ~ d) = a ~ b ~ c ~ d
 
 flat4 :: forall a b c d. a -> b -> (c * d) -> a * b * c * d
 flat4 a b (c ~ d) = (a ~ b ~ c ~ d)
