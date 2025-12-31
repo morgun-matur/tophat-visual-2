@@ -521,30 +521,35 @@ renderBranches render status match subtask branches =
         [ void Attr.onDoubleClick ->> Either.in2 (branches ++ [ Builder.always ~ Builder.item ]) 
         ]
         [ Style.branch
-            [ Concur.traverse (renderBranch (fixgo << render)) branches >-> Either.in2 ]
+            [ Concur.traverse (renderBranch (fixgo << render)) ((\(expr ~ t) -> NotCondensed ~ expr ~ t) <-< branches) >-> mapping >-> Either.in2 ]
         ]
     ]
-    >-> fix3 (NotRemoved ~ subtask) branches (Hurry ~ match)
-    >-> reorder4
+      >-> fix3 (NotRemoved ~ subtask) branches (Hurry ~ match)
+      >-> reorder4
+    where 
+    mapping = (\arr -> arr
+      |> Array.filter (\(con ~ _ ~ _) -> con == NotCondensed) 
+      >-> (\(_ ~ e ~ t) -> e ~ t)) 
 
-renderBranch :: Renderer -> Expression * Checked Task -> Widget (Expression * Checked Task)
-renderBranch render (guard ~ subtask@(Annotated status _)) =
+renderBranch :: Renderer -> IsCondensed * Expression * Checked Task -> Widget (IsCondensed * Expression * Checked Task)
+renderBranch render (iscondensed ~ guard ~ subtask@(Annotated status _)) =
   Style.column
-    [ Style.place Above Small 
-      [ Style.element 
-        [
-          
-        ]
-        [
-          Icon.code_branch
-        ]
+  [ Input.popover Above contents <| Style.column [renderOption status guard >-> Either.in2]
+  --, renderOption status guard >-> Either.in2
+  , render subtask >-> Either.in3
+  , Style.line Solid empty
+  ]
+    
+      >-> fix3 NotCondensed guard subtask
+  where
+  contents = 
+    Style.element 
+      [
+        Attr.onClick ->> Condensed >-> Either.in1 
       ]
-    , renderOption status guard >-> Either.in1
-    , render subtask >-> Either.in2
-    , Style.line Solid empty
-    ]
-    >-> fix2 guard subtask
-
+      [
+        Icon.code_branch
+      ]
 --   Style.column
 --     [ Style.line Dashed [ Style.place After (Input.addon Icon.question (Input.entry Small ?holder ?value)) ]
 --     , renderTask task
@@ -870,6 +875,7 @@ stroke :: Par -> Stroke
 stroke And = Solid
 stroke Or = Double
 
+
 data Cont
   = Hurry
   | Delay
@@ -887,6 +893,10 @@ data IsGuarded
 data ShouldRemove
   = Removed
   | NotRemoved
+
+data IsCondensed
+  = Condensed
+  | NotCondensed
 
 class Switch a where
   switch :: a -> a
@@ -907,6 +917,16 @@ instance Switch IsGuarded where
 instance Switch ShouldRemove where
   switch Removed = NotRemoved
   switch NotRemoved = Removed
+
+instance Switch IsCondensed where
+  switch Condensed = NotCondensed
+  switch NotCondensed = Condensed
+
+
+instance Eq IsCondensed where
+  eq Condensed Condensed = true
+  eq NotCondensed NotCondensed = true
+  eq _ _ = false
 
 addLabels :: forall f v. Functor f => f v -> f (String * v)
 addLabels = map ("" ~ _)
