@@ -235,11 +235,15 @@ renderTask g s t = Style.column
     Lift e -> do
       e' <- renderLift e
       done <| NotRemoved ~ (Annotated a_t <| Lift e')
+    Pair [] -> panic "invalid empty pair"
+    Choose [] -> panic "invalid empty choose"
+    Pair [t] -> panic "invalid single pair, sequencing not implemented yet"
+    Choose [t] -> panic "invalid single pair, sequencing not implemented yet"
     Pair ts -> do
-      t' <- renderGroup And (fixgo << go) ts
+      t' <- renderGroup And go ts
       done <| (if Array.null ts then Removed else NotRemoved) ~ (Annotated a_t <| t')
     Choose ts -> do
-      t' <- renderGroup Or (fixgo << go) ts
+      t' <- renderGroup Or go ts
       done <| (if Array.null ts then Removed else NotRemoved) ~ (Annotated a_t <| t')
 
     ---- Extras
@@ -656,17 +660,39 @@ renderGuardButton isguarded =
 -- |  t_1 ... t_n
 -- | =============
 -- renderGroup :: forall a. Stroke -> (a -> Widget a) -> Array a -> Widget (Array a)
-renderGroup :: Par -> (Checked Task -> Widget (Checked Task)) -> Array (Checked Task) -> Widget (Task (Checked Task))
-renderGroup par trans tasks =
+renderGroup :: Par -> RemovedRenderer -> Array (Checked Task) -> Widget (Task (Checked Task))
+renderGroup par render tasks =
   Style.element
     [ void Attr.onClick ->> other par tasks
     , void Attr.onDoubleClick ->> this par (tasks ++ [ Builder.item ])
     ]
     [ Style.group (stroke par)
-        [ Concur.traverse trans tasks >-> this par
+        [ Concur.traverse (renderSingleGroup (fixgo << render)) ((\t -> NotCondensed ~ t) <-< tasks) >-> mapping >-> this par
         -- , Input.button Action Secondary Small "+" ->> this par (tasks ++ [ Builder.item ])
         ]
     ]
+  where 
+  mapping = (\arr -> arr
+    |> Array.filter (\(c ~ _) -> c == NotCondensed) 
+    >-> snd) 
+
+renderSingleGroup :: Renderer -> IsCondensed * Checked Task -> Widget(IsCondensed * Checked Task) 
+renderSingleGroup render (iscondensed ~ subtask) =
+  Style.column
+    [ Input.popover Above contents <| Style.element [] [Style.column [Style.line Solid empty]]
+    , render subtask >-> Either.in2
+    , Style.line Solid empty
+    ]
+    >-> fix2 NotCondensed subtask
+  where
+  contents = 
+    Style.element 
+      [
+        Attr.onClick ->> Condensed >-> Either.in1 
+      ]
+      [
+        Icon.code_branch
+      ]
 
 ---- Editors ----
 
