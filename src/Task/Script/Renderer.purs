@@ -286,11 +286,10 @@ renderTask g s t = Style.column
       done <| NotRemoved ~ (Annotated a_t <| Share e')
 
 ---- Parts ---------------------------------------------------------------------
-renderNewFork :: forall a. Annotated a Task -> Task (Annotated a Task) -> Annotated a Task 
+renderNewFork :: Checked Task -> Task (Checked Task) -> Checked Task 
 renderNewFork (Annotated a_t _) task = 
   (Annotated a_t <| 
     Pair [
-    -- below is the first pair branch, with the original task in it  
       Annotated a_t <| 
         (Step 
           (MIgnore) 
@@ -298,14 +297,7 @@ renderNewFork (Annotated a_t _) task =
           (Annotated a_t <| 
             Branch ([Constant (B true) ~ (Annotated a_t <| Lift Wildcard)]))
         ) 
-    -- below is manual derivation of Builder.item, aka a new branch of hole
-    , Annotated a_t <| 
-        Step 
-          (MIgnore)
-          (Annotated a_t <| 
-            Hole (ARecord <| from []))
-          (Annotated a_t <| 
-            Branch ([Constant (B true) ~ (Annotated a_t <| Lift Wildcard)]))
+    , Builder.item
     ]
   )
 
