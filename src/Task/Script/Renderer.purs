@@ -167,20 +167,21 @@ renderTask g s t = Style.column
 
     --case following subtask::guarded Select with 1 branch
     Step m t1 orig@(Annotated a_b (Select [l ~ e ~ t2])) -> do
-      (c' ~ m') ~ (b1' ~ t1') ~ (g' ~ bs) <- renderSingleSelect go a_t m t1 (l ~ e ~ t2)
-      done <| NotRemoved ~ case Array.uncons bs of
-          Nothing -> panic "invalid empty select"
-          Just {head: l' ~ e' ~ (b2' ~ t2'), tail:[]} -> case b1' of
+      isdoubled ~ (isguarded ~ (l' ~ e') ~ (c' ~ m')) ~ (isremoved1' ~ t1') ~ (isremoved2' ~ t2') <- renderSingleSelect go a_t m t1 (l ~ e ~ t2)
+      -- Widget ( ((Cont * Match) * IsGuarded * (Label * Expression)) * (ShouldRemove * Checked Task) * (ShouldRemove * Checked Task) )
+      -- (Guarded ~ [label ~ expr ~ (Delay ~ match), "Continue" ~ Builder.always ~ (Delay ~ match)])
+      done <| NotRemoved ~ case isdoubled of
+          NotDoubled -> case isremoved1' of
             Removed -> t2'
-            NotRemoved -> Annotated a_t <| Step m' t1' <| case b2' of
+            NotRemoved -> Annotated a_t <| Step m' t1' <| case isremoved2' of
               Removed -> t2'
-              NotRemoved -> case (c' ~ g') of
+              NotRemoved -> case (c' ~ isguarded) of
                 (Hurry ~ Guarded) -> Annotated a_b <| Branch ([e' ~ t2'])
                 (Hurry ~ NotGuarded) -> Annotated a_b <| Branch ([Constant (B true) ~ t2' ])
                 (Delay ~ Guarded) -> Annotated a_b <| Select [l' ~ e' ~ t2']
                 (Delay ~ NotGuarded) -> Annotated a_b <| Select [l' ~ Constant (B true) ~ t2' ]
                 (New ~ _) -> Builder.new orig
-          Just {head: l' ~ e' ~ (b2' ~ t2'), tail: _} -> Annotated a_t <| Step m' t1' <| Annotated a_b <| Select([l' ~ e' ~ t2', "Continue" ~ Builder.always ~ Builder.item ])
+          Doubled -> Annotated a_t <| Step m' t1' <| Annotated a_b <| Select([l' ~ e' ~ t2', "Continue" ~ Builder.always ~ Builder.item ])
 
     --case following subtask::guarded Select with more than 1 branch
     Step m t1 orig@(Annotated a_b (Select bs)) -> do
@@ -528,24 +529,6 @@ renderSingleBranch render status match sub1 branch@(expr ~ sub2) =
     >-> fix3 (NotRemoved ~ sub1) (NotRemoved ~ sub2) (Guarded ~ [expr ~ (Hurry ~ match)])
     >-> reorder8
 
-{-
-renderSingleSelect :: RemovedRenderer -> Status -> Match -> Checked Task -> Label * Expression * Checked Task -> Widget ((Cont * Match) * (ShouldRemove * Checked Task) * (IsGuarded * LabeledBranches(ShouldRemove * Checked Task)))
-renderSingleSelect render status match sub1 branch@(label ~ expr ~ sub2) = 
-  Style.element [
-    void Attr.onDoubleClick ->> Either.in3 (Guarded ~ [label ~ expr ~ (Delay ~ match), "Continue" ~ Builder.always ~ (Delay ~ match)])
-  ]
-  [ Style.column
-      [ render sub1 >-> Either.in1
-      , renderGuardedSelect status Guarded label expr Delay match >-> Either.in3
-      , render sub2 >-> Either.in2
-      ]
-  ]
-    >-> fix3 (NotRemoved ~ sub1) (NotRemoved ~ sub2) (Guarded ~ [(label ~ expr ~ (Delay ~ match))])
-    >-> reorder9
-
--}
-
-
 renderEnd :: forall a. (a -> Widget (ShouldRemove * a)) -> Status -> Match -> a -> Widget (Cont * Match * (ShouldRemove * a))
 renderEnd render status args@(MRecord row) subtask =
   Style.column
@@ -651,19 +634,21 @@ renderSelect render (iscondensed ~ label ~ guard ~ subtask@(Annotated status _))
         Icon.code_branch
       ]
 
-renderSingleSelect :: RemovedRenderer -> Status -> Match -> Checked Task -> Label * Expression * Checked Task -> Widget ((Cont * Match) * (ShouldRemove * Checked Task) * (IsGuarded * LabeledBranches(ShouldRemove * Checked Task)))
+renderSingleSelect :: RemovedRenderer -> Status -> Match -> Checked Task -> Label * Expression * Checked Task -> Widget ( (IsDoubled) * (IsGuarded * (Label * Expression) * (Cont * Match)) * (ShouldRemove * Checked Task) * (ShouldRemove * Checked Task) )
 renderSingleSelect render status match sub1 branch@(label ~ expr ~ sub2) = 
   Style.element [
-    void Attr.onDoubleClick ->> Either.in3 (Guarded ~ [label ~ expr ~ (Delay ~ match), "Continue" ~ Builder.always ~ (Delay ~ match)])
+    --void Attr.onDoubleClick ->> Either.in3 (Guarded ~ [label ~ expr ~ (Delay ~ match), "Continue" ~ Builder.always ~ (Delay ~ match)])
+    void Attr.onDoubleClick ->> Either.in1 (Doubled)
   ]
   [ Style.column
-      [ render sub1 >-> Either.in1
-      , renderGuardedSelect status Guarded label expr Delay match >-> Either.in3
-      , render sub2 >-> Either.in2
+      [ render sub1 >-> Either.in3
+      , renderGuardedSelect status Guarded label expr Delay match >-> Either.in2 -- Widget (IsGuarded * (Label * Expression) * (Cont * Match))
+      , render sub2 >-> Either.in4
       ]
   ]
-    >-> fix3 (NotRemoved ~ sub1) (NotRemoved ~ sub2) (Guarded ~ [(label ~ expr ~ (Delay ~ match))])
-    >-> reorder9   -- reorders to (Delay ~ match) (NotRemoved ~ sub1) ([isguarded ~ (label ~ expr ~ (NotRemoved ~ sub2))])
+    -->-> fix3 (NotRemoved ~ sub1) (NotRemoved ~ sub2) (Guarded ~ [(label ~ expr ~ (Delay ~ match))])
+    -->-> reorder9   -- reorders to (Delay ~ match) (NotRemoved ~ sub1) ([isguarded ~ (label ~ expr ~ (NotRemoved ~ sub2))])
+    >-> fix4 NotDoubled (Guarded ~ (label ~ expr) ~ (Delay ~ match)) (NotRemoved ~ sub1) (NotRemoved ~ sub2)
     {-
 
     
@@ -674,13 +659,12 @@ renderSingleSelect render status match sub1 branch@(label ~ expr ~ sub2) =
         ]
     -}
 
-renderGuardedSelect :: Status -> IsGuarded -> Label -> Expression -> Cont -> Match -> Widget (IsGuarded * LabeledBranches(Cont * Match))
+renderGuardedSelect :: Status -> IsGuarded -> Label -> Expression -> Cont -> Match -> Widget (IsGuarded * (Label * Expression) * (Cont * Match))
 renderGuardedSelect status isguarded label expr cont match@(MRecord row) = 
   Style.column
     ([ Input.popover After (renderGuardButton isguarded >-> Either.in1) <| (renderStep status cont match >-> Either.in3)]
     ++ guard ) 
         >-> fix3 isguarded (label ~ expr) (cont ~ match)
-        >-> reorder5
   where
   guard = case isguarded of
     Guarded -> 
@@ -1002,6 +986,10 @@ data IsCondensed
 data IsForked
   = Forked
   | NotForked
+
+data IsDoubled 
+  = Doubled
+  | NotDoubled
 
 class Switch a where
   switch :: a -> a
