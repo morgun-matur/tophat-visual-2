@@ -181,7 +181,8 @@ div {
   min-width: 20pc;
 }
 .layout-side.side-top.dist-lg {
-  bottom: 2.25pc;
+  bottom: 20pc;
+  left: 49%;
   min-width: 20pc;
 }
 .layout-side.side-left.dist-sm {
