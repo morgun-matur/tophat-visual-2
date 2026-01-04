@@ -945,6 +945,14 @@ data IsGuarded
   = Guarded
   | NotGuarded
 
+data ShouldRemove
+  = Removed
+  | NotRemoved
+
+data IsCondensed
+  = Condensed
+  | NotCondensed
+
 data IsForked
   = Forked
   | NotForked
@@ -968,14 +976,6 @@ instance Switch Cont where
 instance Switch IsGuarded where
   switch Guarded = NotGuarded
   switch NotGuarded = Guarded
-
-instance Switch ShouldRemove where
-  switch Removed = NotRemoved
-  switch NotRemoved = Removed
-
-instance Switch IsCondensed where
-  switch Condensed = NotCondensed
-  switch NotCondensed = Condensed
 
 instance Switch IsForked where
   switch Forked = NotForked
