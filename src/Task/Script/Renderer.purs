@@ -110,7 +110,7 @@ renderTask g s t = Style.column
 
     -- case following subtask::unguarded Branch of other
     Step m t1 orig@(Annotated a_b (Branch [ Constant (B true) ~ t2 ])) -> do
-      c' ~ m' ~ (b1' ~ t1') ~ (b2' ~ t2') ~ g' ~ e' <- renderSingleUnguarded go a_t (Constant (B true)) Hurry m t1 t2
+      c' ~ m' ~ (b1' ~ t1') ~ (b2' ~ t2') ~ g' ~ e' <- renderSingleUnguarded go a_t Hurry m t1 t2
       done <| NotRemoved ~ case b1' of
         Removed -> t2'
         NotRemoved -> (Annotated a_t <| Step m' t1' <| case b2' of
@@ -124,24 +124,23 @@ renderTask g s t = Style.column
 
     -- case following subtask::guarded Branch with 1 branch
     Step m t1 orig@(Annotated a_b (Branch [ e ~ t2 ])) -> do
-      (c' ~ m') ~ (b1' ~ t1') ~ (g' ~ bs) <- renderSingleBranch go a_t m t1 (e ~ t2)
-      done <| NotRemoved ~ case Array.uncons bs of 
-        Nothing -> panic "invalid empty branch"
-        Just {head: e' ~ (b2' ~ t2'), tail: []} -> case b1' of
+      isdoubled' ~ (isguarded' ~ e' ~ (c' ~ m')) ~ (isremoved1' ~ t1') ~ (isremoved2' ~ t2') <- renderSingleBranch go a_t m t1 (e ~ t2)
+      done <| NotRemoved ~ case isdoubled' of 
+        NotDoubled -> case isremoved1' of
           Removed -> t2'
-          NotRemoved -> Annotated a_t <| Step m' t1' <| case b2' of
+          NotRemoved -> Annotated a_t <| Step m' t1' <| case isremoved2' of
             Removed ->  t2'
-            NotRemoved -> case (c' ~ g') of
+            NotRemoved -> case (c' ~ isguarded') of
               (Hurry ~ Guarded) -> Annotated a_b <| Branch [e' ~ t2']
               (Hurry ~ NotGuarded) -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
               (Delay ~ Guarded) -> Annotated a_b <| Select ["Continue" ~ e' ~ t2']
               (Delay ~ NotGuarded)-> Annotated a_b <| Select ["Continue" ~ Constant (B true) ~ t2' ]
               (New ~ _) -> Builder.new orig
-        Just {head: e' ~ (b2' ~ t2'), tail: _} -> Annotated a_t <| Step m' t1' <| Annotated a_b <| Branch([e' ~ t2', Builder.always ~ Builder.item ])
+        Doubled -> Annotated a_t <| Step m' t1' <| Annotated a_b <| Branch([e' ~ t2', Builder.always ~ Builder.item ])
 
     -- case following subtask::guarded Branch with more than 1 branch
     Step m t1 orig@(Annotated a_b (Branch bs)) -> do
-      c' ~ m' ~ (b1' ~ t1') ~ bs' <- renderBranches go a_t m t1 bs
+      (c' ~ m') ~ (b1' ~ t1') ~ bs' <- renderBranches go a_t m t1 bs
       done <| case b1' of
         Removed -> Removed ~ (subtask a_b c' bs')
         NotRemoved -> NotRemoved ~ (Annotated a_t <| Step m' t1' <| subtask a_b c' bs')
@@ -153,7 +152,7 @@ renderTask g s t = Style.column
 
     -- case following subtask::unguarded Select
     Step m t1 orig@(Annotated a_b (Select [ "Continue" ~ Constant (B true) ~ t2 ])) -> do
-      c' ~ m' ~ (b1' ~ t1') ~ (b2' ~ t2') ~ g' ~ e' <- renderSingleUnguarded go a_t (Constant (B true)) Delay m t1 t2
+      c' ~ m' ~ (b1' ~ t1') ~ (b2' ~ t2') ~ g' ~ e' <- renderSingleUnguarded go a_t Delay m t1 t2
       done <| NotRemoved ~ case b1' of
         Removed -> t2'
         NotRemoved -> (Annotated a_t <| Step m' t1' <| case b2' of
@@ -167,15 +166,13 @@ renderTask g s t = Style.column
 
     --case following subtask::guarded Select with 1 branch
     Step m t1 orig@(Annotated a_b (Select [l ~ e ~ t2])) -> do
-      isdoubled ~ (isguarded ~ (l' ~ e') ~ (c' ~ m')) ~ (isremoved1' ~ t1') ~ (isremoved2' ~ t2') <- renderSingleSelect go a_t m t1 (l ~ e ~ t2)
-      -- Widget ( ((Cont * Match) * IsGuarded * (Label * Expression)) * (ShouldRemove * Checked Task) * (ShouldRemove * Checked Task) )
-      -- (Guarded ~ [label ~ expr ~ (Delay ~ match), "Continue" ~ Builder.always ~ (Delay ~ match)])
-      done <| NotRemoved ~ case isdoubled of
+      isdoubled' ~ (isguarded' ~ (l' ~ e') ~ (c' ~ m')) ~ (isremoved1' ~ t1') ~ (isremoved2' ~ t2') <- renderSingleSelect go a_t m t1 (l ~ e ~ t2)
+      done <| NotRemoved ~ case isdoubled' of
           NotDoubled -> case isremoved1' of
             Removed -> t2'
             NotRemoved -> Annotated a_t <| Step m' t1' <| case isremoved2' of
               Removed -> t2'
-              NotRemoved -> case (c' ~ isguarded) of
+              NotRemoved -> case (c' ~ isguarded') of
                 (Hurry ~ Guarded) -> Annotated a_b <| Branch ([e' ~ t2'])
                 (Hurry ~ NotGuarded) -> Annotated a_b <| Branch ([Constant (B true) ~ t2' ])
                 (Delay ~ Guarded) -> Annotated a_b <| Select [l' ~ e' ~ t2']
@@ -505,29 +502,29 @@ renderOptionWithLabel status label guard =
     ]
     >-> fix2 label guard
 
-renderSingleUnguarded :: forall a. (a -> Widget (ShouldRemove * a)) -> Status -> Expression -> Cont -> Match -> a -> a -> Widget (Cont * Match * (ShouldRemove * a) * (ShouldRemove * a) * IsGuarded * Expression)
-renderSingleUnguarded render status expr cont match sub1 sub2 =
+renderSingleUnguarded :: forall a. (a -> Widget (ShouldRemove * a)) -> Status -> Cont -> Match -> a -> a -> Widget (Cont * Match * (ShouldRemove * a) * (ShouldRemove * a) * IsGuarded * Expression)
+renderSingleUnguarded render status cont match sub1 sub2 =
   Style.column
     [ render sub1 >-> Either.in1
-    , renderGuardedStep status NotGuarded expr cont match >-> Either.in3
+    , renderGuardedStep status NotGuarded (Constant (B true)) cont match >-> Either.in3
     , render sub2 >-> Either.in2
     ]
-    >-> fix3 (NotRemoved ~ sub1) (NotRemoved ~ sub2) (NotGuarded ~ expr ~ (cont ~ match))
+    >-> fix3 (NotRemoved ~ sub1) (NotRemoved ~ sub2) (NotGuarded ~ (Constant (B true)) ~ (cont ~ match))
     >-> reorder6
 
-renderSingleBranch :: RemovedRenderer -> Status -> Match -> Checked Task -> Expression * Checked Task -> Widget((Cont * Match) * (ShouldRemove * Checked Task) * (IsGuarded * Array (Expression * (ShouldRemove * Checked Task))))
+renderSingleBranch :: RemovedRenderer -> Status -> Match -> Checked Task -> Expression * Checked Task -> Widget(IsDoubled * (IsGuarded * Expression * (Cont * Match)) * (ShouldRemove * Checked Task) * (ShouldRemove * Checked Task))
 renderSingleBranch render status match sub1 branch@(expr ~ sub2) = 
   Style.element [
-    void Attr.onDoubleClick ->> Either.in3 (Guarded ~ [expr ~ (Hurry ~ match), Builder.always ~ (Hurry ~ match)])
+    --void Attr.onDoubleClick ->> Either.in3 (Guarded ~ [expr ~ (Hurry ~ match), Builder.always ~ (Hurry ~ match)])
+    void Attr.onDoubleClick ->> Either.in1 Doubled
   ]
   [ Style.column
-      [ render sub1 >-> Either.in1
-      , renderGuardedStep status Guarded expr Hurry match >-> (\(g ~ e ~ (c ~ m)) -> g ~ [e ~ (c ~ m)]) >-> Either.in3
-      , render sub2 >-> Either.in2
+      [ render sub1 >-> Either.in3
+      , renderGuardedStep status Guarded expr Hurry match >-> (\(g ~ e ~ (c ~ m)) -> g ~ e ~ (c ~ m)) >-> Either.in2
+      , render sub2 >-> Either.in4
       ]
   ]
-    >-> fix3 (NotRemoved ~ sub1) (NotRemoved ~ sub2) (Guarded ~ [expr ~ (Hurry ~ match)])
-    >-> reorder8
+    >-> fix4 NotDoubled (Guarded ~ expr ~ (Hurry ~ match)) (NotRemoved ~ sub1) (NotRemoved ~ sub2)
 
 renderEnd :: forall a. (a -> Widget (ShouldRemove * a)) -> Status -> Match -> a -> Widget (Cont * Match * (ShouldRemove * a))
 renderEnd render status args@(MRecord row) subtask =
@@ -552,20 +549,19 @@ renderEnd _ _ _ _ = todo "other matches in end rendering"
 
 ---- Branches ----
 
-renderBranches :: RemovedRenderer -> Status -> Match -> Checked Task -> Branches (Checked Task) -> Widget (Cont * Match * (ShouldRemove * Checked Task) * Branches (Checked Task))
+renderBranches :: RemovedRenderer -> Status -> Match -> Checked Task -> Branches (Checked Task) -> Widget ((Cont * Match) * (ShouldRemove * Checked Task) * Branches (Checked Task))
 renderBranches render status match subtask branches =
   Style.column
-    [ render subtask >-> Either.in1
-    , renderStep status Hurry match >-> Either.in3
+    [ render subtask >-> Either.in2
+    , renderStep status Hurry match >-> Either.in1
     , Style.element 
-        [ void Attr.onDoubleClick ->> Either.in2 (branches ++ [ Builder.always ~ Builder.item ]) 
+        [ void Attr.onDoubleClick ->> Either.in3 (branches ++ [ Builder.always ~ Builder.item ]) 
         ]
         [ Style.branch
-            [ Concur.traverse (renderBranch (fixgo << render)) ((\(expr ~ t) -> NotCondensed ~ expr ~ t) <-< branches) >-> mapping >-> Either.in2 ]
+            [ Concur.traverse (renderBranch (fixgo << render)) ((\(expr ~ t) -> NotCondensed ~ expr ~ t) <-< branches) >-> mapping >-> Either.in3 ]
         ]
     ]
-      >-> fix3 (NotRemoved ~ subtask) branches (Hurry ~ match)
-      >-> reorder4
+      >-> fix3 (Hurry ~ match) (NotRemoved ~ subtask) branches
     where 
     mapping = (\arr -> arr
       |> Array.filter (\(con ~ _ ~ _) -> con == NotCondensed) 
@@ -574,14 +570,13 @@ renderBranches render status match subtask branches =
 renderBranch :: Renderer -> IsCondensed * Expression * Checked Task -> Widget (IsCondensed * Expression * Checked Task)
 renderBranch render (iscondensed ~ guard ~ subtask@(Annotated status _)) =
   Style.column
-  [ Input.popover Above contents <| Style.element [] [renderOption status guard >-> Either.in2]
-  , Style.line Dashed empty
-  , Style.line Dashed empty
-  , render subtask >-> Either.in3
-  , Style.line Solid empty
-  ]
-    
-      >-> fix3 NotCondensed guard subtask
+    [ Input.popover Above contents <| Style.element [] [renderOption status guard >-> Either.in2]
+    , Style.line Dashed empty
+    , Style.line Dashed empty
+    , render subtask >-> Either.in3
+    , Style.line Solid empty
+    ]
+    >-> fix3 NotCondensed guard subtask
   where
   contents = 
     Style.element 
@@ -910,11 +905,6 @@ reorder4 (a ~ b ~ c ~ d) = (c ~ d ~ a ~ b)
 reorder6 :: forall a b c d e f. a * b * c * d * e * f -> e * f * a * b * c * d
 reorder6 (a ~ b ~ c ~ d ~ e ~ f) = (e ~ f ~ a ~ b ~ c ~ d)
 
-reorder8 :: forall a b c d e g h i. (a * b) * (c * d) * (e * Array (g * (h * i))) -> (h * i) * (a * b) * (e * Array (g * (c * d)))
-reorder8 ((a ~ b) ~ (c ~ d) ~ (e ~ [g ~ (h ~ i)])) = ((h ~ i) ~ (a ~ b) ~ (e ~ [g ~ (c ~ d)]))
-reorder8 ((a ~ b) ~ (c ~ d) ~ (e ~ [g1 ~ (h1 ~ i1), g2 ~ (h2 ~ i2)])) = ((h1 ~ i1) ~ (a ~ b) ~ (e ~ [g1 ~ (c ~ d), g2 ~ (c ~ d)]))
-reorder8 ( _ ~ _ ~ _ ) = panic "test"
-
 assoc :: forall a b c. (a * b) * c -> a * (b * c)
 assoc ((a ~ b) ~ c) = a ~ b ~ c
 
@@ -954,14 +944,6 @@ style New = Filled -- NOTE: just to make it total...
 data IsGuarded 
   = Guarded
   | NotGuarded
-
-data ShouldRemove
-  = Removed
-  | NotRemoved
-
-data IsCondensed
-  = Condensed
-  | NotCondensed
 
 data IsForked
   = Forked
