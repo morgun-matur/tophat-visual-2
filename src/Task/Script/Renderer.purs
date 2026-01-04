@@ -185,7 +185,7 @@ renderTask g s t = Style.column
 
     --case following subtask::guarded Select with more than 1 branch
     Step m t1 orig@(Annotated a_b (Select bs)) -> do
-      c' ~ m' ~ (b1' ~ t1') ~ bs' <- renderSelects go a_t m t1 bs
+      (c' ~ m') ~ (b1' ~ t1') ~ bs' <- renderSelects go a_t m t1 bs
       done <| case b1' of
         Removed -> Removed ~ (subtask a_b c' bs') -- pass Removed to do case distinction to satisfy invariant 
         NotRemoved -> NotRemoved ~ (Annotated a_t <| Step m' t1' <| subtask a_b c' bs')
@@ -596,18 +596,17 @@ renderBranch render (iscondensed ~ guard ~ subtask@(Annotated status _)) =
 --     , renderTask task
 --     ]
 
-renderSelects :: RemovedRenderer -> Status -> Match -> Checked Task -> LabeledBranches (Checked Task) -> Widget (Cont * Match * (ShouldRemove * Checked Task) * LabeledBranches (Checked Task))
+renderSelects :: RemovedRenderer -> Status -> Match -> Checked Task -> LabeledBranches (Checked Task) -> Widget ((Cont * Match) * (ShouldRemove * Checked Task) * LabeledBranches (Checked Task))
 renderSelects render status match subtask branches =
   Style.column
-    [ render subtask >-> Either.in1
-    , renderStep status Delay match >-> Either.in3
-    , Style.element [ void Attr.onDoubleClick ->> Either.in2 (branches ++ [ "Continue" ~ Builder.always ~ Builder.item ]) ]
+    [ render subtask >-> Either.in2
+    , renderStep status Delay match >-> Either.in1
+    , Style.element [ void Attr.onDoubleClick ->> Either.in3 (branches ++ [ "Continue" ~ Builder.always ~ Builder.item ]) ]
       [ Style.branch 
-          [ Concur.traverse (renderSelect (fixgo << render)) ((\(l ~ e ~ t) -> NotCondensed ~ l ~ e ~ t) <-< branches) >-> mapping >-> Either.in2 ]  
+          [ Concur.traverse (renderSelect (fixgo << render)) ((\(l ~ e ~ t) -> NotCondensed ~ l ~ e ~ t) <-< branches) >-> mapping >-> Either.in3 ]  
       ]
     ]
-    >-> fix3 (NotRemoved ~ subtask) branches (Delay ~ match)
-    >-> reorder4
+    >-> fix3 (Delay ~ match) (NotRemoved ~ subtask) branches
   where 
   mapping = (\arr -> arr
     |> Array.filter (\(con ~ _ ~ _ ~ _) -> con == NotCondensed) 
@@ -646,18 +645,7 @@ renderSingleSelect render status match sub1 branch@(label ~ expr ~ sub2) =
       , render sub2 >-> Either.in4
       ]
   ]
-    -->-> fix3 (NotRemoved ~ sub1) (NotRemoved ~ sub2) (Guarded ~ [(label ~ expr ~ (Delay ~ match))])
-    -->-> reorder9   -- reorders to (Delay ~ match) (NotRemoved ~ sub1) ([isguarded ~ (label ~ expr ~ (NotRemoved ~ sub2))])
     >-> fix4 NotDoubled (Guarded ~ (label ~ expr) ~ (Delay ~ match)) (NotRemoved ~ sub1) (NotRemoved ~ sub2)
-    {-
-
-    
-    reorder6 (a ~ b ~ c ~ d ~ e ~ f) = (e ~ f ~ a ~ b ~ c ~ d)
-
-      Style.element 
-        [ void Attr.onDoubleClick ->> Either.in2 (branch ++ [ "Continue" ~ Builder.always ~ Builder.item ]) 
-        ]
-    -}
 
 renderGuardedSelect :: Status -> IsGuarded -> Label -> Expression -> Cont -> Match -> Widget (IsGuarded * (Label * Expression) * (Cont * Match))
 renderGuardedSelect status isguarded label expr cont match@(MRecord row) = 
@@ -919,9 +907,6 @@ reorder3 (a ~ b ~ c) = b ~ c ~ a
 reorder4 :: forall a b c d. a * b * c * d -> c * d * a * b
 reorder4 (a ~ b ~ c ~ d) = (c ~ d ~ a ~ b)
 
-reorder5 :: forall a b c d e. a * (b * c) * (d * e) -> a * Array (b * c * (d * e))
-reorder5 (a ~ (b ~ c) ~ (d ~ e)) = (a ~ [b ~ c ~ (d ~ e)])
-
 reorder6 :: forall a b c d e f. a * b * c * d * e * f -> e * f * a * b * c * d
 reorder6 (a ~ b ~ c ~ d ~ e ~ f) = (e ~ f ~ a ~ b ~ c ~ d)
 
@@ -929,11 +914,6 @@ reorder8 :: forall a b c d e g h i. (a * b) * (c * d) * (e * Array (g * (h * i))
 reorder8 ((a ~ b) ~ (c ~ d) ~ (e ~ [g ~ (h ~ i)])) = ((h ~ i) ~ (a ~ b) ~ (e ~ [g ~ (c ~ d)]))
 reorder8 ((a ~ b) ~ (c ~ d) ~ (e ~ [g1 ~ (h1 ~ i1), g2 ~ (h2 ~ i2)])) = ((h1 ~ i1) ~ (a ~ b) ~ (e ~ [g1 ~ (c ~ d), g2 ~ (c ~ d)]))
 reorder8 ( _ ~ _ ~ _ ) = panic "test"
-
-reorder9 :: forall a b c d e f g h i. (a * b) * (c * d) * (e * Array (f * g * (h * i))) -> (h * i) * (a * b) * (e * Array (f * g * (c * d)))
-reorder9 ((a ~ b) ~ (c ~ d) ~ (e ~ [f ~ g ~ (h ~ i)])) = ((h ~ i) ~ (a ~ b) ~ (e ~ [f ~ g ~ (c ~ d)]))
-reorder9 ((a ~ b) ~ (c ~ d) ~ (e ~ [f1 ~ g1 ~ (h1 ~ i1), f2 ~ g2 ~ (h2 ~ i2)])) = ((h1 ~ i1) ~ (a ~ b) ~ (e ~ [f1 ~ g1 ~ (c ~ d), f2 ~ g2 ~ (c ~ d)]))
-reorder9 ( _ ~ _ ~ _ ) = panic "test"
 
 assoc :: forall a b c. (a * b) * c -> a * (b * c)
 assoc ((a ~ b) ~ c) = a ~ b ~ c
