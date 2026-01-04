@@ -335,17 +335,6 @@ renderForked isforked =
     Forked -> Icon.code_branch -- note: should be flipped code_fork
     NotForked -> Icon.code_branch
 
-defaultOptions :: IsRemoved * IsForked
-defaultOptions = NotRemoved ~ NotForked
-
-type UserOptions = IsRemoved * IsForked
-
-getFirstUserOption :: UserOptions -> IsRemoved 
-getFirstUserOption = fst 
-
-getSecondUserOption :: UserOptions -> IsForked
-getSecondUserOption = snd
-
 ---- General ----
 
 -- | [[ * |   n   ]]
@@ -509,15 +498,11 @@ renderSingleUnguarded render status cont match sub1 sub2 =
     , renderGuardableStep status NotGuarded (Constant (B true)) cont match >-> Either.in1
     , render sub2 >-> Either.in3
     ]
-    -->-> fix3 (NotRemoved ~ sub1) (NotRemoved ~ sub2) (NotGuarded ~ (Constant (B true)) ~ (cont ~ match))
-    -->-> reorder6
-    --Cont * Match * (IsRemoved * a) * (IsRemoved * a) * IsGuarded * Expression
     >-> fix3 (NotGuarded ~ (Constant (B true)) ~ (cont ~ match)) (NotRemoved ~ sub1) (NotRemoved ~ sub2)
 
 renderSingleBranch :: RemovedRenderer -> Status -> Match -> Checked Task -> Expression * Checked Task -> Widget(IsDoubled * (IsGuarded * Expression * (Cont * Match)) * (IsRemoved * Checked Task) * (IsRemoved * Checked Task))
 renderSingleBranch render status match sub1 branch@(expr ~ sub2) = 
   Style.element [
-    --void Attr.onDoubleClick ->> Either.in3 (Guarded ~ [expr ~ (Hurry ~ match), Builder.always ~ (Hurry ~ match)])
     void Attr.onDoubleClick ->> Either.in1 Doubled
   ]
   [ Style.column
@@ -633,12 +618,11 @@ renderSelect render (iscondensed ~ label ~ guard ~ subtask@(Annotated status _))
 renderSingleSelect :: RemovedRenderer -> Status -> Match -> Checked Task -> Label * Expression * Checked Task -> Widget ( (IsDoubled) * (IsGuarded * (Label * Expression) * (Cont * Match)) * (IsRemoved * Checked Task) * (IsRemoved * Checked Task) )
 renderSingleSelect render status match sub1 branch@(label ~ expr ~ sub2) = 
   Style.element [
-    --void Attr.onDoubleClick ->> Either.in3 (Guarded ~ [label ~ expr ~ (Delay ~ match), "Continue" ~ Builder.always ~ (Delay ~ match)])
     void Attr.onDoubleClick ->> Either.in1 (Doubled)
   ]
   [ Style.column
       [ render sub1 >-> Either.in3
-      , renderGuardedSelect status Guarded label expr Delay match >-> Either.in2 -- Widget (IsGuarded * (Label * Expression) * (Cont * Match))
+      , renderGuardedSelect status Guarded label expr Delay match >-> Either.in2
       , render sub2 >-> Either.in4
       ]
   ]
@@ -659,11 +643,6 @@ renderGuardedSelect status isguarded label expr cont match@(MRecord row) =
     NotGuarded -> []
 renderGuardedSelect _ _ _ _ _ _ = todo "no"
 
-{-
-
-a~(b~c)~(d~e) -> a~(b~c~(d~e))
--}
-
 renderGuardButton :: IsGuarded -> Widget(IsGuarded)
 renderGuardButton isguarded = 
   Style.column
@@ -676,6 +655,7 @@ renderGuardButton isguarded =
         ]
       ]
     >-> fix1 isguarded
+
 ---- Combinators ----
 
 -- | ==============
@@ -989,8 +969,21 @@ instance Eq IsCondensed where
   eq NotCondensed NotCondensed = true
   eq _ _ = false
 
+
 addLabels :: forall f v. Functor f => f v -> f (String * v)
 addLabels = map ("" ~ _)
 
 removeLabels :: forall f v k. Functor f => f (k * v) -> f v
 removeLabels = map snd
+
+
+type UserOptions = IsRemoved * IsForked
+
+defaultOptions :: UserOptions
+defaultOptions = NotRemoved ~ NotForked
+
+getFirstUserOption :: UserOptions -> IsRemoved 
+getFirstUserOption = fst 
+
+getSecondUserOption :: UserOptions -> IsForked
+getSecondUserOption = snd
