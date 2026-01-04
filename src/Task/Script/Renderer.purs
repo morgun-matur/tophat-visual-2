@@ -28,7 +28,7 @@ import Task.Script.World (World, Parameters)
 ---- Rendering -----------------------------------------------------------------
 
 type Renderer = Checked Task -> Widget (Checked Task)
-type RemovedRenderer = Checked Task -> Widget (ShouldRemove * Checked Task)
+type RemovedRenderer = Checked Task -> Widget (IsRemoved * Checked Task)
 
 main :: World -> Name -> Widget (Name * Parameters * Checked Task)
 main { types: s, context: g, tasks: ts } n =
@@ -76,7 +76,7 @@ renderTips = Text.bullets
 renderNotes :: forall a. Widget a
 renderNotes = Text.text "Editing matches (results) and expressions is currently not supported, as is adding fresh tasks to the library."
 
-fixgo :: Widget (ShouldRemove * Checked Task) -> Widget (Checked Task)
+fixgo :: Widget (IsRemoved * Checked Task) -> Widget (Checked Task)
 fixgo g = do
   (_~t) <- g 
   done <| t
@@ -87,7 +87,7 @@ renderTask g s t = Style.column
   [ fixgo <| go t
   ]
   where
-  go :: Checked Task -> Widget (ShouldRemove * Checked Task)
+  go :: Checked Task -> Widget (IsRemoved * Checked Task)
   go (Annotated a_t t) = case t of
     ---- Steps
     -- NOTE:
@@ -110,12 +110,12 @@ renderTask g s t = Style.column
 
     -- case following subtask::unguarded Branch of other
     Step m t1 orig@(Annotated a_b (Branch [ Constant (B true) ~ t2 ])) -> do
-      c' ~ m' ~ (b1' ~ t1') ~ (b2' ~ t2') ~ g' ~ e' <- renderSingleUnguarded go a_t Hurry m t1 t2
-      done <| NotRemoved ~ case b1' of
+      (isguarded' ~ e' ~ (c' ~ m')) ~ (isremoved1' ~ t1') ~ (isremoved2' ~ t2') <- renderSingleUnguarded go a_t Hurry m t1 t2      
+      done <| NotRemoved ~ case isremoved1' of
         Removed -> t2'
-        NotRemoved -> (Annotated a_t <| Step m' t1' <| case b2' of
+        NotRemoved -> (Annotated a_t <| Step m' t1' <| case isremoved2' of
           Removed -> t2'
-          NotRemoved -> case (c' ~ g') of
+          NotRemoved -> case (c' ~ isguarded') of
             (Hurry ~ Guarded) -> Annotated a_b <| Branch [ Constant (B false) ~ t2' ]
             (Hurry ~ NotGuarded) -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
             (Delay ~ Guarded) -> Annotated a_b <| Select [ "Continue" ~ Constant (B false) ~ t2' ]
@@ -152,12 +152,12 @@ renderTask g s t = Style.column
 
     -- case following subtask::unguarded Select
     Step m t1 orig@(Annotated a_b (Select [ "Continue" ~ Constant (B true) ~ t2 ])) -> do
-      c' ~ m' ~ (b1' ~ t1') ~ (b2' ~ t2') ~ g' ~ e' <- renderSingleUnguarded go a_t Delay m t1 t2
-      done <| NotRemoved ~ case b1' of
+      (isguarded' ~ e' ~ (c' ~ m')) ~ (isremoved1' ~ t1') ~ (isremoved2' ~ t2') <- renderSingleUnguarded go a_t Delay m t1 t2
+      done <| NotRemoved ~ case isremoved1' of
         Removed -> t2'
-        NotRemoved -> (Annotated a_t <| Step m' t1' <| case b2' of
+        NotRemoved -> (Annotated a_t <| Step m' t1' <| case isremoved2' of
           Removed -> t2'
-          NotRemoved -> case (c' ~ g') of
+          NotRemoved -> case (c' ~ isguarded') of
             (Hurry ~ Guarded) -> Annotated a_b <| Branch [ Constant (B false) ~ t2' ]
             (Hurry ~ NotGuarded) -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
             (Delay ~ Guarded) -> Annotated a_b <| Select [ "Continue" ~ Constant (B false) ~ t2' ]
@@ -313,7 +313,7 @@ renderWithOptions a isforked widget =
     Input.popover After contents (widget >-> Either.in1)
     >-> fix2 a defaultOptions --TODO: Cleaner default values
 
-renderRemove :: Widget (ShouldRemove)
+renderRemove :: Widget (IsRemoved)
 renderRemove = 
   Style.element 
   [
@@ -335,12 +335,12 @@ renderForked isforked =
     Forked -> Icon.code_branch -- note: should be flipped code_fork
     NotForked -> Icon.code_branch
 
-defaultOptions :: ShouldRemove * IsForked
+defaultOptions :: IsRemoved * IsForked
 defaultOptions = NotRemoved ~ NotForked
 
-type UserOptions = ShouldRemove * IsForked
+type UserOptions = IsRemoved * IsForked
 
-getFirstUserOption :: UserOptions -> ShouldRemove 
+getFirstUserOption :: UserOptions -> IsRemoved 
 getFirstUserOption = fst 
 
 getSecondUserOption :: UserOptions -> IsForked
@@ -476,8 +476,8 @@ renderStep status cont match@(MRecord row) =
     _ -> Nothing
 renderStep _ _ _ = todo "other matches in step rendering"
 
-renderGuardedStep :: Status -> IsGuarded -> Expression -> Cont -> Match -> Widget (IsGuarded * Expression * (Cont * Match))
-renderGuardedStep status isguarded expr cont match@(MRecord row) = 
+renderGuardableStep :: Status -> IsGuarded -> Expression -> Cont -> Match -> Widget (IsGuarded * Expression * (Cont * Match))
+renderGuardableStep status isguarded expr cont match@(MRecord row) = 
   Style.column
     ( [Input.popover After (renderGuardButton isguarded >-> Either.in1) (renderStep status cont match >-> Either.in3)]
       ++ guard
@@ -485,9 +485,9 @@ renderGuardedStep status isguarded expr cont match@(MRecord row) =
     >-> fix3 isguarded expr (cont ~ match)
   where
   guard = case isguarded of
-    Guarded -> [(renderOption status expr) >-> Either.in2, Style.line Solid empty] -- extra line for consistency with renderGuardedSelect
+    Guarded -> [(renderOption status expr) >-> Either.in2]
     NotGuarded -> []
-renderGuardedStep _ _ _ _ _ = todo "no"
+renderGuardableStep _ _ _ _ _ = todo "no"
 
 renderOption :: Status -> Expression -> Widget Expression
 renderOption status guard =
@@ -502,17 +502,19 @@ renderOptionWithLabel status label guard =
     ]
     >-> fix2 label guard
 
-renderSingleUnguarded :: forall a. (a -> Widget (ShouldRemove * a)) -> Status -> Cont -> Match -> a -> a -> Widget (Cont * Match * (ShouldRemove * a) * (ShouldRemove * a) * IsGuarded * Expression)
+renderSingleUnguarded :: forall a. (a -> Widget (IsRemoved * a)) -> Status -> Cont -> Match -> a -> a -> Widget ((IsGuarded * Expression * (Cont * Match)) * (IsRemoved * a) * (IsRemoved * a))
 renderSingleUnguarded render status cont match sub1 sub2 =
   Style.column
-    [ render sub1 >-> Either.in1
-    , renderGuardedStep status NotGuarded (Constant (B true)) cont match >-> Either.in3
-    , render sub2 >-> Either.in2
+    [ render sub1 >-> Either.in2
+    , renderGuardableStep status NotGuarded (Constant (B true)) cont match >-> Either.in1
+    , render sub2 >-> Either.in3
     ]
-    >-> fix3 (NotRemoved ~ sub1) (NotRemoved ~ sub2) (NotGuarded ~ (Constant (B true)) ~ (cont ~ match))
-    >-> reorder6
+    -->-> fix3 (NotRemoved ~ sub1) (NotRemoved ~ sub2) (NotGuarded ~ (Constant (B true)) ~ (cont ~ match))
+    -->-> reorder6
+    --Cont * Match * (IsRemoved * a) * (IsRemoved * a) * IsGuarded * Expression
+    >-> fix3 (NotGuarded ~ (Constant (B true)) ~ (cont ~ match)) (NotRemoved ~ sub1) (NotRemoved ~ sub2)
 
-renderSingleBranch :: RemovedRenderer -> Status -> Match -> Checked Task -> Expression * Checked Task -> Widget(IsDoubled * (IsGuarded * Expression * (Cont * Match)) * (ShouldRemove * Checked Task) * (ShouldRemove * Checked Task))
+renderSingleBranch :: RemovedRenderer -> Status -> Match -> Checked Task -> Expression * Checked Task -> Widget(IsDoubled * (IsGuarded * Expression * (Cont * Match)) * (IsRemoved * Checked Task) * (IsRemoved * Checked Task))
 renderSingleBranch render status match sub1 branch@(expr ~ sub2) = 
   Style.element [
     --void Attr.onDoubleClick ->> Either.in3 (Guarded ~ [expr ~ (Hurry ~ match), Builder.always ~ (Hurry ~ match)])
@@ -520,13 +522,13 @@ renderSingleBranch render status match sub1 branch@(expr ~ sub2) =
   ]
   [ Style.column
       [ render sub1 >-> Either.in3
-      , renderGuardedStep status Guarded expr Hurry match >-> (\(g ~ e ~ (c ~ m)) -> g ~ e ~ (c ~ m)) >-> Either.in2
+      , renderGuardableStep status Guarded expr Hurry match >-> (\(g ~ e ~ (c ~ m)) -> g ~ e ~ (c ~ m)) >-> Either.in2
       , render sub2 >-> Either.in4
       ]
   ]
     >-> fix4 NotDoubled (Guarded ~ expr ~ (Hurry ~ match)) (NotRemoved ~ sub1) (NotRemoved ~ sub2)
 
-renderEnd :: forall a. (a -> Widget (ShouldRemove * a)) -> Status -> Match -> a -> Widget (Cont * Match * (ShouldRemove * a))
+renderEnd :: forall a. (a -> Widget (IsRemoved * a)) -> Status -> Match -> a -> Widget (Cont * Match * (IsRemoved * a))
 renderEnd render status args@(MRecord row) subtask =
   Style.column
     [ render subtask >-> Either.in3
@@ -549,7 +551,7 @@ renderEnd _ _ _ _ = todo "other matches in end rendering"
 
 ---- Branches ----
 
-renderBranches :: RemovedRenderer -> Status -> Match -> Checked Task -> Branches (Checked Task) -> Widget ((Cont * Match) * (ShouldRemove * Checked Task) * Branches (Checked Task))
+renderBranches :: RemovedRenderer -> Status -> Match -> Checked Task -> Branches (Checked Task) -> Widget ((Cont * Match) * (IsRemoved * Checked Task) * Branches (Checked Task))
 renderBranches render status match subtask branches =
   Style.column
     [ render subtask >-> Either.in2
@@ -591,7 +593,7 @@ renderBranch render (iscondensed ~ guard ~ subtask@(Annotated status _)) =
 --     , renderTask task
 --     ]
 
-renderSelects :: RemovedRenderer -> Status -> Match -> Checked Task -> LabeledBranches (Checked Task) -> Widget ((Cont * Match) * (ShouldRemove * Checked Task) * LabeledBranches (Checked Task))
+renderSelects :: RemovedRenderer -> Status -> Match -> Checked Task -> LabeledBranches (Checked Task) -> Widget ((Cont * Match) * (IsRemoved * Checked Task) * LabeledBranches (Checked Task))
 renderSelects render status match subtask branches =
   Style.column
     [ render subtask >-> Either.in2
@@ -628,7 +630,7 @@ renderSelect render (iscondensed ~ label ~ guard ~ subtask@(Annotated status _))
         Icon.code_branch
       ]
 
-renderSingleSelect :: RemovedRenderer -> Status -> Match -> Checked Task -> Label * Expression * Checked Task -> Widget ( (IsDoubled) * (IsGuarded * (Label * Expression) * (Cont * Match)) * (ShouldRemove * Checked Task) * (ShouldRemove * Checked Task) )
+renderSingleSelect :: RemovedRenderer -> Status -> Match -> Checked Task -> Label * Expression * Checked Task -> Widget ( (IsDoubled) * (IsGuarded * (Label * Expression) * (Cont * Match)) * (IsRemoved * Checked Task) * (IsRemoved * Checked Task) )
 renderSingleSelect render status match sub1 branch@(label ~ expr ~ sub2) = 
   Style.element [
     --void Attr.onDoubleClick ->> Either.in3 (Guarded ~ [label ~ expr ~ (Delay ~ match), "Continue" ~ Builder.always ~ (Delay ~ match)])
@@ -945,7 +947,7 @@ data IsGuarded
   = Guarded
   | NotGuarded
 
-data ShouldRemove
+data IsRemoved
   = Removed
   | NotRemoved
 
