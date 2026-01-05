@@ -147,12 +147,12 @@ renderTask g s t = Style.column
             ((MovedUp ~ NotMovedDown)) ~ (Annotated a_c (Step m2' t3' t4')) -> (Annotated a_t <| Step m2' t3' <| Annotated a_b <| Branch [Constant (B true) ~ Annotated a_c (Step m' t1' t4')] )
             ((MovedUp ~ NotMovedDown) ~ _) -> panic "invalid move button press"
             ((NotMovedUp ~ MovedDown) ~ _) -> panic "invalid move button case"
-            _ -> case(c' ~ isguarded') of
+            _ -> Annotated a_t (Step m' t1' <| case(c' ~ isguarded') of
               (Hurry ~ Guarded) -> Annotated a_b <| Branch [ Constant (B false) ~ t2' ]
               (Hurry ~ NotGuarded) -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
               (Delay ~ Guarded) -> Annotated a_b <| Select [ "Continue" ~ Constant (B false) ~ t2' ]
               (Delay ~ NotGuarded) -> Annotated a_b <| Select [ "Continue" ~ Constant (B true) ~ t2' ]
-              (New ~ _) -> Builder.new orig
+              (New ~ _) -> Builder.new orig)
 
     -- case following subtask::guarded Branch with 1 branch
     Step m t1 orig@(Annotated a_b (Branch [ e ~ t2 ])) -> do
@@ -169,12 +169,12 @@ renderTask g s t = Style.column
               ((MovedUp ~ NotMovedDown)) ~ (Annotated a_c (Step m2' t3' t4')) -> (Annotated a_t <| Step m2' t3' <| Annotated a_b <| Branch [e ~ Annotated a_c (Step m' t1' t4')] )
               ((MovedUp ~ NotMovedDown) ~ _) -> panic "invalid move button press"
               ((NotMovedUp ~ MovedDown) ~ _) -> panic "invalid move button case"
-              _ -> case (c' ~ isguarded') of
+              _ -> Annotated a_t (Step m' t1' <| case (c' ~ isguarded') of
                 (Hurry ~ Guarded) -> Annotated a_b <| Branch [e' ~ t2']
                 (Hurry ~ NotGuarded) -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
                 (Delay ~ Guarded) -> Annotated a_b <| Select ["Continue" ~ e' ~ t2']
                 (Delay ~ NotGuarded)-> Annotated a_b <| Select ["Continue" ~ Constant (B true) ~ t2' ]
-                (New ~ _) -> Builder.new orig
+                (New ~ _) -> Builder.new orig)
 
     -- case following subtask::guarded Branch with more than 1 branch
     Step m t1 orig@(Annotated a_b (Branch bs)) -> do
@@ -204,12 +204,12 @@ renderTask g s t = Style.column
             ((MovedUp ~ NotMovedDown)) ~ (Annotated a_c (Step m2' t3' t4')) -> (Annotated a_t <| Step m2' t3' <| Annotated a_b <| Select ["Continue" ~ Constant (B true) ~ Annotated a_c (Step m' t1' t4')] )
             ((MovedUp ~ NotMovedDown) ~ _) -> panic "invalid move button press"
             ((NotMovedUp ~ MovedDown) ~ _) -> panic "invalid move button case"
-            _ -> case (c' ~ isguarded') of
+            _ -> Annotated a_t (Step m' t1' <| case (c' ~ isguarded') of
               (Hurry ~ Guarded) -> Annotated a_b <| Branch [ Constant (B false) ~ t2' ]
               (Hurry ~ NotGuarded) -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
               (Delay ~ Guarded) -> Annotated a_b <| Select [ "Continue" ~ Constant (B false) ~ t2' ]
               (Delay ~ NotGuarded) -> Annotated a_b <| Select [ "Continue" ~ Constant (B true) ~ t2' ]
-              (New ~ _) -> Builder.new orig
+              (New ~ _) -> Builder.new orig)
 
     --case following subtask::guarded Select with 1 branch
     Step m t1 orig@(Annotated a_b (Select [l ~ e ~ t2])) -> do
@@ -226,12 +226,12 @@ renderTask g s t = Style.column
               ((MovedUp ~ NotMovedDown)) ~ (Annotated a_c (Step m2' t3' t4')) -> (Annotated a_t <| Step m2' t3' <| Annotated a_b <| Select [l ~ e ~ Annotated a_c (Step m' t1' t4')] )
               ((MovedUp ~ NotMovedDown) ~ _) -> panic "invalid move button press"
               ((NotMovedUp ~ MovedDown) ~ _) -> panic "invalid move button case"
-              _ ->  case (c' ~ isguarded') of
+              _ -> Annotated a_t (Step m' t1' <| case (c' ~ isguarded') of
                 (Hurry ~ Guarded) -> Annotated a_b <| Branch ([e' ~ t2'])
                 (Hurry ~ NotGuarded) -> Annotated a_b <| Branch ([Constant (B true) ~ t2' ])
                 (Delay ~ Guarded) -> Annotated a_b <| Select [l' ~ e' ~ t2']
                 (Delay ~ NotGuarded) -> Annotated a_b <| Select [l' ~ Constant (B true) ~ t2' ]
-                (New ~ _) -> Builder.new orig
+                (New ~ _) -> Builder.new orig)
                 
     --case following subtask::guarded Select with more than 1 branch
     Step m t1 orig@(Annotated a_b (Select bs)) -> do
@@ -247,22 +247,6 @@ renderTask g s t = Style.column
         Hurry -> Annotated a_b <| Branch (removeLabels bs')
         Delay -> Annotated a_b <| Select bs'
         New -> Builder.new orig
-
-{-
-Step m t1 orig@(Annotated a_b (Branch bs)) -> do
-      (didmove1' ~ c' ~ m') ~ (isremoved1' ~ _ ~ t1') ~ bs' <- renderBranches go a_t m t1 bs
-      done <| case isremoved1' of
-        Removed -> Removed ~ defaultDidMove ~ (subtask a_b c' bs')
-        NotRemoved -> case didmove1' of 
-          (MovedUp ~ NotMovedDown) -> NotRemoved ~ (MovedUp ~ NotMovedDown) ~ (Annotated a_t t) 
-          --(NotMovedUp ~ MovedDown) -> do nothing, just ignore
-          _ -> NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| subtask a_b c' bs')
-      where
-      subtask a_b c' bs' = case c' of
-        Hurry -> Annotated a_b <| Branch bs'
-        Delay -> Annotated a_b <| Select (addLabels bs')
-        New -> Builder.new orig
--}
 
     Step _ _ _ -> panic "invalid single step"
     -- m' ~ t1' ~ t2' <- renderSingle Hurry go m t1 t2
