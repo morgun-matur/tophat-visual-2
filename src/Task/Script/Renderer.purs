@@ -243,15 +243,15 @@ renderTask g s t = Style.column
     ---- Editors
     Enter n -> do
       n' ~ o <- renderWithOptions n NotForked (renderEnter s n)
-      done <| case getSecondUserOption o of 
-        Forked -> (getFirstUserOption o) ~ defaultDidMove ~ renderNewFork (Annotated a_t t) (Enter n')
-        NotForked -> (getFirstUserOption o) ~ defaultDidMove ~ (Annotated a_t <| Enter n')
+      done <| (getFirstUserOption o) ~ defaultDidMove ~ case getSecondUserOption o of 
+        Forked -> renderNewFork (Annotated a_t (Enter n'))
+        NotForked -> (Annotated a_t (Enter n'))
    
     Update e -> do
       e' ~ o <- renderWithOptions e NotForked (renderUpdate e)
-      done <| case getSecondUserOption o of 
-        Forked -> (getFirstUserOption o) ~ defaultDidMove ~ renderNewFork (Annotated a_t t) (Update e')
-        NotForked -> (getFirstUserOption o) ~ defaultDidMove ~ (Annotated a_t <| Update e')
+      done <| (getFirstUserOption o) ~ defaultDidMove ~ case getSecondUserOption o of 
+        Forked ->  renderNewFork (Annotated a_t (Update e'))
+        NotForked -> (Annotated a_t (Update e'))
     
     Change e -> todo "change"
     -- Change  e -> do
@@ -261,15 +261,15 @@ renderTask g s t = Style.column
     
     View e -> do
       e' ~ o <- renderWithOptions e NotForked (renderView e)
-      done <| case getSecondUserOption o of
-        Forked -> (getFirstUserOption o) ~ defaultDidMove ~ renderNewFork (Annotated a_t t) (View e')
-        NotForked -> (getFirstUserOption o) ~ defaultDidMove ~ (Annotated a_t <| View e')
+      done <| (getFirstUserOption o) ~ defaultDidMove ~ case getSecondUserOption o of
+        Forked -> renderNewFork (Annotated a_t (View e'))
+        NotForked -> (Annotated a_t (View e'))
     
     Watch e -> do
       e' ~ o <- renderWithOptions e NotForked (renderWatch a_t e)
-      done <| case getSecondUserOption o of
-        Forked -> (getFirstUserOption o) ~ defaultDidMove ~ renderNewFork (Annotated a_t t) (Watch e')
-        NotForked -> (getFirstUserOption o) ~ defaultDidMove ~ (Annotated a_t <| Watch e')
+      done <| (getFirstUserOption o) ~ defaultDidMove ~ case getSecondUserOption o of
+        Forked -> renderNewFork (Annotated a_t (Watch e'))
+        NotForked -> (Annotated a_t (Watch e'))
 
     ---- Combinators
     Lift e -> do
@@ -281,33 +281,33 @@ renderTask g s t = Style.column
     Choose [t] -> panic "invalid single pair, sequencing not implemented yet"
     Pair ts -> do
       t' ~ (_ ~ o) <- renderGroup And go ts
-      done <| NotRemoved ~ defaultDidMove ~ case (getSecondUserOption o) of
-        Forked -> renderNewFork (Annotated a_t t) (t')
-        NotForked -> (Annotated a_t <| t')
+      done <| (getFirstUserOption o) ~ defaultDidMove ~ case (getSecondUserOption o) of
+          Forked -> renderNewFork (Annotated a_t t')
+          NotForked -> (Annotated a_t t')
     Choose ts -> do
       t' ~ (_ ~ o) <- renderGroup Or go ts
-      done <| NotRemoved ~ defaultDidMove ~ case (getSecondUserOption o) of
-        Forked -> renderNewFork (Annotated a_t t) (t')
-        NotForked -> (Annotated a_t <| t')
-      --t' <- renderGroup Or go ts
-      --done <| (if Array.null ts then Removed else NotRemoved) ~ defaultDidMove ~ (Annotated a_t <| t')
+      done <| (getFirstUserOption o) ~ defaultDidMove ~ case (getSecondUserOption o) of
+        Forked -> renderNewFork (Annotated a_t t')
+        NotForked -> (Annotated a_t t')
+
+    -- idea: bring renderWithOptions all the way down in the rendering. Then only apply to the actual clicked symbol
 
     ---- Extras
     Execute n as -> do
       (n' ~ as') ~ o <- renderWithOptions (n ~ as) NotForked (renderExecute a_t n as)
-      done <| case getSecondUserOption o of
-        Forked -> (getFirstUserOption o) ~ defaultDidMove ~ renderNewFork (Annotated a_t t) (Execute n' as')
-        NotForked -> (getFirstUserOption o) ~ defaultDidMove ~ (Annotated a_t <| Execute n' as') 
+      done <| (getFirstUserOption o) ~ defaultDidMove ~ case getSecondUserOption o of
+        Forked -> renderNewFork (Annotated a_t (Execute n' as'))
+        NotForked -> (Annotated a_t (Execute n' as'))
     Hole as -> do
       (n' ~ as') ~ o <- renderWithOptions ("??" ~ as) NotForked (renderExecute a_t "??" as)
       if n' == "??" then
-        done <| case getSecondUserOption o of
-          Forked -> (getFirstUserOption o) ~ defaultDidMove ~ renderNewFork (Annotated a_t t) (Hole as')
-          NotForked -> (getFirstUserOption o) ~ defaultDidMove ~ (Annotated a_t <| Hole as')
+        done <| (getFirstUserOption o) ~ defaultDidMove ~ case getSecondUserOption o of
+          Forked -> renderNewFork (Annotated a_t (Hole as'))
+          NotForked -> (Annotated a_t (Hole as'))
       else
-        done <| case getSecondUserOption o of
-          Forked -> (getFirstUserOption o) ~ defaultDidMove ~ renderNewFork (Annotated a_t t) (Execute n' as')
-          NotForked -> (getFirstUserOption o) ~ defaultDidMove ~ (Annotated a_t <| Execute n' as')
+        done <| (getFirstUserOption o) ~ defaultDidMove ~ case getSecondUserOption o of
+          Forked -> renderNewFork (Annotated a_t (Execute n' as'))
+          NotForked -> (Annotated a_t (Execute n' as'))
 
     ---- Shares
     Assign e1 e2 -> todo "assign"
@@ -318,19 +318,19 @@ renderTask g s t = Style.column
 
     Share e -> do
       e' <- renderShare e
-      done <| NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Share e')
+      done <| NotRemoved ~ defaultDidMove ~ (Annotated a_t (Share e'))
 
 ---- Parts ---------------------------------------------------------------------
-renderNewFork :: Checked Task -> Task (Checked Task) -> Checked Task 
-renderNewFork (Annotated a_t _) task = 
+renderNewFork :: Checked Task -> Checked Task 
+renderNewFork (Annotated a_t task) = 
   (Annotated a_t <| 
     Pair [
       Annotated a_t <| 
         (Step 
           (MIgnore) 
-          (Annotated a_t <| task) 
+          (Annotated a_t task) 
           (Annotated a_t <| 
-            Branch ([Constant (B true) ~ (Annotated a_t <| Lift Wildcard)]))
+            Branch [Constant (B true) ~ (Annotated a_t (Lift Wildcard))])
         ) 
     , Builder.item
     ]
