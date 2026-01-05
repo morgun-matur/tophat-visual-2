@@ -127,7 +127,7 @@ request_subsidy =
                     ]
                 )
                 -- <| execute "submit request" (ARecord <| from [ "dossier" ~ Record (from [ "declaration" ~ Variable "declaration", "documents" ~ Variable "documents" ]) ])
-                <| execute "submit request" (ARecord <| from [ "declaration" ~ Variable "declaration", "documents" ~ Variable "documents" ])
+                <| step (MRecord <| from []) (execute "submit request" (ARecord <| from [ "declaration" ~ Variable "declaration", "documents" ~ Variable "documents" ])) (lift Wildcard)
             )
       ]
 

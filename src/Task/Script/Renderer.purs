@@ -99,31 +99,6 @@ renderTask g s t = Style.column
 
     -- for task types, see Syntax.purs
 
-    -- case for moving: 
-    -- Step m t1 x@(Annotated a_b (Step t2 t3)) -> do
-    -- case x of 
-    -- all the rest... 
-    -- not forget: give 2 extra parameters to all render fujnction: canMoveUp and canMoveDown
-    -- GIVE RENDERER go WITH TO RENDER SUBSTEPS!!
-
-    -- case: Step inside Step
-    {-Step m1 t1 x@(Annotated a_b (Step m2 t2 t3)) -> do
-      c1' m1' c2' m2' ~ mu ~ md b1' t1' b2' t2' b3' t3' <- renderMovingStep (t1 ~ canMoveDown) (t2~canMoveUp)
-      done <| case b1' of 
-        true -> false ~ (Annotated a_b <| (Step m2' t2' t3'))
-        false -> case b2' of
-          true -> 
-          false -> case b3' of 
-            true ->
-            false -> case (c1' ~ c2' ~ mu ~ md) of
-              (Delay ~ Hurry ~ false ~ false)
-              (Hurry ~ Delay ~ false ~ false)
-              (Hurry ~ Hurry ~ true ~ false)
-              (Hurry ~ Hurry ~ false ~ true)
-              --...
-              (_ ~ _ ~ _ ~) -> panic "impossible"-}
-
-    -- case: Select inside Select
 
     -- case following subtask::unguarded Branch of Lift. This is the end step of choose/pair combinators or final of functions
     Step m t1 orig@(Annotated a_b (Branch [ Constant (B true) ~ Annotated a_l (Lift e) ])) -> do
@@ -142,7 +117,7 @@ renderTask g s t = Style.column
         NotRemoved -> case (didmove1' ~ t2') of
           ((MovedUp ~ NotMovedDown) ~ _) -> (MovedUp ~ NotMovedDown) ~ (Annotated a_t t)
           ((NotMovedUp ~ MovedDown) ~ (Annotated a_c (Step m2' t3' t4'))) -> defaultDidMove ~ (Annotated a_t <| Step m2' t3' <| Annotated a_b <| Branch [Constant (B true) ~ Annotated a_c (Step m' t1' t4')] )
-          ((NotMovedUp ~ MovedDown) ~ _) -> panic "invalid move button press"
+          --((NotMovedUp ~ MovedDown) ~ _) -> panic "invalid move button press"
           _ -> defaultDidMove ~ case (didmove2' ~ t2') of
             ((MovedUp ~ NotMovedDown)) ~ (Annotated a_c (Step m2' t3' t4')) -> (Annotated a_t <| Step m2' t3' <| Annotated a_b <| Branch [Constant (B true) ~ Annotated a_c (Step m' t1' t4')] )
             ((MovedUp ~ NotMovedDown) ~ _) -> panic "invalid move button press"
@@ -164,7 +139,7 @@ renderTask g s t = Style.column
           NotRemoved -> case (didmove1' ~ t2') of
             ((MovedUp ~ NotMovedDown) ~ _) -> (MovedUp ~ NotMovedDown) ~ (Annotated a_t t)
             ((NotMovedUp ~ MovedDown) ~ (Annotated a_c (Step m2' t3' t4'))) -> defaultDidMove ~ (Annotated a_t <| Step m2' t3' <| Annotated a_b <| Branch [e ~ Annotated a_c (Step m' t1' t4')] )
-            ((NotMovedUp ~ MovedDown) ~ _) -> panic "invalid move button press"
+            --((NotMovedUp ~ MovedDown) ~ _) -> panic "invalid move button press"
             _ -> defaultDidMove ~ case (didmove2' ~ t2') of
               ((MovedUp ~ NotMovedDown)) ~ (Annotated a_c (Step m2' t3' t4')) -> (Annotated a_t <| Step m2' t3' <| Annotated a_b <| Branch [e ~ Annotated a_c (Step m' t1' t4')] )
               ((MovedUp ~ NotMovedDown) ~ _) -> panic "invalid move button press"
@@ -199,7 +174,7 @@ renderTask g s t = Style.column
         NotRemoved -> case (didmove1' ~ t2') of
           ((MovedUp ~ NotMovedDown) ~ _) -> (MovedUp ~ NotMovedDown) ~ (Annotated a_t t)
           ((NotMovedUp ~ MovedDown) ~ (Annotated a_c (Step m2' t3' t4'))) -> defaultDidMove ~ (Annotated a_t <| Step m2' t3' <| Annotated a_b <| Select ["Continue" ~ Constant (B true) ~ Annotated a_c (Step m' t1' t4')] )
-          ((NotMovedUp ~ MovedDown) ~ _) -> panic "invalid move button press"
+          --((NotMovedUp ~ MovedDown) ~ _) -> panic "invalid move button press"
           _ -> defaultDidMove ~ case (didmove2' ~ t2') of
             ((MovedUp ~ NotMovedDown)) ~ (Annotated a_c (Step m2' t3' t4')) -> (Annotated a_t <| Step m2' t3' <| Annotated a_b <| Select ["Continue" ~ Constant (B true) ~ Annotated a_c (Step m' t1' t4')] )
             ((MovedUp ~ NotMovedDown) ~ _) -> panic "invalid move button press"
@@ -221,7 +196,7 @@ renderTask g s t = Style.column
           NotRemoved -> case (didmove1' ~ t2') of
             ((MovedUp ~ NotMovedDown) ~ _) -> (MovedUp ~ NotMovedDown) ~ (Annotated a_t t)
             ((NotMovedUp ~ MovedDown) ~ (Annotated a_c (Step m2' t3' t4'))) -> defaultDidMove ~ (Annotated a_t <| Step m2' t3' <| Annotated a_b <| Select [l ~ e ~ Annotated a_c (Step m' t1' t4')] )
-            ((NotMovedUp ~ MovedDown) ~ _) -> panic "invalid move button press"
+            --((NotMovedUp ~ MovedDown) ~ _) -> panic "invalid move button press"
             _ -> defaultDidMove ~ case (didmove2' ~ t2') of
               ((MovedUp ~ NotMovedDown)) ~ (Annotated a_c (Step m2' t3' t4')) -> (Annotated a_t <| Step m2' t3' <| Annotated a_b <| Select [l ~ e ~ Annotated a_c (Step m' t1' t4')] )
               ((MovedUp ~ NotMovedDown) ~ _) -> panic "invalid move button press"
