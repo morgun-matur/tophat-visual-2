@@ -280,8 +280,10 @@ renderTask g s t = Style.column
     Pair [t] -> panic "invalid single pair, sequencing not implemented yet"
     Choose [t] -> panic "invalid single pair, sequencing not implemented yet"
     Pair ts -> do
-      t' <- renderGroup And go ts
-      done <| (if Array.null ts then Removed else NotRemoved) ~ defaultDidMove ~ (Annotated a_t <| t')
+      t' ~ o <- renderWithOptions ((this And) ts) NotForked (renderGroup And go ts)
+      done <| NotRemoved ~ defaultDidMove ~ case (getSecondUserOption o) of
+        Forked -> renderNewFork (Annotated a_t t) (t')
+        NotForked -> (Annotated a_t <| t')
     Choose ts -> do
       t' <- renderGroup Or go ts
       done <| (if Array.null ts then Removed else NotRemoved) ~ defaultDidMove ~ (Annotated a_t <| t')
