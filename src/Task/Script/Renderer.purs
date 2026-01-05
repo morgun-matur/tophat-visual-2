@@ -280,13 +280,17 @@ renderTask g s t = Style.column
     Pair [t] -> panic "invalid single pair, sequencing not implemented yet"
     Choose [t] -> panic "invalid single pair, sequencing not implemented yet"
     Pair ts -> do
-      t' ~ o <- renderWithOptions ((this And) ts) NotForked (renderGroup And go ts)
+      t' ~ (_ ~ o) <- renderGroup And go ts
       done <| NotRemoved ~ defaultDidMove ~ case (getSecondUserOption o) of
         Forked -> renderNewFork (Annotated a_t t) (t')
         NotForked -> (Annotated a_t <| t')
     Choose ts -> do
-      t' <- renderGroup Or go ts
-      done <| (if Array.null ts then Removed else NotRemoved) ~ defaultDidMove ~ (Annotated a_t <| t')
+      t' ~ (_ ~ o) <- renderGroup Or go ts
+      done <| NotRemoved ~ defaultDidMove ~ case (getSecondUserOption o) of
+        Forked -> renderNewFork (Annotated a_t t) (t')
+        NotForked -> (Annotated a_t <| t')
+      --t' <- renderGroup Or go ts
+      --done <| (if Array.null ts then Removed else NotRemoved) ~ defaultDidMove ~ (Annotated a_t <| t')
 
     ---- Extras
     Execute n as -> do
@@ -708,17 +712,24 @@ renderGuardButton isguarded =
 -- |  t_1 ... t_n
 -- | =============
 -- renderGroup :: forall a. Stroke -> (a -> Widget a) -> Array a -> Widget (Array a)
-renderGroup :: Par -> RemovedRenderer -> Array (Checked Task) -> Widget (Task (Checked Task))
+
+--renderWithOptions :: a -> IsForked -> Widget a -> Widget (UserOptions * a)
+renderGroup :: Par -> RemovedRenderer -> Array (Checked Task) -> Widget ((Task (Checked Task)) * (Unit * UserOptions))
 renderGroup par render tasks =
   Style.element
-    [ void Attr.onClick ->> other par tasks
-    , void Attr.onDoubleClick ->> this par (tasks ++ [ Builder.item ])
+    [ void Attr.onClick ->> other par tasks >-> Either.in1
+    , void Attr.onDoubleClick ->> this par (tasks ++ [ Builder.item ] ) >-> Either.in1
     ]
-    [ Style.group (stroke par)
-        [ Concur.traverse (renderSingleGroup (fixgo << render)) ((\t -> NotCondensed ~ t) <-< tasks) >-> mapping >-> this par
-        -- , Input.button Action Secondary Small "+" ->> this par (tasks ++ [ Builder.item ])
-        ]
+    [ Style.column
+      [ renderWithOptions unit NotForked (Style.element [] [Style.column[Style.line Solid []]]) >-> Either.in2 
+      , Style.group (stroke par)
+          [ Concur.traverse (renderSingleGroup (fixgo << render)) ((\t -> NotCondensed ~ t) <-< tasks) >-> mapping >-> this par >-> Either.in1
+          -- , Input.button Action Secondary Small "+" ->> this par (tasks ++ [ Builder.item ])
+          ]
+      ]
     ]
+    >-> fix2 (this par tasks) (unit ~ defaultOptions)
+    --this :: forall a. Par -> Array a -> Task a
   where 
   mapping = (\arr -> arr
     |> Array.filter (\(c ~ _) -> c == NotCondensed) 
