@@ -15,6 +15,7 @@ import Concur.Dom.Text as Text
 import Data.Array as Array
 import Data.Either.Nested as Either
 import Data.HashMap as HashMap
+import Data.Maybe as Maybe
 
 import Task.Script.Annotation (Annotated(..), Checked, Status(..), unannotate, extractContext)
 import Task.Script.Builder as Builder
@@ -756,8 +757,29 @@ renderGroup par render tasks =
     [ Style.column
       [ renderWithOptions unit NotForked (Style.element [] [Style.column[Style.line Solid []]]) >-> Either.in2 
       , Style.group (stroke par)
-          [ Concur.traverse (renderSingleGroup (fixgo << render)) ((\t -> NotCondensed ~ t) <-< tasks) >-> mapping >-> this par >-> Either.in1
+          [ --Concur.traverse (renderSingleGroup (fixgo << render)) ((\t -> Still ~ NotCondensed ~ t) <-< tasks) >-> mapping >-> this par >-> Either.in1
           -- , Input.button Action Secondary Small "+" ->> this par (tasks ++ [ Builder.item ])
+
+          {-
+          traverse render elements = do
+            (index ~ element) <- Internal.orr indexedElements
+            done <| Array.updateAt index element elements ?? elements
+            where
+              indexedElements = elements |> Array.mapWithIndex (\index element -> (index ~ _) <-< render element)
+          -}
+            do
+              -- Traverse tasks, render each as a widget
+              rendered <- Concur.traverse (renderSingleGroup (fixgo << render)) ((\t -> NotCondensed ~ Still ~ t) <-< tasks)
+
+              let indexed = Array.mapWithIndex (\i x -> i ~ x) rendered
+              let tasks' = Array.foldl (\acc (i ~ (iscondensed ~ move ~ task)) ->
+                    case move of
+                      MoveLeft  -> swap i (i - 1) acc
+                      MoveRight -> swap i (i + 1) acc
+                      Still     -> acc
+                  ) rendered indexed
+
+              (done <| tasks') >-> mapping >-> this par >-> Either.in1
           ]
       ]
     ]
@@ -765,25 +787,40 @@ renderGroup par render tasks =
     --this :: forall a. Par -> Array a -> Task a
   where 
   mapping = (\arr -> arr
-    |> Array.filter (\(c ~ _) -> c == NotCondensed) 
-    >-> snd) 
+    |> Array.filter (\(c ~ _ ~ _) -> c == NotCondensed) 
+    >-> (\(_ ~ _ ~ x) -> x)) 
 
-renderSingleGroup :: Renderer -> IsCondensed * Checked Task -> Widget(IsCondensed * Checked Task) 
-renderSingleGroup render (iscondensed ~ subtask) =
+swap :: forall a. Int -> Int -> Array a -> Array a
+swap i j arr = 
+  case (Array.index arr i ~ Array.index arr j) of
+    (Just vi ~ Just vj) ->
+      arr
+        |> Array.updateAt i vj
+        |> Maybe.fromMaybe arr
+        |> Array.updateAt j vi
+        |> Maybe.fromMaybe arr
+    _ -> arr
+
+
+data Move 
+  = MoveLeft
+  | MoveRight
+  | Still
+
+renderSingleGroup :: Renderer -> IsCondensed * Move * Checked Task -> Widget(IsCondensed * Move * Checked Task) 
+renderSingleGroup render (iscondensed ~ move ~ subtask) =
   Style.column
     [ Input.popover Above contents <| Style.element [] [Style.column [Style.line Solid empty]]
-    , render subtask >-> Either.in2
+    , render subtask >-> Either.in3
     , Style.line Solid empty
     ]
-    >-> fix2 NotCondensed subtask
+    >-> fix3 NotCondensed move subtask
   where
   contents = 
-    Style.element 
-      [
-        Attr.onClick ->> Condensed >-> Either.in1 
-      ]
-      [
-        Icon.code_branch
+    Style.row 
+      [ Style.element [Attr.onClick ->> MoveLeft >-> Either.in2] [Icon.arrow_left]
+      , Style.element [Attr.onClick ->> Condensed >-> Either.in1] [Icon.code_branch]
+      , Style.element [Attr.onClick ->> MoveRight >-> Either.in2] [Icon.arrow_right]
       ]
 
 ---- Editors ----
