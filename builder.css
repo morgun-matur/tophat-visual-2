@@ -310,3 +310,38 @@ div {
   height: 2pc;
   width: 2pc;
 }
+
+.fa-minus-circle:hover{
+  color: #4b48d6;
+}
+
+.fa-code-branch{
+  transform: rotateX(180deg)
+}
+.fa-code-branch:hover{
+  color: #4b48d6;
+}
+
+.fa-arrow-up:hover{
+  color: #4b48d6;
+}
+
+.fa-arrow-left:hover{
+  color: #4b48d6;
+}
+
+.fa-arrow-right:hover{
+  color: #4b48d6;
+}
+
+.fa-arrow-down:hover{
+  color: #4b48d6;
+}
+
+div.layout-column > div > .fa-question:hover{
+  color: #4b48d6;
+}
+
+.fa-window-close:hover{
+  color: #4b48d6;
+}

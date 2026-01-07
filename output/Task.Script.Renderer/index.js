@@ -40,6 +40,20 @@ var Task_Script_Type = require("../Task.Script.Type/index.js");
 var Switch = function ($$switch) {
     this["switch"] = $$switch;
 };
+var Show = (function () {
+    function Show() {
+
+    };
+    Show.value = new Show();
+    return Show;
+})();
+var NotShow = (function () {
+    function NotShow() {
+
+    };
+    NotShow.value = new NotShow();
+    return NotShow;
+})();
 var Yes = (function () {
     function Yes(value0) {
         this.value0 = value0;
@@ -219,7 +233,7 @@ var $$this = function (v) {
     if (v instanceof Or) {
         return Task_Script_Syntax.Choose.create;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 1030, column 1 - line 1030, column 43): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 1020, column 1 - line 1020, column 43): " + [ v.constructor.name ]);
 };
 var $$switch = function (dict) {
     return dict["switch"];
@@ -245,7 +259,7 @@ var style = function (v) {
     if (v instanceof New) {
         return Concur_Dom_Style.Filled.value;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 1048, column 1 - line 1048, column 23): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 1038, column 1 - line 1038, column 23): " + [ v.constructor.name ]);
 };
 var stroke = function (v) {
     if (v instanceof And) {
@@ -254,7 +268,7 @@ var stroke = function (v) {
     if (v instanceof Or) {
         return Concur_Dom_Style.Double.value;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 1038, column 1 - line 1038, column 24): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 1028, column 1 - line 1028, column 24): " + [ v.constructor.name ]);
 };
 var selectType = function (types) {
     return function (name) {
@@ -286,14 +300,14 @@ var renderPossibleArgs = function (status) {
             return new Task_Script_Syntax.ARecord(Data_HashMap.fromArrayBy(Data_Hashable.hashableString)(Control_Category.identity(Control_Category.categoryFn))(Task_Script_Syntax.Variable.create)(labels));
         };
         var labels = Data_Array.sort(Data_Ord.ordString)(Data_HashMap.keys(Data_HashMap.filter((function () {
-            var $879 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
-            return function ($880) {
-                return $879(Task_Script_Type.isFunction($880));
+            var $900 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
+            return function ($901) {
+                return $900(Task_Script_Type.isFunction($901));
             };
         })())(Task_Script_Annotation.extractContext(status))));
         var action = function (label) {
-            var $149 = Data_HashMap.member(Data_Hashable.hashableString)(label)(v.value0);
-            if ($149) {
+            var $151 = Data_HashMap.member(Data_Hashable.hashableString)(label)(v.value0);
+            if ($151) {
                 return Concur_Dom_Input.Remove.value;
             };
             return Concur_Dom_Input.Add.value;
@@ -338,17 +352,17 @@ var renderContext = (function () {
     var go = function (v) {
         return v.value0 + (" : " + (Data_Show.show(Task_Script_Type["$_ShowFullType_49"])(v.value1) + "\x0a"));
     };
-    var $881 = Data_Foldable.foldMap(Data_Foldable.foldableArray)(Data_Monoid.monoidString)(go);
-    var $882 = Data_Array.sortBy(Data_Function.on(Data_Ord.compare(Data_Ord.ordString))(Data_Tuple.fst));
-    var $883 = Data_HashMap.toArrayBy(Data_Tuple.Tuple.create);
-    var $884 = Data_HashMap.filter((function () {
-        var $886 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
-        return function ($887) {
-            return $886(Task_Script_Type.isFunction($887));
+    var $902 = Data_Foldable.foldMap(Data_Foldable.foldableArray)(Data_Monoid.monoidString)(go);
+    var $903 = Data_Array.sortBy(Data_Function.on(Data_Ord.compare(Data_Ord.ordString))(Data_Tuple.fst));
+    var $904 = Data_HashMap.toArrayBy(Data_Tuple.Tuple.create);
+    var $905 = Data_HashMap.filter((function () {
+        var $907 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
+        return function ($908) {
+            return $907(Task_Script_Type.isFunction($908));
         };
     })());
-    return function ($885) {
-        return $881($882($883($884(Task_Script_Annotation.extractContext($885)))));
+    return function ($906) {
+        return $902($903($904($905(Task_Script_Annotation.extractContext($906)))));
     };
 })();
 var renderArg = function (sel) {
@@ -370,7 +384,7 @@ var other = function (v) {
     if (v instanceof Or) {
         return Task_Script_Syntax.Pair.create;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 1034, column 1 - line 1034, column 44): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 1024, column 1 - line 1024, column 44): " + [ v.constructor.name ]);
 };
 var isYes = function (v) {
     if (v instanceof Yes) {
@@ -397,6 +411,37 @@ var fixgo = function (g) {
         return Preload.done(Concur_Core_Types.widgetApplicative)(v.value1.value1);
     });
 };
+var fix5 = function (_1) {
+    return function (_2) {
+        return function (_3) {
+            return function (_4) {
+                return function (_5) {
+                    return function (v) {
+                        if (v instanceof Data_Either.Left) {
+                            return new Data_Tuple.Tuple(v.value0, new Data_Tuple.Tuple(_2, new Data_Tuple.Tuple(_3, new Data_Tuple.Tuple(_4, _5))));
+                        };
+                        if (v instanceof Data_Either.Right && v.value0 instanceof Data_Either.Left) {
+                            return new Data_Tuple.Tuple(_1, new Data_Tuple.Tuple(v.value0.value0, new Data_Tuple.Tuple(_3, new Data_Tuple.Tuple(_4, _5))));
+                        };
+                        if (v instanceof Data_Either.Right && (v.value0 instanceof Data_Either.Right && v.value0.value0 instanceof Data_Either.Left)) {
+                            return new Data_Tuple.Tuple(_1, new Data_Tuple.Tuple(_2, new Data_Tuple.Tuple(v.value0.value0.value0, new Data_Tuple.Tuple(_4, _5))));
+                        };
+                        if (v instanceof Data_Either.Right && (v.value0 instanceof Data_Either.Right && (v.value0.value0 instanceof Data_Either.Right && v.value0.value0.value0 instanceof Data_Either.Left))) {
+                            return new Data_Tuple.Tuple(_1, new Data_Tuple.Tuple(_2, new Data_Tuple.Tuple(_3, new Data_Tuple.Tuple(v.value0.value0.value0.value0, _5))));
+                        };
+                        if (v instanceof Data_Either.Right && (v.value0 instanceof Data_Either.Right && (v.value0.value0 instanceof Data_Either.Right && (v.value0.value0.value0 instanceof Data_Either.Right && v.value0.value0.value0.value0 instanceof Data_Either.Left)))) {
+                            return new Data_Tuple.Tuple(_1, new Data_Tuple.Tuple(_2, new Data_Tuple.Tuple(_3, new Data_Tuple.Tuple(_4, v.value0.value0.value0.value0.value0))));
+                        };
+                        if (v instanceof Data_Either.Right && (v.value0 instanceof Data_Either.Right && (v.value0.value0 instanceof Data_Either.Right && (v.value0.value0.value0 instanceof Data_Either.Right && v.value0.value0.value0.value0 instanceof Data_Either.Right)))) {
+                            return Data_Void.absurd(v.value0.value0.value0.value0.value0);
+                        };
+                        throw new Error("Failed pattern match at Task.Script.Renderer (line 988, column 23 - line 994, column 64): " + [ v.constructor.name ]);
+                    };
+                };
+            };
+        };
+    };
+};
 var fix4 = function (_1) {
     return function (_2) {
         return function (_3) {
@@ -417,7 +462,7 @@ var fix4 = function (_1) {
                     if (v instanceof Data_Either.Right && (v.value0 instanceof Data_Either.Right && (v.value0.value0 instanceof Data_Either.Right && v.value0.value0.value0 instanceof Data_Either.Right))) {
                         return Data_Void.absurd(v.value0.value0.value0.value0);
                     };
-                    throw new Error("Failed pattern match at Task.Script.Renderer (line 1001, column 20 - line 1006, column 56): " + [ v.constructor.name ]);
+                    throw new Error("Failed pattern match at Task.Script.Renderer (line 980, column 20 - line 985, column 56): " + [ v.constructor.name ]);
                 };
             };
         };
@@ -439,14 +484,14 @@ var fix3 = function (_1) {
                 if (v instanceof Data_Either.Right && (v.value0 instanceof Data_Either.Right && v.value0.value0 instanceof Data_Either.Right)) {
                     return Data_Void.absurd(v.value0.value0.value0);
                 };
-                throw new Error("Failed pattern match at Task.Script.Renderer (line 994, column 16 - line 998, column 48): " + [ v.constructor.name ]);
+                throw new Error("Failed pattern match at Task.Script.Renderer (line 973, column 16 - line 977, column 48): " + [ v.constructor.name ]);
             };
         };
     };
 };
 var renderSingleGroup = function (render) {
     return function (v) {
-        var contents = Concur_Dom_Style.row([ Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(MoveLeft.value))(Data_Either_Nested.in2) ])([ Concur_Dom_Icon.arrow_left ]), Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(Condensed.value))(Data_Either_Nested.in1) ])([ Concur_Dom_Icon.code_branch ]), Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(MoveRight.value))(Data_Either_Nested.in2) ])([ Concur_Dom_Icon.arrow_right ]) ]);
+        var contents = Concur_Dom_Style.row([ Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(MoveLeft.value))(Data_Either_Nested.in2) ])([ Concur_Dom_Icon.arrow_left ]), Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(Condensed.value))(Data_Either_Nested.in1) ])([ Concur_Dom_Icon.minus_circle ]), Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(MoveRight.value))(Data_Either_Nested.in2) ])([ Concur_Dom_Icon.arrow_right ]) ]);
         return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Concur_Dom_Input.popover(Concur_Dom_Style.Above.value)(contents)(Concur_Dom_Style.element([  ])([ Concur_Dom_Style.column([ Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)(Control_Plus.empty(Control_Plus.plusArray)) ]) ])), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(v.value1.value1))(Data_Either_Nested.in3), Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)(Control_Plus.empty(Control_Plus.plusArray)) ]))(fix3(NotCondensed.value)(v.value1.value0)(v.value1.value1));
     };
 };
@@ -462,7 +507,7 @@ var fix2 = function (_1) {
             if (v instanceof Data_Either.Right && v.value0 instanceof Data_Either.Right) {
                 return Data_Void.absurd(v.value0.value0);
             };
-            throw new Error("Failed pattern match at Task.Script.Renderer (line 988, column 14 - line 991, column 40): " + [ v.constructor.name ]);
+            throw new Error("Failed pattern match at Task.Script.Renderer (line 967, column 14 - line 970, column 40): " + [ v.constructor.name ]);
         };
     };
 };
@@ -474,7 +519,7 @@ var fix1 = function (_1) {
         if (v instanceof Data_Either.Right) {
             return _1;
         };
-        throw new Error("Failed pattern match at Task.Script.Renderer (line 983, column 11 - line 985, column 16): " + [ v.constructor.name ]);
+        throw new Error("Failed pattern match at Task.Script.Renderer (line 962, column 11 - line 964, column 16): " + [ v.constructor.name ]);
     };
 };
 var renderRemove = Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(Removed.value))(Data_Either_Nested.in1) ])([ Concur_Dom_Icon.window_close ]))(fix1(NotRemoved.value));
@@ -505,7 +550,7 @@ var renderOption = function (status) {
 };
 var renderBranch = function (render) {
     return function (v) {
-        var contents = Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(Condensed.value))(Data_Either_Nested.in1) ])([ Concur_Dom_Icon.code_branch ]);
+        var contents = Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(Condensed.value))(Data_Either_Nested.in1) ])([ Concur_Dom_Icon.minus_circle ]);
         return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Concur_Dom_Input.popover(Concur_Dom_Style.Above.value)(contents)(Concur_Dom_Style.element([  ])([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderOption(v.value1.value1.value0)(v.value1.value0))(Data_Either_Nested.in2) ])), Concur_Dom_Style.line(Concur_Dom_Style.Dashed.value)(Control_Plus.empty(Control_Plus.plusArray)), Concur_Dom_Style.line(Concur_Dom_Style.Dashed.value)(Control_Plus.empty(Control_Plus.plusArray)), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(v.value1.value1))(Data_Either_Nested.in3), Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)(Control_Plus.empty(Control_Plus.plusArray)) ]))(fix3(NotCondensed.value)(v.value1.value0)(v.value1.value1));
     };
 };
@@ -560,27 +605,27 @@ var catYes = Data_Array.concatMap(function (v) {
 var renderArgs = function (status) {
     return function (v) {
         var unselect = (function () {
-            var $888 = Data_HashMap.fromArray(Data_Hashable.hashableString);
-            var $889 = Data_Functor.map(Data_Functor.functorArray)(function (l) {
+            var $909 = Data_HashMap.fromArray(Data_Hashable.hashableString);
+            var $910 = Data_Functor.map(Data_Functor.functorArray)(function (l) {
                 return new Data_Tuple.Tuple(l, new Task_Script_Syntax.Variable(l));
             });
-            return function ($890) {
-                return Task_Script_Syntax.ARecord.create($888($889(catYes($890))));
+            return function ($911) {
+                return Task_Script_Syntax.ARecord.create($909($910(catYes($911))));
             };
         })();
         var check = function (label) {
             return (function () {
-                var $236 = Data_HashMap.member(Data_Hashable.hashableString)(label)(v.value0);
-                if ($236) {
+                var $259 = Data_HashMap.member(Data_Hashable.hashableString)(label)(v.value0);
+                if ($259) {
                     return Yes.create;
                 };
                 return No.create;
             })()(label);
         };
         var select = Data_Functor.map(Data_Functor.functorArray)(check)(Data_HashMap.keys(Data_HashMap.filter((function () {
-            var $891 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
-            return function ($892) {
-                return $891(Task_Script_Type.isFunction($892));
+            var $912 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
+            return function ($913) {
+                return $912(Task_Script_Type.isFunction($913));
             };
         })())(Task_Script_Annotation.extractContext(status))));
         return Concur_Dom_Input.popover(Concur_Dom_Style.After.value)(Concur_Dom_Input.card([  ])([ Concur_Dom_Style.row([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur.traverse(Data_Monoid.monoidArray)(renderArg)(select))(unselect) ]) ])([  ]))(Concur_Dom_Style.column([ Data_Functor.voidLeft(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)([ Concur_Dom_Style.place(Concur_Dom_Style.After.value)(Concur_Dom_Style.Small.value)([ Concur_Dom_Style.row(renderLabels(Data_HashMap.keys(v.value0))) ]) ]))(v) ]));
@@ -598,7 +643,7 @@ var assoc4 = function (v) {
 };
 var renderSelect = function (render) {
     return function (v) {
-        var contents = Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(Condensed.value))(Data_Either_Nested.in1) ])([ Concur_Dom_Icon.code_branch ]);
+        var contents = Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(Condensed.value))(Data_Either_Nested.in1) ])([ Concur_Dom_Icon.minus_circle ]);
         return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Concur_Dom_Input.popover(Concur_Dom_Style.Above.value)(contents)(Concur_Dom_Style.element([  ])([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderOptionWithLabel(v.value1.value1.value1.value0)(v.value1.value0)(v.value1.value1.value0))(Data_Either_Nested.in2) ])), Concur_Dom_Style.line(Concur_Dom_Style.Dashed.value)(Control_Plus.empty(Control_Plus.plusArray)), Concur_Dom_Style.line(Concur_Dom_Style.Dashed.value)(Control_Plus.empty(Control_Plus.plusArray)), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(v.value1.value1.value1))(Data_Either_Nested.in3), Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)(Control_Plus.empty(Control_Plus.plusArray)) ]))(fix3(NotCondensed.value)(new Data_Tuple.Tuple(v.value1.value0, v.value1.value1.value0))(v.value1.value1.value1)))(assoc4);
     };
 };
@@ -610,35 +655,35 @@ var addLabels = function (dictFunctor) {
         return new Data_Tuple.Tuple("", v);
     });
 };
-var $dollar_SwitchPar_83 = new Switch(function (v) {
+var $dollar_SwitchPar_85 = new Switch(function (v) {
     if (v instanceof And) {
         return Or.value;
     };
     if (v instanceof Or) {
         return And.value;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 1076, column 1 - line 1078, column 18): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 1072, column 1 - line 1074, column 18): " + [ v.constructor.name ]);
 });
-var $dollar_SwitchIsGuarded_85 = new Switch(function (v) {
+var $dollar_SwitchIsGuarded_87 = new Switch(function (v) {
     if (v instanceof Guarded) {
         return NotGuarded.value;
     };
     if (v instanceof NotGuarded) {
         return Guarded.value;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 1085, column 1 - line 1087, column 30): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 1081, column 1 - line 1083, column 30): " + [ v.constructor.name ]);
 });
 var renderGuardButton = function (isguarded) {
-    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(Data_Either_Nested.in1($$switch($dollar_SwitchIsGuarded_85)(isguarded))) ])([ Concur_Dom_Icon.question ]) ]))(fix1(isguarded));
+    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(Data_Either_Nested.in1($$switch($dollar_SwitchIsGuarded_87)(isguarded))) ])([ Concur_Dom_Icon.question ]) ]))(fix1(isguarded));
 };
-var $dollar_SwitchIsForked_86 = new Switch(function (v) {
+var $dollar_SwitchIsForked_88 = new Switch(function (v) {
     if (v instanceof Forked) {
         return NotForked.value;
     };
     if (v instanceof NotForked) {
         return Forked.value;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 1089, column 1 - line 1091, column 28): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 1085, column 1 - line 1087, column 28): " + [ v.constructor.name ]);
 });
 var renderForked = function (isforked) {
     var forkedSymbol = (function () {
@@ -650,7 +695,7 @@ var renderForked = function (isforked) {
         };
         throw new Error("Failed pattern match at Task.Script.Renderer (line 398, column 18 - line 400, column 34): " + [ isforked.constructor.name ]);
     })();
-    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)($$switch($dollar_SwitchIsForked_86)(isforked)))(Data_Either_Nested.in1) ])([ forkedSymbol ]))(fix1(isforked));
+    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)($$switch($dollar_SwitchIsForked_88)(isforked)))(Data_Either_Nested.in1) ])([ forkedSymbol ]))(fix1(isforked));
 };
 var renderWithOptions = function (a) {
     return function (isforked) {
@@ -664,7 +709,7 @@ var renderWithOptions = function (a) {
         };
     };
 };
-var $dollar_SwitchCont_84 = new Switch(function (v) {
+var $dollar_SwitchCont_86 = new Switch(function (v) {
     if (v instanceof Hurry) {
         return Delay.value;
     };
@@ -674,27 +719,37 @@ var $dollar_SwitchCont_84 = new Switch(function (v) {
     if (v instanceof New) {
         return New.value;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 1080, column 1 - line 1083, column 19): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 1076, column 1 - line 1079, column 19): " + [ v.constructor.name ]);
 });
 var renderStep = function (v) {
     return function (v1) {
         return function (v2) {
-            if (v2 instanceof Task_Script_Syntax.MRecord) {
-                var getBinds = function (v3) {
-                    if (v3 instanceof Task_Script_Syntax.MBind) {
-                        return new Data_Maybe.Just(v3.value0);
+            return function (v3) {
+                return function (v4) {
+                    if (v4 instanceof Task_Script_Syntax.MRecord) {
+                        var guardButton = (function () {
+                            if (v instanceof Show) {
+                                return [ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderGuardButton(v2))(Data_Either_Nested.in3) ];
+                            };
+                            return [  ];
+                        })();
+                        var getBinds = function (v5) {
+                            if (v5 instanceof Task_Script_Syntax.MBind) {
+                                return new Data_Maybe.Just(v5.value0);
+                            };
+                            return Data_Maybe.Nothing.value;
+                        };
+                        var labels = Data_Array.catMaybes(Data_Functor.map(Data_Functor.functorArray)(getBinds)(Data_HashMap.values(v4.value0)));
+                        var contents = Concur_Dom_Style.row(Data_Semigroup.append(Data_Semigroup.semigroupArray)(guardButton)([ Concur_Dom_Style.column([ Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onClick))(Data_Either_Nested.in1(new Data_Tuple.Tuple(MovedUp.value, NotMovedDown.value))) ])([ Concur_Dom_Icon.arrow_up ]), Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onClick))(Data_Either_Nested.in1(new Data_Tuple.Tuple(NotMovedUp.value, MovedDown.value))) ])([ Concur_Dom_Icon.arrow_down ]) ]), Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderRemove)(function (b) {
+                            return Data_Either_Nested.in2(new Data_Tuple.Tuple(b, NotForked.value));
+                        }), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderForked(NotForked.value))(function (b) {
+                            return Data_Either_Nested.in2(new Data_Tuple.Tuple(NotRemoved.value, b));
+                        }) ]) ]));
+                        return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.voidLeft(Concur_Core_Types.widgetFunctor)(renderLine(labels))(Data_Either_Nested.in5(v4)), Concur_Dom_Input.popover(Concur_Dom_Style.After.value)(contents)(Concur_Dom_Input.popover(Concur_Dom_Style.Before.value)(Concur_Dom_Text.code("TopHat")(renderContext(v1)))(Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onClick))(Data_Either_Nested.in4($$switch($dollar_SwitchCont_86)(v3))), Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))(Data_Either_Nested.in4(New.value)) ])([ Concur_Dom_Style.triangle(style(v3))(Control_Plus.empty(Control_Plus.plusArray)) ]))) ]))(fix5(defaultDidMove)(defaultOptions)(v2)(v3)(v4));
                     };
-                    return Data_Maybe.Nothing.value;
+                    return Preload.todo()("other matches in step rendering");
                 };
-                var labels = Data_Array.catMaybes(Data_Functor.map(Data_Functor.functorArray)(getBinds)(Data_HashMap.values(v2.value0)));
-                var contents = Concur_Dom_Style.row([ Concur_Dom_Style.column([ Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onClick))(Data_Either_Nested.in1(new Data_Tuple.Tuple(MovedUp.value, NotMovedDown.value))) ])([ Concur_Dom_Icon.arrow_up ]), Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onClick))(Data_Either_Nested.in1(new Data_Tuple.Tuple(NotMovedUp.value, MovedDown.value))) ])([ Concur_Dom_Icon.arrow_down ]) ]), Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderRemove)(function (b) {
-                    return Data_Either_Nested.in2(new Data_Tuple.Tuple(b, NotForked.value));
-                }), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderForked(NotForked.value))(function (b) {
-                    return Data_Either_Nested.in2(new Data_Tuple.Tuple(NotRemoved.value, b));
-                }) ]) ]);
-                return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.voidLeft(Concur_Core_Types.widgetFunctor)(renderLine(labels))(Data_Either_Nested.in4(v2)), Concur_Dom_Input.popover(Concur_Dom_Style.After.value)(contents)(Concur_Dom_Input.popover(Concur_Dom_Style.Before.value)(Concur_Dom_Text.code("TopHat")(renderContext(v)))(Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onClick))(Data_Either_Nested.in3($$switch($dollar_SwitchCont_84)(v1))), Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))(Data_Either_Nested.in3(New.value)) ])([ Concur_Dom_Style.triangle(style(v1))(Control_Plus.empty(Control_Plus.plusArray)) ]))) ]))(fix4(defaultDidMove)(defaultOptions)(v1)(v2));
             };
-            return Preload.todo()("other matches in step rendering");
         };
     };
 };
@@ -706,15 +761,14 @@ var renderGuardableStep = function (v) {
                     if (v4 instanceof Task_Script_Syntax.MRecord) {
                         var guard = (function () {
                             if (v1 instanceof Guarded) {
-                                return [ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderOption(v)(v2))(Data_Either_Nested.in2) ];
+                                return [ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderOption(v)(v2))(Data_Either_Nested.in1) ];
                             };
                             if (v1 instanceof NotGuarded) {
                                 return [  ];
                             };
-                            throw new Error("Failed pattern match at Task.Script.Renderer (line 560, column 11 - line 562, column 21): " + [ v1.constructor.name ]);
+                            throw new Error("Failed pattern match at Task.Script.Renderer (line 557, column 11 - line 559, column 21): " + [ v1.constructor.name ]);
                         })();
-                        var contents = Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderGuardButton(v1))(Data_Either_Nested.in1) ]);
-                        return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column(Data_Semigroup.append(Data_Semigroup.semigroupArray)([ Concur_Dom_Input.popover(Concur_Dom_Style.After.value)(contents)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStep(v)(v3)(v4))(Data_Either_Nested.in3)) ])(guard)))(fix3(v1)(v2)(new Data_Tuple.Tuple(defaultDidMove, new Data_Tuple.Tuple(defaultOptions, new Data_Tuple.Tuple(v3, v4)))));
+                        return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column(Data_Semigroup.append(Data_Semigroup.semigroupArray)([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStep(Show.value)(v)(v1)(v3)(v4))(Data_Either_Nested.in2) ])(guard)))(fix2(v2)(new Data_Tuple.Tuple(defaultDidMove, new Data_Tuple.Tuple(defaultOptions, new Data_Tuple.Tuple(v1, new Data_Tuple.Tuple(v3, v4))))));
                     };
                     return Preload.todo()("no");
                 };
@@ -727,9 +781,7 @@ var renderSingleBranch = function (render) {
         return function (match) {
             return function (sub1) {
                 return function (v) {
-                    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))(Data_Either_Nested.in1(Doubled.value)) ])([ Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(sub1))(Data_Either_Nested.in3), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderGuardableStep(status)(Guarded.value)(v.value0)(Hurry.value)(match))(function (v1) {
-                        return new Data_Tuple.Tuple(v1.value0, new Data_Tuple.Tuple(v1.value1.value0, new Data_Tuple.Tuple(v1.value1.value1.value0, new Data_Tuple.Tuple(v1.value1.value1.value1.value0, v1.value1.value1.value1.value1))));
-                    }))(Data_Either_Nested.in2), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(v.value1))(Data_Either_Nested.in4) ]) ]))(fix4(NotDoubled.value)(new Data_Tuple.Tuple(Guarded.value, new Data_Tuple.Tuple(v.value0, new Data_Tuple.Tuple(defaultDidMove, new Data_Tuple.Tuple(defaultOptions, new Data_Tuple.Tuple(Hurry.value, match))))))(new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, sub1)))(new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, v.value1))));
+                    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))(Data_Either_Nested.in1(Doubled.value)) ])([ Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(sub1))(Data_Either_Nested.in3), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderGuardableStep(status)(Guarded.value)(v.value0)(Hurry.value)(match))(Data_Either_Nested.in2), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(v.value1))(Data_Either_Nested.in4) ]) ]))(fix4(NotDoubled.value)(new Data_Tuple.Tuple(v.value0, new Data_Tuple.Tuple(defaultDidMove, new Data_Tuple.Tuple(defaultOptions, new Data_Tuple.Tuple(Guarded.value, new Data_Tuple.Tuple(Hurry.value, match))))))(new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, sub1)))(new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, v.value1))));
                 };
             };
         };
@@ -741,7 +793,7 @@ var renderSingleUnguarded = function (render) {
             return function (match) {
                 return function (sub1) {
                     return function (sub2) {
-                        return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(sub1))(Data_Either_Nested.in2), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderGuardableStep(status)(NotGuarded.value)(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)))(cont)(match))(Data_Either_Nested.in1), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(sub2))(Data_Either_Nested.in3) ]))(fix3(new Data_Tuple.Tuple(NotGuarded.value, new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), new Data_Tuple.Tuple(defaultDidMove, new Data_Tuple.Tuple(defaultOptions, new Data_Tuple.Tuple(cont, match))))))(new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, sub1)))(new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, sub2))));
+                        return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(sub1))(Data_Either_Nested.in2), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderGuardableStep(status)(NotGuarded.value)(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)))(cont)(match))(Data_Either_Nested.in1), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(sub2))(Data_Either_Nested.in3) ]))(fix3(new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), new Data_Tuple.Tuple(defaultDidMove, new Data_Tuple.Tuple(defaultOptions, new Data_Tuple.Tuple(NotGuarded.value, new Data_Tuple.Tuple(cont, match))))))(new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, sub1)))(new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, sub2))));
                     };
                 };
             };
@@ -757,14 +809,14 @@ var renderGuardedSelect = function (v) {
                         if (v5 instanceof Task_Script_Syntax.MRecord) {
                             var guard = (function () {
                                 if (v1 instanceof Guarded) {
-                                    return [ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderOptionWithLabel(v)(v2)(v3))(Data_Either_Nested.in2), Concur_Dom_Style.line(Concur_Dom_Style.Dashed.value)(Control_Plus.empty(Control_Plus.plusArray)) ];
+                                    return [ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderOptionWithLabel(v)(v2)(v3))(Data_Either_Nested.in1), Concur_Dom_Style.line(Concur_Dom_Style.Dashed.value)(Control_Plus.empty(Control_Plus.plusArray)) ];
                                 };
                                 if (v1 instanceof NotGuarded) {
                                     return [  ];
                                 };
-                                throw new Error("Failed pattern match at Task.Script.Renderer (line 722, column 11 - line 727, column 21): " + [ v1.constructor.name ]);
+                                throw new Error("Failed pattern match at Task.Script.Renderer (line 718, column 11 - line 723, column 21): " + [ v1.constructor.name ]);
                             })();
-                            return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column(Data_Semigroup.append(Data_Semigroup.semigroupArray)([ Concur_Dom_Input.popover(Concur_Dom_Style.After.value)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderGuardButton(v1))(Data_Either_Nested.in1))(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStep(v)(v4)(v5))(Data_Either_Nested.in3)) ])(guard)))(fix3(v1)(new Data_Tuple.Tuple(v2, v3))(new Data_Tuple.Tuple(defaultDidMove, new Data_Tuple.Tuple(defaultOptions, new Data_Tuple.Tuple(v4, v5)))));
+                            return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column(Data_Semigroup.append(Data_Semigroup.semigroupArray)([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStep(Show.value)(v)(Guarded.value)(v4)(v5))(Data_Either_Nested.in2) ])(guard)))(fix2(new Data_Tuple.Tuple(v2, v3))(new Data_Tuple.Tuple(defaultDidMove, new Data_Tuple.Tuple(defaultOptions, new Data_Tuple.Tuple(Guarded.value, new Data_Tuple.Tuple(v4, v5))))));
                         };
                         return Preload.todo()("no");
                     };
@@ -778,18 +830,18 @@ var renderSingleSelect = function (render) {
         return function (match) {
             return function (sub1) {
                 return function (v) {
-                    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))(Data_Either_Nested.in1(Doubled.value)) ])([ Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(sub1))(Data_Either_Nested.in3), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderGuardedSelect(status)(Guarded.value)(v.value0)(v.value1.value0)(Delay.value)(match))(Data_Either_Nested.in2), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(v.value1.value1))(Data_Either_Nested.in4) ]) ]))(fix4(NotDoubled.value)(new Data_Tuple.Tuple(Guarded.value, new Data_Tuple.Tuple(new Data_Tuple.Tuple(v.value0, v.value1.value0), new Data_Tuple.Tuple(defaultDidMove, new Data_Tuple.Tuple(defaultOptions, new Data_Tuple.Tuple(Delay.value, match))))))(new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, sub1)))(new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, v.value1.value1))));
+                    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))(Data_Either_Nested.in1(Doubled.value)) ])([ Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(sub1))(Data_Either_Nested.in3), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderGuardedSelect(status)(Guarded.value)(v.value0)(v.value1.value0)(Delay.value)(match))(Data_Either_Nested.in2), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(v.value1.value1))(Data_Either_Nested.in4) ]) ]))(fix4(NotDoubled.value)(new Data_Tuple.Tuple(new Data_Tuple.Tuple(v.value0, v.value1.value0), new Data_Tuple.Tuple(defaultDidMove, new Data_Tuple.Tuple(defaultOptions, new Data_Tuple.Tuple(Guarded.value, new Data_Tuple.Tuple(Delay.value, match))))))(new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, sub1)))(new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, v.value1.value1))));
                 };
             };
         };
     };
 };
-var $dollar_EqIsCondensed_87 = new Data_Eq.Eq(function (v) {
-    return function (v1) {
-        if (v instanceof Condensed && v1 instanceof Condensed) {
+var $dollar_EqIsCondensed_89 = new Data_Eq.Eq(function (x) {
+    return function (y) {
+        if (x instanceof Condensed && y instanceof Condensed) {
             return true;
         };
-        if (v instanceof NotCondensed && v1 instanceof NotCondensed) {
+        if (x instanceof NotCondensed && y instanceof NotCondensed) {
             return true;
         };
         return false;
@@ -802,16 +854,16 @@ var renderBranches = function (render) {
                 return function (branches) {
                     var mapping = function (arr) {
                         return Data_Functor.mapFlipped(Data_Functor.functorArray)(Data_Array.filter(function (v) {
-                            return Data_Eq.eq($dollar_EqIsCondensed_87)(v.value0)(NotCondensed.value);
+                            return Data_Eq.eq($dollar_EqIsCondensed_89)(v.value0)(NotCondensed.value);
                         })(arr))(function (v) {
                             return new Data_Tuple.Tuple(v.value1.value0, v.value1.value1);
                         });
                     };
-                    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(subtask))(Data_Either_Nested.in2), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStep(status)(Hurry.value)(match))(Data_Either_Nested.in1), Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))(Data_Either_Nested.in3(Data_Semigroup.append(Data_Semigroup.semigroupArray)(branches)([ new Data_Tuple.Tuple(Task_Script_Builder.always, Task_Script_Builder.item) ]))) ])([ Concur_Dom_Style.branch([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur.traverse(Data_Monoid.monoidArray)(renderBranch(function ($893) {
-                        return fixgo(render($893));
+                    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(subtask))(Data_Either_Nested.in2), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStep(NotShow.value)(status)(NotGuarded.value)(Hurry.value)(match))(Data_Either_Nested.in1), Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))(Data_Either_Nested.in3(Data_Semigroup.append(Data_Semigroup.semigroupArray)(branches)([ new Data_Tuple.Tuple(Task_Script_Builder.always, Task_Script_Builder.item) ]))) ])([ Concur_Dom_Style.branch([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur.traverse(Data_Monoid.monoidArray)(renderBranch(function ($914) {
+                        return fixgo(render($914));
                     }))(Data_Functor.map(Data_Functor.functorArray)(function (v) {
                         return new Data_Tuple.Tuple(NotCondensed.value, new Data_Tuple.Tuple(v.value0, v.value1));
-                    })(branches)))(mapping))(Data_Either_Nested.in3) ]) ]) ]))(fix3(new Data_Tuple.Tuple(defaultDidMove, new Data_Tuple.Tuple(defaultOptions, new Data_Tuple.Tuple(Hurry.value, match))))(new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, subtask)))(branches));
+                    })(branches)))(mapping))(Data_Either_Nested.in3) ]) ]) ]))(fix3(new Data_Tuple.Tuple(defaultDidMove, new Data_Tuple.Tuple(defaultOptions, new Data_Tuple.Tuple(NotGuarded.value, new Data_Tuple.Tuple(Hurry.value, match)))))(new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, subtask)))(branches));
                 };
             };
         };
@@ -822,13 +874,13 @@ var renderGroup = function (par) {
         return function (tasks) {
             var mapping = function (arr) {
                 return Data_Functor.mapFlipped(Data_Functor.functorArray)(Data_Array.filter(function (v) {
-                    return Data_Eq.eq($dollar_EqIsCondensed_87)(v.value0)(NotCondensed.value);
+                    return Data_Eq.eq($dollar_EqIsCondensed_89)(v.value0)(NotCondensed.value);
                 })(arr))(function (v) {
                     return v.value1.value1;
                 });
             };
-            return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onClick))(other(par)(tasks)))(Data_Either_Nested.in1), Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))($$this(par)(Data_Semigroup.append(Data_Semigroup.semigroupArray)(tasks)([ Task_Script_Builder.item ]))))(Data_Either_Nested.in1) ])([ Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderWithOptions(Data_Unit.unit)(NotForked.value)(Concur_Dom_Style.element([  ])([ Concur_Dom_Style.column([ Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)([  ]) ]) ])))(Data_Either_Nested.in2), Concur_Dom_Style.group(stroke(par))([ Control_Bind.bind(Concur_Core_Types.widgetBind)(Concur.traverse(Data_Monoid.monoidArray)(renderSingleGroup(function ($894) {
-                return fixgo(render($894));
+            return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onClick))(other(par)(tasks)))(Data_Either_Nested.in1), Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))($$this(par)(Data_Semigroup.append(Data_Semigroup.semigroupArray)(tasks)([ Task_Script_Builder.item ]))))(Data_Either_Nested.in1) ])([ Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderWithOptions(Data_Unit.unit)(NotForked.value)(Concur_Dom_Style.element([  ])([ Concur_Dom_Style.column([ Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)([  ]) ]) ])))(Data_Either_Nested.in2), Concur_Dom_Style.group(stroke(par))([ Control_Bind.bind(Concur_Core_Types.widgetBind)(Concur.traverse(Data_Monoid.monoidArray)(renderSingleGroup(function ($915) {
+                return fixgo(render($915));
             }))(Data_Functor.map(Data_Functor.functorArray)(function (t) {
                 return new Data_Tuple.Tuple(NotCondensed.value, new Data_Tuple.Tuple(Still.value, t));
             })(tasks)))(function (rendered) {
@@ -848,7 +900,7 @@ var renderGroup = function (par) {
                         if (v.value1.value1.value0 instanceof Still) {
                             return acc;
                         };
-                        throw new Error("Failed pattern match at Task.Script.Renderer (line 776, column 21 - line 779, column 39): " + [ v.value1.value1.value0.constructor.name ]);
+                        throw new Error("Failed pattern match at Task.Script.Renderer (line 772, column 21 - line 775, column 39): " + [ v.value1.value1.value0.constructor.name ]);
                     };
                 })(rendered)(indexed);
                 return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Preload.done(Concur_Core_Types.widgetApplicative)(tasks$prime))(mapping))($$this(par)))(Data_Either_Nested.in1);
@@ -863,16 +915,16 @@ var renderSelects = function (render) {
                 return function (branches) {
                     var mapping = function (arr) {
                         return Data_Functor.mapFlipped(Data_Functor.functorArray)(Data_Array.filter(function (v) {
-                            return Data_Eq.eq($dollar_EqIsCondensed_87)(v.value0)(NotCondensed.value);
+                            return Data_Eq.eq($dollar_EqIsCondensed_89)(v.value0)(NotCondensed.value);
                         })(arr))(function (v) {
                             return new Data_Tuple.Tuple(v.value1.value0, new Data_Tuple.Tuple(v.value1.value1.value0, v.value1.value1.value1));
                         });
                     };
-                    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(subtask))(Data_Either_Nested.in2), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStep(status)(Delay.value)(match))(Data_Either_Nested.in1), Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))(Data_Either_Nested.in3(Data_Semigroup.append(Data_Semigroup.semigroupArray)(branches)([ new Data_Tuple.Tuple("Continue", new Data_Tuple.Tuple(Task_Script_Builder.always, Task_Script_Builder.item)) ]))) ])([ Concur_Dom_Style.branch([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur.traverse(Data_Monoid.monoidArray)(renderSelect(function ($895) {
-                        return fixgo(render($895));
+                    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(subtask))(Data_Either_Nested.in2), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStep(NotShow.value)(status)(NotGuarded.value)(Delay.value)(match))(Data_Either_Nested.in1), Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))(Data_Either_Nested.in3(Data_Semigroup.append(Data_Semigroup.semigroupArray)(branches)([ new Data_Tuple.Tuple("Continue", new Data_Tuple.Tuple(Task_Script_Builder.always, Task_Script_Builder.item)) ]))) ])([ Concur_Dom_Style.branch([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur.traverse(Data_Monoid.monoidArray)(renderSelect(function ($916) {
+                        return fixgo(render($916));
                     }))(Data_Functor.map(Data_Functor.functorArray)(function (v) {
                         return new Data_Tuple.Tuple(NotCondensed.value, new Data_Tuple.Tuple(v.value0, new Data_Tuple.Tuple(v.value1.value0, v.value1.value1)));
-                    })(branches)))(mapping))(Data_Either_Nested.in3) ]) ]) ]))(fix3(new Data_Tuple.Tuple(defaultDidMove, new Data_Tuple.Tuple(defaultOptions, new Data_Tuple.Tuple(Delay.value, match))))(new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, subtask)))(branches));
+                    })(branches)))(mapping))(Data_Either_Nested.in3) ]) ]) ]))(fix3(new Data_Tuple.Tuple(defaultDidMove, new Data_Tuple.Tuple(defaultOptions, new Data_Tuple.Tuple(NotGuarded.value, new Data_Tuple.Tuple(Delay.value, match)))))(new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, subtask)))(branches));
                 };
             };
         };
@@ -903,10 +955,10 @@ var renderTask = function (g) {
                 if (v.value1 instanceof Task_Script_Syntax.Step && (v.value1.value2.value1 instanceof Task_Script_Syntax.Branch && (v.value1.value2.value1.value0.length === 1 && (v["value1"]["value2"]["value1"]["value0"][0].value0 instanceof Task_Script_Syntax.Constant && (v["value1"]["value2"]["value1"]["value0"][0].value0.value0 instanceof Task_Script_Syntax.B && v["value1"]["value2"]["value1"]["value0"][0].value0.value0.value0))))) {
                     return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingleUnguarded(go)(v.value0)(Hurry.value)(v.value1.value0)(v.value1.value1)(v["value1"]["value2"]["value1"]["value0"][0].value1))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)((function () {
-                            if (v1.value0.value1.value1.value1.value0.value0 instanceof Removed && v1.value0.value1.value1.value1.value0.value1 instanceof NotForked) {
+                            if (v1.value0.value1.value1.value0.value0 instanceof Removed && v1.value0.value1.value1.value0.value1 instanceof NotForked) {
                                 return new Data_Tuple.Tuple(Removed.value, new Data_Tuple.Tuple(defaultDidMove, new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Lift(Task_Script_Syntax.Wildcard.value))) ]))));
                             };
-                            if (v1.value0.value1.value1.value1.value0.value0 instanceof NotRemoved && v1.value0.value1.value1.value1.value0.value1 instanceof Forked) {
+                            if (v1.value0.value1.value1.value0.value0 instanceof NotRemoved && v1.value0.value1.value1.value0.value1 instanceof Forked) {
                                 return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, renderNewFork(new Task_Script_Annotation.Annotated(v.value0, v.value1))));
                             };
                             if (v1.value1.value0.value0 instanceof Removed) {
@@ -918,12 +970,12 @@ var renderTask = function (g) {
                                         return new Data_Tuple.Tuple(defaultDidMove, Task_Script_Annotation.Annotated.create(v.value0)(new Task_Script_Syntax.Step(v1.value0.value1.value1.value1.value1.value1, v1.value1.value0.value1.value1, v1.value1.value1.value1.value1)));
                                     };
                                     if (v1.value1.value1.value0 instanceof NotRemoved) {
-                                        var v2 = new Data_Tuple.Tuple(v1.value0.value1.value1.value0, v1.value1.value1.value1.value1);
+                                        var v2 = new Data_Tuple.Tuple(v1.value0.value1.value0, v1.value1.value1.value1.value1);
                                         if (v2.value0.value0 instanceof MovedUp && v2.value0.value1 instanceof NotMovedDown) {
                                             return new Data_Tuple.Tuple(new Data_Tuple.Tuple(MovedUp.value, NotMovedDown.value), new Task_Script_Annotation.Annotated(v.value0, v.value1));
                                         };
                                         if (v2.value0.value0 instanceof NotMovedUp && (v2.value0.value1 instanceof MovedDown && v2.value1.value1 instanceof Task_Script_Syntax.Step)) {
-                                            return new Data_Tuple.Tuple(defaultDidMove, Task_Script_Annotation.Annotated.create(v.value0)(Task_Script_Syntax.Step.create(v2.value1.value1.value0)(v2.value1.value1.value1)(Task_Script_Annotation.Annotated.create(v2.value1.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(v1.value0.value1.value0, new Task_Script_Annotation.Annotated(v.value1.value2.value0, new Task_Script_Syntax.Step(v1.value0.value1.value1.value1.value1.value1, v1.value1.value0.value1.value1, v2.value1.value1.value2))) ])))));
+                                            return new Data_Tuple.Tuple(defaultDidMove, Task_Script_Annotation.Annotated.create(v.value0)(Task_Script_Syntax.Step.create(v2.value1.value1.value0)(v2.value1.value1.value1)(Task_Script_Annotation.Annotated.create(v2.value1.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(v1.value0.value0, new Task_Script_Annotation.Annotated(v.value1.value2.value0, new Task_Script_Syntax.Step(v1.value0.value1.value1.value1.value1.value1, v1.value1.value0.value1.value1, v2.value1.value1.value2))) ])))));
                                         };
                                         return new Data_Tuple.Tuple(defaultDidMove, (function () {
                                             var v3 = new Data_Tuple.Tuple(v1.value1.value1.value1.value0, v1.value1.value1.value1.value1);
@@ -937,7 +989,7 @@ var renderTask = function (g) {
                                                 return Preload.panic("invalid move button case");
                                             };
                                             return new Task_Script_Annotation.Annotated(v.value0, Task_Script_Syntax.Step.create(v1.value0.value1.value1.value1.value1.value1)(v1.value1.value0.value1.value1)((function () {
-                                                var v4 = new Data_Tuple.Tuple(v1.value0.value1.value1.value1.value1.value0, v1.value0.value0);
+                                                var v4 = new Data_Tuple.Tuple(v1.value0.value1.value1.value1.value1.value0, v1.value0.value1.value1.value1.value0);
                                                 if (v4.value0 instanceof Hurry && v4.value1 instanceof Guarded) {
                                                     return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(false)), v1.value1.value1.value1.value1) ]));
                                                 };
@@ -967,14 +1019,14 @@ var renderTask = function (g) {
                 if (v.value1 instanceof Task_Script_Syntax.Step && (v.value1.value2.value1 instanceof Task_Script_Syntax.Branch && v.value1.value2.value1.value0.length === 1)) {
                     return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingleBranch(go)(v.value0)(v.value1.value0)(v.value1.value1)(new Data_Tuple.Tuple(v["value1"]["value2"]["value1"]["value0"][0].value0, v["value1"]["value2"]["value1"]["value0"][0].value1)))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)((function () {
-                            if (v1.value1.value0.value1.value1.value1.value0.value0 instanceof Removed && v1.value1.value0.value1.value1.value1.value0.value1 instanceof NotForked) {
+                            if (v1.value1.value0.value1.value1.value0.value0 instanceof Removed && v1.value1.value0.value1.value1.value0.value1 instanceof NotForked) {
                                 return new Data_Tuple.Tuple(Removed.value, new Data_Tuple.Tuple(defaultDidMove, new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Lift(Task_Script_Syntax.Wildcard.value))) ]))));
                             };
-                            if (v1.value1.value0.value1.value1.value1.value0.value0 instanceof NotRemoved && v1.value1.value0.value1.value1.value1.value0.value1 instanceof Forked) {
+                            if (v1.value1.value0.value1.value1.value0.value0 instanceof NotRemoved && v1.value1.value0.value1.value1.value0.value1 instanceof Forked) {
                                 return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, renderNewFork(new Task_Script_Annotation.Annotated(v.value0, v.value1))));
                             };
                             if (v1.value0 instanceof Doubled) {
-                                return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, Task_Script_Annotation.Annotated.create(v.value0)(Task_Script_Syntax.Step.create(v1.value1.value0.value1.value1.value1.value1.value1)(v1.value1.value1.value0.value1.value1)(Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(v1.value1.value0.value1.value0, v1.value1.value1.value1.value1.value1), new Data_Tuple.Tuple(Task_Script_Builder.always, Task_Script_Builder.item) ]))))));
+                                return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, Task_Script_Annotation.Annotated.create(v.value0)(Task_Script_Syntax.Step.create(v1.value1.value0.value1.value1.value1.value1.value1)(v1.value1.value1.value0.value1.value1)(Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(v1.value1.value0.value0, v1.value1.value1.value1.value1.value1), new Data_Tuple.Tuple(Task_Script_Builder.always, Task_Script_Builder.item) ]))))));
                             };
                             if (v1.value0 instanceof NotDoubled) {
                                 if (v1.value1.value1.value0.value0 instanceof Removed) {
@@ -986,7 +1038,7 @@ var renderTask = function (g) {
                                             return new Data_Tuple.Tuple(defaultDidMove, Task_Script_Annotation.Annotated.create(v.value0)(new Task_Script_Syntax.Step(v1.value1.value0.value1.value1.value1.value1.value1, v1.value1.value1.value0.value1.value1, v1.value1.value1.value1.value1.value1)));
                                         };
                                         if (v1.value1.value1.value1.value0 instanceof NotRemoved) {
-                                            var v2 = new Data_Tuple.Tuple(v1.value1.value0.value1.value1.value0, v1.value1.value1.value1.value1.value1);
+                                            var v2 = new Data_Tuple.Tuple(v1.value1.value0.value1.value0, v1.value1.value1.value1.value1.value1);
                                             if (v2.value0.value0 instanceof MovedUp && v2.value0.value1 instanceof NotMovedDown) {
                                                 return new Data_Tuple.Tuple(new Data_Tuple.Tuple(MovedUp.value, NotMovedDown.value), new Task_Script_Annotation.Annotated(v.value0, v.value1));
                                             };
@@ -1005,15 +1057,15 @@ var renderTask = function (g) {
                                                     return Preload.panic("invalid move button case");
                                                 };
                                                 return new Task_Script_Annotation.Annotated(v.value0, Task_Script_Syntax.Step.create(v1.value1.value0.value1.value1.value1.value1.value1)(v1.value1.value1.value0.value1.value1)((function () {
-                                                    var v4 = new Data_Tuple.Tuple(v1.value1.value0.value1.value1.value1.value1.value0, v1.value1.value0.value0);
+                                                    var v4 = new Data_Tuple.Tuple(v1.value1.value0.value1.value1.value1.value1.value0, v1.value1.value0.value1.value1.value1.value0);
                                                     if (v4.value0 instanceof Hurry && v4.value1 instanceof Guarded) {
-                                                        return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(v1.value1.value0.value1.value0, v1.value1.value1.value1.value1.value1) ]));
+                                                        return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(v1.value1.value0.value0, v1.value1.value1.value1.value1.value1) ]));
                                                     };
                                                     if (v4.value0 instanceof Hurry && v4.value1 instanceof NotGuarded) {
                                                         return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), v1.value1.value1.value1.value1.value1) ]));
                                                     };
                                                     if (v4.value0 instanceof Delay && v4.value1 instanceof Guarded) {
-                                                        return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select([ new Data_Tuple.Tuple("Continue", new Data_Tuple.Tuple(v1.value1.value0.value1.value0, v1.value1.value1.value1.value1.value1)) ]));
+                                                        return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select([ new Data_Tuple.Tuple("Continue", new Data_Tuple.Tuple(v1.value1.value0.value0, v1.value1.value1.value1.value1.value1)) ]));
                                                     };
                                                     if (v4.value0 instanceof Delay && v4.value1 instanceof NotGuarded) {
                                                         return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select([ new Data_Tuple.Tuple("Continue", new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), v1.value1.value1.value1.value1.value1)) ]));
@@ -1060,13 +1112,13 @@ var renderTask = function (g) {
                                 return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, renderNewFork(new Task_Script_Annotation.Annotated(v.value0, v.value1))));
                             };
                             if (v1.value1.value0.value0 instanceof Removed) {
-                                return new Data_Tuple.Tuple(Removed.value, new Data_Tuple.Tuple(defaultDidMove, subtask(v.value1.value2.value0)(v1.value0.value1.value1.value0)(v1.value1.value1)));
+                                return new Data_Tuple.Tuple(Removed.value, new Data_Tuple.Tuple(defaultDidMove, subtask(v.value1.value2.value0)(v1.value0.value1.value1.value1.value0)(v1.value1.value1)));
                             };
                             if (v1.value1.value0.value0 instanceof NotRemoved) {
                                 if (v1.value0.value0.value0 instanceof MovedUp && v1.value0.value0.value1 instanceof NotMovedDown) {
                                     return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(new Data_Tuple.Tuple(MovedUp.value, NotMovedDown.value), new Task_Script_Annotation.Annotated(v.value0, v.value1)));
                                 };
-                                return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, Task_Script_Annotation.Annotated.create(v.value0)(Task_Script_Syntax.Step.create(v1.value0.value1.value1.value1)(v1.value1.value0.value1.value1)(subtask(v.value1.value2.value0)(v1.value0.value1.value1.value0)(v1.value1.value1)))));
+                                return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, Task_Script_Annotation.Annotated.create(v.value0)(Task_Script_Syntax.Step.create(v1.value0.value1.value1.value1.value1)(v1.value1.value0.value1.value1)(subtask(v.value1.value2.value0)(v1.value0.value1.value1.value1.value0)(v1.value1.value1)))));
                             };
                             throw new Error("Failed pattern match at Task.Script.Renderer (line 171, column 14 - line 176, column 100): " + [ v1.value1.value0.value0.constructor.name ]);
                         })());
@@ -1075,10 +1127,10 @@ var renderTask = function (g) {
                 if (v.value1 instanceof Task_Script_Syntax.Step && (v.value1.value2.value1 instanceof Task_Script_Syntax.Select && (v.value1.value2.value1.value0.length === 1 && (v["value1"]["value2"]["value1"]["value0"][0].value0 === "Continue" && (v["value1"]["value2"]["value1"]["value0"][0].value1.value0 instanceof Task_Script_Syntax.Constant && (v["value1"]["value2"]["value1"]["value0"][0].value1.value0.value0 instanceof Task_Script_Syntax.B && v["value1"]["value2"]["value1"]["value0"][0].value1.value0.value0.value0)))))) {
                     return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingleUnguarded(go)(v.value0)(Delay.value)(v.value1.value0)(v.value1.value1)(v["value1"]["value2"]["value1"]["value0"][0].value1.value1))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)((function () {
-                            if (v1.value0.value1.value1.value1.value0.value0 instanceof Removed && v1.value0.value1.value1.value1.value0.value1 instanceof NotForked) {
+                            if (v1.value0.value1.value1.value0.value0 instanceof Removed && v1.value0.value1.value1.value0.value1 instanceof NotForked) {
                                 return new Data_Tuple.Tuple(Removed.value, new Data_Tuple.Tuple(defaultDidMove, new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Lift(Task_Script_Syntax.Wildcard.value))) ]))));
                             };
-                            if (v1.value0.value1.value1.value1.value0.value0 instanceof NotRemoved && v1.value0.value1.value1.value1.value0.value1 instanceof Forked) {
+                            if (v1.value0.value1.value1.value0.value0 instanceof NotRemoved && v1.value0.value1.value1.value0.value1 instanceof Forked) {
                                 return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, renderNewFork(new Task_Script_Annotation.Annotated(v.value0, v.value1))));
                             };
                             if (v1.value1.value0.value0 instanceof Removed) {
@@ -1090,7 +1142,7 @@ var renderTask = function (g) {
                                         return new Data_Tuple.Tuple(defaultDidMove, Task_Script_Annotation.Annotated.create(v.value0)(new Task_Script_Syntax.Step(v1.value0.value1.value1.value1.value1.value1, v1.value1.value0.value1.value1, v1.value1.value1.value1.value1)));
                                     };
                                     if (v1.value1.value1.value0 instanceof NotRemoved) {
-                                        var v2 = new Data_Tuple.Tuple(v1.value0.value1.value1.value0, v1.value1.value1.value1.value1);
+                                        var v2 = new Data_Tuple.Tuple(v1.value0.value1.value0, v1.value1.value1.value1.value1);
                                         if (v2.value0.value0 instanceof MovedUp && v2.value0.value1 instanceof NotMovedDown) {
                                             return new Data_Tuple.Tuple(new Data_Tuple.Tuple(MovedUp.value, NotMovedDown.value), new Task_Script_Annotation.Annotated(v.value0, v.value1));
                                         };
@@ -1109,7 +1161,7 @@ var renderTask = function (g) {
                                                 return Preload.panic("invalid move button case");
                                             };
                                             return new Task_Script_Annotation.Annotated(v.value0, Task_Script_Syntax.Step.create(v1.value0.value1.value1.value1.value1.value1)(v1.value1.value0.value1.value1)((function () {
-                                                var v4 = new Data_Tuple.Tuple(v1.value0.value1.value1.value1.value1.value0, v1.value0.value0);
+                                                var v4 = new Data_Tuple.Tuple(v1.value0.value1.value1.value1.value1.value0, v1.value0.value1.value1.value1.value0);
                                                 if (v4.value0 instanceof Hurry && v4.value1 instanceof Guarded) {
                                                     return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(false)), v1.value1.value1.value1.value1) ]));
                                                 };
@@ -1139,14 +1191,14 @@ var renderTask = function (g) {
                 if (v.value1 instanceof Task_Script_Syntax.Step && (v.value1.value2.value1 instanceof Task_Script_Syntax.Select && v.value1.value2.value1.value0.length === 1)) {
                     return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingleSelect(go)(v.value0)(v.value1.value0)(v.value1.value1)(new Data_Tuple.Tuple(v["value1"]["value2"]["value1"]["value0"][0].value0, new Data_Tuple.Tuple(v["value1"]["value2"]["value1"]["value0"][0].value1.value0, v["value1"]["value2"]["value1"]["value0"][0].value1.value1))))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)((function () {
-                            if (v1.value1.value0.value1.value1.value1.value0.value0 instanceof Removed && v1.value1.value0.value1.value1.value1.value0.value1 instanceof NotForked) {
+                            if (v1.value1.value0.value1.value1.value0.value0 instanceof Removed && v1.value1.value0.value1.value1.value0.value1 instanceof NotForked) {
                                 return new Data_Tuple.Tuple(Removed.value, new Data_Tuple.Tuple(defaultDidMove, new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Lift(Task_Script_Syntax.Wildcard.value))) ]))));
                             };
-                            if (v1.value1.value0.value1.value1.value1.value0.value0 instanceof NotRemoved && v1.value1.value0.value1.value1.value1.value0.value1 instanceof Forked) {
+                            if (v1.value1.value0.value1.value1.value0.value0 instanceof NotRemoved && v1.value1.value0.value1.value1.value0.value1 instanceof Forked) {
                                 return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, renderNewFork(new Task_Script_Annotation.Annotated(v.value0, v.value1))));
                             };
                             if (v1.value0 instanceof Doubled) {
-                                return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, Task_Script_Annotation.Annotated.create(v.value0)(Task_Script_Syntax.Step.create(v1.value1.value0.value1.value1.value1.value1.value1)(v1.value1.value1.value0.value1.value1)(Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select([ new Data_Tuple.Tuple(v1.value1.value0.value1.value0.value0, new Data_Tuple.Tuple(v1.value1.value0.value1.value0.value1, v1.value1.value1.value1.value1.value1)), new Data_Tuple.Tuple("Continue", new Data_Tuple.Tuple(Task_Script_Builder.always, Task_Script_Builder.item)) ]))))));
+                                return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, Task_Script_Annotation.Annotated.create(v.value0)(Task_Script_Syntax.Step.create(v1.value1.value0.value1.value1.value1.value1.value1)(v1.value1.value1.value0.value1.value1)(Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select([ new Data_Tuple.Tuple(v1.value1.value0.value0.value0, new Data_Tuple.Tuple(v1.value1.value0.value0.value1, v1.value1.value1.value1.value1.value1)), new Data_Tuple.Tuple("Continue", new Data_Tuple.Tuple(Task_Script_Builder.always, Task_Script_Builder.item)) ]))))));
                             };
                             if (v1.value0 instanceof NotDoubled) {
                                 if (v1.value1.value1.value0.value0 instanceof Removed) {
@@ -1158,7 +1210,7 @@ var renderTask = function (g) {
                                             return new Data_Tuple.Tuple(defaultDidMove, Task_Script_Annotation.Annotated.create(v.value0)(new Task_Script_Syntax.Step(v1.value1.value0.value1.value1.value1.value1.value1, v1.value1.value1.value0.value1.value1, v1.value1.value1.value1.value1.value1)));
                                         };
                                         if (v1.value1.value1.value1.value0 instanceof NotRemoved) {
-                                            var v2 = new Data_Tuple.Tuple(v1.value1.value0.value1.value1.value0, v1.value1.value1.value1.value1.value1);
+                                            var v2 = new Data_Tuple.Tuple(v1.value1.value0.value1.value0, v1.value1.value1.value1.value1.value1);
                                             if (v2.value0.value0 instanceof MovedUp && v2.value0.value1 instanceof NotMovedDown) {
                                                 return new Data_Tuple.Tuple(new Data_Tuple.Tuple(MovedUp.value, NotMovedDown.value), new Task_Script_Annotation.Annotated(v.value0, v.value1));
                                             };
@@ -1177,18 +1229,18 @@ var renderTask = function (g) {
                                                     return Preload.panic("invalid move button case");
                                                 };
                                                 return new Task_Script_Annotation.Annotated(v.value0, Task_Script_Syntax.Step.create(v1.value1.value0.value1.value1.value1.value1.value1)(v1.value1.value1.value0.value1.value1)((function () {
-                                                    var v4 = new Data_Tuple.Tuple(v1.value1.value0.value1.value1.value1.value1.value0, v1.value1.value0.value0);
+                                                    var v4 = new Data_Tuple.Tuple(v1.value1.value0.value1.value1.value1.value1.value0, v1.value1.value0.value1.value1.value1.value0);
                                                     if (v4.value0 instanceof Hurry && v4.value1 instanceof Guarded) {
-                                                        return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(v1.value1.value0.value1.value0.value1, v1.value1.value1.value1.value1.value1) ]));
+                                                        return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(v1.value1.value0.value0.value1, v1.value1.value1.value1.value1.value1) ]));
                                                     };
                                                     if (v4.value0 instanceof Hurry && v4.value1 instanceof NotGuarded) {
                                                         return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), v1.value1.value1.value1.value1.value1) ]));
                                                     };
                                                     if (v4.value0 instanceof Delay && v4.value1 instanceof Guarded) {
-                                                        return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select([ new Data_Tuple.Tuple(v1.value1.value0.value1.value0.value0, new Data_Tuple.Tuple(v1.value1.value0.value1.value0.value1, v1.value1.value1.value1.value1.value1)) ]));
+                                                        return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select([ new Data_Tuple.Tuple(v1.value1.value0.value0.value0, new Data_Tuple.Tuple(v1.value1.value0.value0.value1, v1.value1.value1.value1.value1.value1)) ]));
                                                     };
                                                     if (v4.value0 instanceof Delay && v4.value1 instanceof NotGuarded) {
-                                                        return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select([ new Data_Tuple.Tuple(v1.value1.value0.value1.value0.value0, new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), v1.value1.value1.value1.value1.value1)) ]));
+                                                        return Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select([ new Data_Tuple.Tuple(v1.value1.value0.value0.value0, new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), v1.value1.value1.value1.value1.value1)) ]));
                                                     };
                                                     if (v4.value0 instanceof New) {
                                                         return Task_Script_Builder["new"](v.value1.value2);
@@ -1232,13 +1284,13 @@ var renderTask = function (g) {
                                 return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, renderNewFork(new Task_Script_Annotation.Annotated(v.value0, v.value1))));
                             };
                             if (v1.value1.value0.value0 instanceof Removed) {
-                                return new Data_Tuple.Tuple(Removed.value, new Data_Tuple.Tuple(defaultDidMove, subtask(v.value1.value2.value0)(v1.value0.value1.value1.value0)(v1.value1.value1)));
+                                return new Data_Tuple.Tuple(Removed.value, new Data_Tuple.Tuple(defaultDidMove, subtask(v.value1.value2.value0)(v1.value0.value1.value1.value1.value0)(v1.value1.value1)));
                             };
                             if (v1.value1.value0.value0 instanceof NotRemoved) {
                                 if (v1.value0.value0.value0 instanceof MovedUp && v1.value0.value0.value1 instanceof NotMovedDown) {
                                     return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(new Data_Tuple.Tuple(MovedUp.value, NotMovedDown.value), new Task_Script_Annotation.Annotated(v.value0, v.value1)));
                                 };
-                                return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, Task_Script_Annotation.Annotated.create(v.value0)(Task_Script_Syntax.Step.create(v1.value0.value1.value1.value1)(v1.value1.value0.value1.value1)(subtask(v.value1.value2.value0)(v1.value0.value1.value1.value0)(v1.value1.value1)))));
+                                return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, Task_Script_Annotation.Annotated.create(v.value0)(Task_Script_Syntax.Step.create(v1.value0.value1.value1.value1.value1)(v1.value1.value0.value1.value1)(subtask(v.value1.value2.value0)(v1.value0.value1.value1.value1.value0)(v1.value1.value1)))));
                             };
                             throw new Error("Failed pattern match at Task.Script.Renderer (line 241, column 14 - line 246, column 100): " + [ v1.value1.value0.value0.constructor.name ]);
                         })());
@@ -1339,7 +1391,7 @@ var renderTask = function (g) {
                             if (v2 instanceof NotForked) {
                                 return new Task_Script_Annotation.Annotated(v.value0, v1.value0);
                             };
-                            throw new Error("Failed pattern match at Task.Script.Renderer (line 311, column 57 - line 313, column 42): " + [ v2.constructor.name ]);
+                            throw new Error("Failed pattern match at Task.Script.Renderer (line 311, column 57 - line 313, column 40): " + [ v2.constructor.name ]);
                         })())));
                     });
                 };
@@ -1373,8 +1425,8 @@ var renderTask = function (g) {
                 };
                 if (v.value1 instanceof Task_Script_Syntax.Hole) {
                     return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderWithOptions(new Data_Tuple.Tuple("??", v.value1.value0))(NotForked.value)(renderExecute(v.value0)("??")(v.value1.value0)))(function (v1) {
-                        var $852 = v1.value0.value0 === "??";
-                        if ($852) {
+                        var $873 = v1.value0.value0 === "??";
+                        if ($873) {
                             return Preload.done(Concur_Core_Types.widgetApplicative)(new Data_Tuple.Tuple(getFirstUserOption(v1.value1), new Data_Tuple.Tuple(defaultDidMove, (function () {
                                 var v2 = getSecondUserOption(v1.value1);
                                 if (v2 instanceof Forked) {
@@ -1468,10 +1520,6 @@ module.exports = {
     renderGuardedSelect: renderGuardedSelect,
     renderGuardButton: renderGuardButton,
     renderGroup: renderGroup,
-    swap: swap,
-    MoveLeft: MoveLeft,
-    MoveRight: MoveRight,
-    Still: Still,
     renderSingleGroup: renderSingleGroup,
     renderEditor: renderEditor,
     renderEnter: renderEnter,
@@ -1493,6 +1541,7 @@ module.exports = {
     fix2: fix2,
     fix3: fix3,
     fix4: fix4,
+    fix5: fix5,
     reorder3: reorder3,
     reorder4: reorder4,
     reorder6: reorder6,
@@ -1518,9 +1567,12 @@ module.exports = {
     NotForked: NotForked,
     Doubled: Doubled,
     NotDoubled: NotDoubled,
+    Show: Show,
+    NotShow: NotShow,
     Switch: Switch,
-    addLabels: addLabels,
-    removeLabels: removeLabels,
+    MoveLeft: MoveLeft,
+    MoveRight: MoveRight,
+    Still: Still,
     MovedUp: MovedUp,
     NotMovedUp: NotMovedUp,
     MovedDown: MovedDown,
@@ -1531,9 +1583,12 @@ module.exports = {
     defaultOptions: defaultOptions,
     getFirstUserOption: getFirstUserOption,
     getSecondUserOption: getSecondUserOption,
-    "$_SwitchPar_83": $dollar_SwitchPar_83,
-    "$_SwitchCont_84": $dollar_SwitchCont_84,
-    "$_SwitchIsGuarded_85": $dollar_SwitchIsGuarded_85,
-    "$_SwitchIsForked_86": $dollar_SwitchIsForked_86,
-    "$_EqIsCondensed_87": $dollar_EqIsCondensed_87
+    swap: swap,
+    addLabels: addLabels,
+    removeLabels: removeLabels,
+    "$_SwitchPar_85": $dollar_SwitchPar_85,
+    "$_SwitchCont_86": $dollar_SwitchCont_86,
+    "$_SwitchIsGuarded_87": $dollar_SwitchIsGuarded_87,
+    "$_SwitchIsForked_88": $dollar_SwitchIsForked_88,
+    "$_EqIsCondensed_89": $dollar_EqIsCondensed_89
 };
