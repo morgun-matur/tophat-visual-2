@@ -114,8 +114,8 @@ renderTask g s t = Style.column
     Step m t1 orig@(Annotated a_b (Branch [ Constant (B true) ~ t2 ])) -> do
       (e' ~ (didmove1' ~ o' ~ isguarded' ~ c' ~ m')) ~ (isremoved1' ~ _ ~ t1') ~ (isremoved2' ~ didmove2' ~ t2') <- renderSingleUnguarded go a_t Hurry m t1 t2      
       done <| case o' of
-        (Removed ~ NotForked) -> Removed ~ defaultDidMove ~ Annotated a_t (Branch [ Constant (B true) ~ Annotated a_t (Lift Wildcard)]) 
-        (NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewFork (Annotated a_t t)
+        --(Removed ~ NotForked) -> Removed ~ defaultDidMove ~ Annotated a_t (Branch [ Constant (B true) ~ Annotated a_t (Lift Wildcard)]) 
+        --(NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewFork (Annotated a_t t)
         _ -> case isremoved1' of
           Removed -> Removed ~ defaultDidMove ~ t2'
           NotRemoved -> NotRemoved ~ case isremoved2' of 
@@ -139,8 +139,8 @@ renderTask g s t = Style.column
     Step m t1 orig@(Annotated a_b (Branch [ e ~ t2 ])) -> do
       isdoubled' ~ (e' ~ (didmove1' ~ o' ~ isguarded' ~ c' ~ m')) ~ (isremoved1' ~ _ ~ t1') ~ (isremoved2' ~ didmove2' ~ t2') <- renderSingleBranch go a_t m t1 (e ~ t2)       
       done <| case o' of
-        (Removed ~ NotForked) -> Removed ~ defaultDidMove ~ Annotated a_t (Branch [ Constant (B true) ~ Annotated a_t (Lift Wildcard)]) 
-        (NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewFork (Annotated a_t t)
+        --(Removed ~ NotForked) -> Removed ~ defaultDidMove ~ Annotated a_t (Branch [ Constant (B true) ~ Annotated a_t (Lift Wildcard)]) 
+        --(NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewFork (Annotated a_t t)
         _ -> case isdoubled' of 
           Doubled -> NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Branch([e' ~ t2', Builder.always ~ Builder.item ]))
           NotDoubled -> case isremoved1' of
@@ -166,8 +166,8 @@ renderTask g s t = Style.column
     Step m t1 orig@(Annotated a_b (Branch bs)) -> do
       (didmove1' ~ o' ~ _ ~ c' ~ m') ~ (isremoved1' ~ _ ~ t1') ~ bs' <- renderBranches go a_t m t1 bs
       done <| case o' of
-        (Removed ~ NotForked) -> Removed ~ defaultDidMove ~ Annotated a_t (Branch [ Constant (B true) ~ Annotated a_t (Lift Wildcard)]) 
-        (NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewFork (Annotated a_t t)
+        --(Removed ~ NotForked) -> Removed ~ defaultDidMove ~ Annotated a_t (Branch [ Constant (B true) ~ Annotated a_t (Lift Wildcard)]) 
+        --(NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewFork (Annotated a_t t)
         _ -> case isremoved1' of
           Removed -> Removed ~ defaultDidMove ~ (subtask a_b c' bs')
           NotRemoved -> case didmove1' of 
@@ -184,8 +184,8 @@ renderTask g s t = Style.column
     Step m t1 orig@(Annotated a_b (Select [ "Continue" ~ Constant (B true) ~ t2 ])) -> do
       ( e' ~ (didmove1' ~ o' ~ isguarded' ~ c' ~ m')) ~ (isremoved1' ~ _ ~ t1') ~ (isremoved2' ~ didmove2' ~ t2') <- renderSingleUnguarded go a_t Delay m t1 t2
       done <| case o' of
-        (Removed ~ NotForked) -> Removed ~ defaultDidMove ~ Annotated a_t (Branch [ Constant (B true) ~ Annotated a_t (Lift Wildcard)]) 
-        (NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewFork (Annotated a_t t)
+        --(Removed ~ NotForked) -> Removed ~ defaultDidMove ~ Annotated a_t (Branch [ Constant (B true) ~ Annotated a_t (Lift Wildcard)]) 
+        --(NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewFork (Annotated a_t t)
         _ -> case isremoved1' of
           Removed -> Removed ~ defaultDidMove ~ t2'
           NotRemoved -> NotRemoved ~ case isremoved2' of 
@@ -209,8 +209,8 @@ renderTask g s t = Style.column
     Step m t1 orig@(Annotated a_b (Select [l ~ e ~ t2])) -> do
       isdoubled' ~ ((l' ~ e') ~ (didmove1' ~ o' ~ isguarded' ~ c' ~ m')) ~ (isremoved1' ~ _ ~ t1') ~ (isremoved2' ~ didmove2' ~ t2') <- renderSingleSelect go a_t m t1 (l ~ e ~ t2)
       done <| case o' of
-        (Removed ~ NotForked) -> Removed ~ defaultDidMove ~ Annotated a_t (Branch [ Constant (B true) ~ Annotated a_t (Lift Wildcard)]) 
-        (NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewFork (Annotated a_t t)
+        --(Removed ~ NotForked) -> Removed ~ defaultDidMove ~ Annotated a_t (Branch [ Constant (B true) ~ Annotated a_t (Lift Wildcard)]) 
+        --(NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewFork (Annotated a_t t)
         _ -> case isdoubled' of
           Doubled -> NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Select([l' ~ e' ~ t2', "Continue" ~ Builder.always ~ Builder.item ]))
           NotDoubled -> case isremoved1' of
@@ -236,8 +236,8 @@ renderTask g s t = Style.column
     Step m t1 orig@(Annotated a_b (Select bs)) -> do
       (didmove1' ~ o' ~ _ ~ c' ~ m') ~ (isremoved1' ~ _ ~ t1') ~ bs' <- renderSelects go a_t m t1 bs
       done <| case o' of
-        (Removed ~ NotForked) -> Removed ~ defaultDidMove ~ Annotated a_t (Branch [ Constant (B true) ~ Annotated a_t (Lift Wildcard)]) 
-        (NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewFork (Annotated a_t t)
+        --(Removed ~ NotForked) -> Removed ~ defaultDidMove ~ Annotated a_t (Branch [ Constant (B true) ~ Annotated a_t (Lift Wildcard)]) 
+        --(NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewFork (Annotated a_t t)
         _ -> case isremoved1' of
           Removed -> Removed ~ defaultDidMove ~ (subtask a_b c' bs')
           NotRemoved -> case didmove1' of
@@ -302,10 +302,10 @@ renderTask g s t = Style.column
     Lift e -> do
       e' <- renderLift e
       done <| NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Lift e')
-    Pair [] -> panic "invalid empty pair"
-    Choose [] -> panic "invalid empty choose"
-    Pair [t] -> panic "invalid single pair, sequencing not implemented yet"
-    Choose [t] -> panic "invalid single pair, sequencing not implemented yet"
+    --Pair [] -> panic "invalid empty pair"
+    --Choose [] -> panic "invalid empty choose"
+    --Pair [t] -> panic "invalid single pair, sequencing not implemented yet"
+    --Choose [t] -> panic "invalid single pair, sequencing not implemented yet"
     Pair ts -> do
       t' ~ (_ ~ o) <- renderGroup And go ts
       done <| (getFirstUserOption o) ~ defaultDidMove ~ case (getSecondUserOption o) of
@@ -535,8 +535,8 @@ renderStep show status isguarded cont match@(MRecord row) =
           [Icon.arrow_down]
         ]
     , Style.column 
-      [ renderRemove >-> (\b -> Either.in2 (b ~ NotForked))
-      , renderForked NotForked >-> (\b -> Either.in2 (NotRemoved ~ b))
+      [ --renderRemove >-> (\b -> Either.in2 (b ~ NotForked))
+        renderForked NotForked >-> (\b -> Either.in2 (NotRemoved ~ b))
       ]
     ] )
   guardButton = case show of 
@@ -632,7 +632,7 @@ renderBranches render status match subtask branches =
       >-> fix3 (defaultDidMove ~ defaultOptions ~ NotGuarded ~ Hurry ~ match) (NotRemoved ~ defaultDidMove ~ subtask) branches
     where 
     mapping = (\arr -> arr
-      |> Array.filter (\(con ~ _ ~ _) -> con == NotCondensed) 
+      |> (if Array.length arr == 2 then identity else Array.filter (\(con ~ _ ~ _) -> con == NotCondensed)) 
       >-> (\(_ ~ e ~ t) -> e ~ t)) 
 
 renderBranch :: Renderer -> IsCondensed * Expression * Checked Task -> Widget (IsCondensed * Expression * Checked Task)
@@ -672,7 +672,7 @@ renderSelects render status match subtask branches =
     >-> fix3 (defaultDidMove ~ defaultOptions ~ NotGuarded ~ Delay ~ match) (NotRemoved ~ defaultDidMove ~ subtask) branches
   where 
   mapping = (\arr -> arr
-    |> Array.filter (\(con ~ _ ~ _ ~ _) -> con == NotCondensed) 
+    |> (if Array.length arr == 2 then identity else Array.filter (\(con ~ _ ~ _ ~ _) -> con == NotCondensed))
     >-> (\(_ ~ l ~ e ~ t) -> l ~ e ~ t)) 
 
 renderSelect :: Renderer -> IsCondensed * Label * Expression * Checked Task -> Widget (IsCondensed * Label * Expression * Checked Task)
@@ -782,7 +782,7 @@ renderGroup par render tasks =
     >-> fix2 (this par tasks) (unit ~ defaultOptions)
   where 
   mapping = (\arr -> arr
-    |> Array.filter (\(c ~ _ ~ _) -> c == NotCondensed) 
+    |> (if Array.length arr == 2 then identity else Array.filter (\(c ~ _ ~ _) -> c == NotCondensed)) 
     >-> (\(_ ~ _ ~ x) -> x)) 
 
 renderSingleGroup :: Renderer -> IsCondensed * Move * Checked Task -> Widget(IsCondensed * Move * Checked Task) 

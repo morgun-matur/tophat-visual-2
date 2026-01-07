@@ -300,9 +300,9 @@ var renderPossibleArgs = function (status) {
             return new Task_Script_Syntax.ARecord(Data_HashMap.fromArrayBy(Data_Hashable.hashableString)(Control_Category.identity(Control_Category.categoryFn))(Task_Script_Syntax.Variable.create)(labels));
         };
         var labels = Data_Array.sort(Data_Ord.ordString)(Data_HashMap.keys(Data_HashMap.filter((function () {
-            var $900 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
-            return function ($901) {
-                return $900(Task_Script_Type.isFunction($901));
+            var $867 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
+            return function ($868) {
+                return $867(Task_Script_Type.isFunction($868));
             };
         })())(Task_Script_Annotation.extractContext(status))));
         var action = function (label) {
@@ -352,17 +352,17 @@ var renderContext = (function () {
     var go = function (v) {
         return v.value0 + (" : " + (Data_Show.show(Task_Script_Type["$_ShowFullType_49"])(v.value1) + "\x0a"));
     };
-    var $902 = Data_Foldable.foldMap(Data_Foldable.foldableArray)(Data_Monoid.monoidString)(go);
-    var $903 = Data_Array.sortBy(Data_Function.on(Data_Ord.compare(Data_Ord.ordString))(Data_Tuple.fst));
-    var $904 = Data_HashMap.toArrayBy(Data_Tuple.Tuple.create);
-    var $905 = Data_HashMap.filter((function () {
-        var $907 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
-        return function ($908) {
-            return $907(Task_Script_Type.isFunction($908));
+    var $869 = Data_Foldable.foldMap(Data_Foldable.foldableArray)(Data_Monoid.monoidString)(go);
+    var $870 = Data_Array.sortBy(Data_Function.on(Data_Ord.compare(Data_Ord.ordString))(Data_Tuple.fst));
+    var $871 = Data_HashMap.toArrayBy(Data_Tuple.Tuple.create);
+    var $872 = Data_HashMap.filter((function () {
+        var $874 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
+        return function ($875) {
+            return $874(Task_Script_Type.isFunction($875));
         };
     })());
-    return function ($906) {
-        return $902($903($904($905(Task_Script_Annotation.extractContext($906)))));
+    return function ($873) {
+        return $869($870($871($872(Task_Script_Annotation.extractContext($873)))));
     };
 })();
 var renderArg = function (sel) {
@@ -605,12 +605,12 @@ var catYes = Data_Array.concatMap(function (v) {
 var renderArgs = function (status) {
     return function (v) {
         var unselect = (function () {
-            var $909 = Data_HashMap.fromArray(Data_Hashable.hashableString);
-            var $910 = Data_Functor.map(Data_Functor.functorArray)(function (l) {
+            var $876 = Data_HashMap.fromArray(Data_Hashable.hashableString);
+            var $877 = Data_Functor.map(Data_Functor.functorArray)(function (l) {
                 return new Data_Tuple.Tuple(l, new Task_Script_Syntax.Variable(l));
             });
-            return function ($911) {
-                return Task_Script_Syntax.ARecord.create($909($910(catYes($911))));
+            return function ($878) {
+                return Task_Script_Syntax.ARecord.create($876($877(catYes($878))));
             };
         })();
         var check = function (label) {
@@ -623,9 +623,9 @@ var renderArgs = function (status) {
             })()(label);
         };
         var select = Data_Functor.map(Data_Functor.functorArray)(check)(Data_HashMap.keys(Data_HashMap.filter((function () {
-            var $912 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
-            return function ($913) {
-                return $912(Task_Script_Type.isFunction($913));
+            var $879 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
+            return function ($880) {
+                return $879(Task_Script_Type.isFunction($880));
             };
         })())(Task_Script_Annotation.extractContext(status))));
         return Concur_Dom_Input.popover(Concur_Dom_Style.After.value)(Concur_Dom_Input.card([  ])([ Concur_Dom_Style.row([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur.traverse(Data_Monoid.monoidArray)(renderArg)(select))(unselect) ]) ])([  ]))(Concur_Dom_Style.column([ Data_Functor.voidLeft(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)([ Concur_Dom_Style.place(Concur_Dom_Style.After.value)(Concur_Dom_Style.Small.value)([ Concur_Dom_Style.row(renderLabels(Data_HashMap.keys(v.value0))) ]) ]))(v) ]));
@@ -740,9 +740,7 @@ var renderStep = function (v) {
                             return Data_Maybe.Nothing.value;
                         };
                         var labels = Data_Array.catMaybes(Data_Functor.map(Data_Functor.functorArray)(getBinds)(Data_HashMap.values(v4.value0)));
-                        var contents = Concur_Dom_Style.row(Data_Semigroup.append(Data_Semigroup.semigroupArray)(guardButton)([ Concur_Dom_Style.column([ Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onClick))(Data_Either_Nested.in1(new Data_Tuple.Tuple(MovedUp.value, NotMovedDown.value))) ])([ Concur_Dom_Icon.arrow_up ]), Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onClick))(Data_Either_Nested.in1(new Data_Tuple.Tuple(NotMovedUp.value, MovedDown.value))) ])([ Concur_Dom_Icon.arrow_down ]) ]), Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderRemove)(function (b) {
-                            return Data_Either_Nested.in2(new Data_Tuple.Tuple(b, NotForked.value));
-                        }), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderForked(NotForked.value))(function (b) {
+                        var contents = Concur_Dom_Style.row(Data_Semigroup.append(Data_Semigroup.semigroupArray)(guardButton)([ Concur_Dom_Style.column([ Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onClick))(Data_Either_Nested.in1(new Data_Tuple.Tuple(MovedUp.value, NotMovedDown.value))) ])([ Concur_Dom_Icon.arrow_up ]), Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onClick))(Data_Either_Nested.in1(new Data_Tuple.Tuple(NotMovedUp.value, MovedDown.value))) ])([ Concur_Dom_Icon.arrow_down ]) ]), Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderForked(NotForked.value))(function (b) {
                             return Data_Either_Nested.in2(new Data_Tuple.Tuple(NotRemoved.value, b));
                         }) ]) ]));
                         return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.voidLeft(Concur_Core_Types.widgetFunctor)(renderLine(labels))(Data_Either_Nested.in5(v4)), Concur_Dom_Input.popover(Concur_Dom_Style.After.value)(contents)(Concur_Dom_Input.popover(Concur_Dom_Style.Before.value)(Concur_Dom_Text.code("TopHat")(renderContext(v1)))(Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onClick))(Data_Either_Nested.in4($$switch($dollar_SwitchCont_86)(v3))), Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))(Data_Either_Nested.in4(New.value)) ])([ Concur_Dom_Style.triangle(style(v3))(Control_Plus.empty(Control_Plus.plusArray)) ]))) ]))(fix5(defaultDidMove)(defaultOptions)(v2)(v3)(v4));
@@ -853,14 +851,20 @@ var renderBranches = function (render) {
             return function (subtask) {
                 return function (branches) {
                     var mapping = function (arr) {
-                        return Data_Functor.mapFlipped(Data_Functor.functorArray)(Data_Array.filter(function (v) {
-                            return Data_Eq.eq($dollar_EqIsCondensed_89)(v.value0)(NotCondensed.value);
-                        })(arr))(function (v) {
+                        return Data_Functor.mapFlipped(Data_Functor.functorArray)((function () {
+                            var $330 = Data_Array.length(arr) === 2;
+                            if ($330) {
+                                return Control_Category.identity(Control_Category.categoryFn);
+                            };
+                            return Data_Array.filter(function (v) {
+                                return Data_Eq.eq($dollar_EqIsCondensed_89)(v.value0)(NotCondensed.value);
+                            });
+                        })()(arr))(function (v) {
                             return new Data_Tuple.Tuple(v.value1.value0, v.value1.value1);
                         });
                     };
-                    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(subtask))(Data_Either_Nested.in2), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStep(NotShow.value)(status)(NotGuarded.value)(Hurry.value)(match))(Data_Either_Nested.in1), Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))(Data_Either_Nested.in3(Data_Semigroup.append(Data_Semigroup.semigroupArray)(branches)([ new Data_Tuple.Tuple(Task_Script_Builder.always, Task_Script_Builder.item) ]))) ])([ Concur_Dom_Style.branch([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur.traverse(Data_Monoid.monoidArray)(renderBranch(function ($914) {
-                        return fixgo(render($914));
+                    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(subtask))(Data_Either_Nested.in2), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStep(NotShow.value)(status)(NotGuarded.value)(Hurry.value)(match))(Data_Either_Nested.in1), Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))(Data_Either_Nested.in3(Data_Semigroup.append(Data_Semigroup.semigroupArray)(branches)([ new Data_Tuple.Tuple(Task_Script_Builder.always, Task_Script_Builder.item) ]))) ])([ Concur_Dom_Style.branch([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur.traverse(Data_Monoid.monoidArray)(renderBranch(function ($881) {
+                        return fixgo(render($881));
                     }))(Data_Functor.map(Data_Functor.functorArray)(function (v) {
                         return new Data_Tuple.Tuple(NotCondensed.value, new Data_Tuple.Tuple(v.value0, v.value1));
                     })(branches)))(mapping))(Data_Either_Nested.in3) ]) ]) ]))(fix3(new Data_Tuple.Tuple(defaultDidMove, new Data_Tuple.Tuple(defaultOptions, new Data_Tuple.Tuple(NotGuarded.value, new Data_Tuple.Tuple(Hurry.value, match)))))(new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, subtask)))(branches));
@@ -873,14 +877,20 @@ var renderGroup = function (par) {
     return function (render) {
         return function (tasks) {
             var mapping = function (arr) {
-                return Data_Functor.mapFlipped(Data_Functor.functorArray)(Data_Array.filter(function (v) {
-                    return Data_Eq.eq($dollar_EqIsCondensed_89)(v.value0)(NotCondensed.value);
-                })(arr))(function (v) {
+                return Data_Functor.mapFlipped(Data_Functor.functorArray)((function () {
+                    var $344 = Data_Array.length(arr) === 2;
+                    if ($344) {
+                        return Control_Category.identity(Control_Category.categoryFn);
+                    };
+                    return Data_Array.filter(function (v) {
+                        return Data_Eq.eq($dollar_EqIsCondensed_89)(v.value0)(NotCondensed.value);
+                    });
+                })()(arr))(function (v) {
                     return v.value1.value1;
                 });
             };
-            return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onClick))(other(par)(tasks)))(Data_Either_Nested.in1), Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))($$this(par)(Data_Semigroup.append(Data_Semigroup.semigroupArray)(tasks)([ Task_Script_Builder.item ]))))(Data_Either_Nested.in1) ])([ Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderWithOptions(Data_Unit.unit)(NotForked.value)(Concur_Dom_Style.element([  ])([ Concur_Dom_Style.column([ Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)([  ]) ]) ])))(Data_Either_Nested.in2), Concur_Dom_Style.group(stroke(par))([ Control_Bind.bind(Concur_Core_Types.widgetBind)(Concur.traverse(Data_Monoid.monoidArray)(renderSingleGroup(function ($915) {
-                return fixgo(render($915));
+            return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onClick))(other(par)(tasks)))(Data_Either_Nested.in1), Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))($$this(par)(Data_Semigroup.append(Data_Semigroup.semigroupArray)(tasks)([ Task_Script_Builder.item ]))))(Data_Either_Nested.in1) ])([ Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderWithOptions(Data_Unit.unit)(NotForked.value)(Concur_Dom_Style.element([  ])([ Concur_Dom_Style.column([ Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)([  ]) ]) ])))(Data_Either_Nested.in2), Concur_Dom_Style.group(stroke(par))([ Control_Bind.bind(Concur_Core_Types.widgetBind)(Concur.traverse(Data_Monoid.monoidArray)(renderSingleGroup(function ($882) {
+                return fixgo(render($882));
             }))(Data_Functor.map(Data_Functor.functorArray)(function (t) {
                 return new Data_Tuple.Tuple(NotCondensed.value, new Data_Tuple.Tuple(Still.value, t));
             })(tasks)))(function (rendered) {
@@ -914,14 +924,20 @@ var renderSelects = function (render) {
             return function (subtask) {
                 return function (branches) {
                     var mapping = function (arr) {
-                        return Data_Functor.mapFlipped(Data_Functor.functorArray)(Data_Array.filter(function (v) {
-                            return Data_Eq.eq($dollar_EqIsCondensed_89)(v.value0)(NotCondensed.value);
-                        })(arr))(function (v) {
+                        return Data_Functor.mapFlipped(Data_Functor.functorArray)((function () {
+                            var $363 = Data_Array.length(arr) === 2;
+                            if ($363) {
+                                return Control_Category.identity(Control_Category.categoryFn);
+                            };
+                            return Data_Array.filter(function (v) {
+                                return Data_Eq.eq($dollar_EqIsCondensed_89)(v.value0)(NotCondensed.value);
+                            });
+                        })()(arr))(function (v) {
                             return new Data_Tuple.Tuple(v.value1.value0, new Data_Tuple.Tuple(v.value1.value1.value0, v.value1.value1.value1));
                         });
                     };
-                    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(subtask))(Data_Either_Nested.in2), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStep(NotShow.value)(status)(NotGuarded.value)(Delay.value)(match))(Data_Either_Nested.in1), Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))(Data_Either_Nested.in3(Data_Semigroup.append(Data_Semigroup.semigroupArray)(branches)([ new Data_Tuple.Tuple("Continue", new Data_Tuple.Tuple(Task_Script_Builder.always, Task_Script_Builder.item)) ]))) ])([ Concur_Dom_Style.branch([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur.traverse(Data_Monoid.monoidArray)(renderSelect(function ($916) {
-                        return fixgo(render($916));
+                    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(subtask))(Data_Either_Nested.in2), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStep(NotShow.value)(status)(NotGuarded.value)(Delay.value)(match))(Data_Either_Nested.in1), Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))(Data_Either_Nested.in3(Data_Semigroup.append(Data_Semigroup.semigroupArray)(branches)([ new Data_Tuple.Tuple("Continue", new Data_Tuple.Tuple(Task_Script_Builder.always, Task_Script_Builder.item)) ]))) ])([ Concur_Dom_Style.branch([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur.traverse(Data_Monoid.monoidArray)(renderSelect(function ($883) {
+                        return fixgo(render($883));
                     }))(Data_Functor.map(Data_Functor.functorArray)(function (v) {
                         return new Data_Tuple.Tuple(NotCondensed.value, new Data_Tuple.Tuple(v.value0, new Data_Tuple.Tuple(v.value1.value0, v.value1.value1)));
                     })(branches)))(mapping))(Data_Either_Nested.in3) ]) ]) ]))(fix3(new Data_Tuple.Tuple(defaultDidMove, new Data_Tuple.Tuple(defaultOptions, new Data_Tuple.Tuple(NotGuarded.value, new Data_Tuple.Tuple(Delay.value, match)))))(new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, subtask)))(branches));
@@ -955,12 +971,6 @@ var renderTask = function (g) {
                 if (v.value1 instanceof Task_Script_Syntax.Step && (v.value1.value2.value1 instanceof Task_Script_Syntax.Branch && (v.value1.value2.value1.value0.length === 1 && (v["value1"]["value2"]["value1"]["value0"][0].value0 instanceof Task_Script_Syntax.Constant && (v["value1"]["value2"]["value1"]["value0"][0].value0.value0 instanceof Task_Script_Syntax.B && v["value1"]["value2"]["value1"]["value0"][0].value0.value0.value0))))) {
                     return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingleUnguarded(go)(v.value0)(Hurry.value)(v.value1.value0)(v.value1.value1)(v["value1"]["value2"]["value1"]["value0"][0].value1))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)((function () {
-                            if (v1.value0.value1.value1.value0.value0 instanceof Removed && v1.value0.value1.value1.value0.value1 instanceof NotForked) {
-                                return new Data_Tuple.Tuple(Removed.value, new Data_Tuple.Tuple(defaultDidMove, new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Lift(Task_Script_Syntax.Wildcard.value))) ]))));
-                            };
-                            if (v1.value0.value1.value1.value0.value0 instanceof NotRemoved && v1.value0.value1.value1.value0.value1 instanceof Forked) {
-                                return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, renderNewFork(new Task_Script_Annotation.Annotated(v.value0, v.value1))));
-                            };
                             if (v1.value1.value0.value0 instanceof Removed) {
                                 return new Data_Tuple.Tuple(Removed.value, new Data_Tuple.Tuple(defaultDidMove, v1.value1.value1.value1.value1));
                             };
@@ -1019,12 +1029,6 @@ var renderTask = function (g) {
                 if (v.value1 instanceof Task_Script_Syntax.Step && (v.value1.value2.value1 instanceof Task_Script_Syntax.Branch && v.value1.value2.value1.value0.length === 1)) {
                     return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingleBranch(go)(v.value0)(v.value1.value0)(v.value1.value1)(new Data_Tuple.Tuple(v["value1"]["value2"]["value1"]["value0"][0].value0, v["value1"]["value2"]["value1"]["value0"][0].value1)))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)((function () {
-                            if (v1.value1.value0.value1.value1.value0.value0 instanceof Removed && v1.value1.value0.value1.value1.value0.value1 instanceof NotForked) {
-                                return new Data_Tuple.Tuple(Removed.value, new Data_Tuple.Tuple(defaultDidMove, new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Lift(Task_Script_Syntax.Wildcard.value))) ]))));
-                            };
-                            if (v1.value1.value0.value1.value1.value0.value0 instanceof NotRemoved && v1.value1.value0.value1.value1.value0.value1 instanceof Forked) {
-                                return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, renderNewFork(new Task_Script_Annotation.Annotated(v.value0, v.value1))));
-                            };
                             if (v1.value0 instanceof Doubled) {
                                 return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, Task_Script_Annotation.Annotated.create(v.value0)(Task_Script_Syntax.Step.create(v1.value1.value0.value1.value1.value1.value1.value1)(v1.value1.value1.value0.value1.value1)(Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(v1.value1.value0.value0, v1.value1.value1.value1.value1.value1), new Data_Tuple.Tuple(Task_Script_Builder.always, Task_Script_Builder.item) ]))))));
                             };
@@ -1105,12 +1109,6 @@ var renderTask = function (g) {
                     };
                     return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderBranches(go)(v.value0)(v.value1.value0)(v.value1.value1)(v.value1.value2.value1.value0))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)((function () {
-                            if (v1.value0.value1.value0.value0 instanceof Removed && v1.value0.value1.value0.value1 instanceof NotForked) {
-                                return new Data_Tuple.Tuple(Removed.value, new Data_Tuple.Tuple(defaultDidMove, new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Lift(Task_Script_Syntax.Wildcard.value))) ]))));
-                            };
-                            if (v1.value0.value1.value0.value0 instanceof NotRemoved && v1.value0.value1.value0.value1 instanceof Forked) {
-                                return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, renderNewFork(new Task_Script_Annotation.Annotated(v.value0, v.value1))));
-                            };
                             if (v1.value1.value0.value0 instanceof Removed) {
                                 return new Data_Tuple.Tuple(Removed.value, new Data_Tuple.Tuple(defaultDidMove, subtask(v.value1.value2.value0)(v1.value0.value1.value1.value1.value0)(v1.value1.value1)));
                             };
@@ -1127,12 +1125,6 @@ var renderTask = function (g) {
                 if (v.value1 instanceof Task_Script_Syntax.Step && (v.value1.value2.value1 instanceof Task_Script_Syntax.Select && (v.value1.value2.value1.value0.length === 1 && (v["value1"]["value2"]["value1"]["value0"][0].value0 === "Continue" && (v["value1"]["value2"]["value1"]["value0"][0].value1.value0 instanceof Task_Script_Syntax.Constant && (v["value1"]["value2"]["value1"]["value0"][0].value1.value0.value0 instanceof Task_Script_Syntax.B && v["value1"]["value2"]["value1"]["value0"][0].value1.value0.value0.value0)))))) {
                     return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingleUnguarded(go)(v.value0)(Delay.value)(v.value1.value0)(v.value1.value1)(v["value1"]["value2"]["value1"]["value0"][0].value1.value1))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)((function () {
-                            if (v1.value0.value1.value1.value0.value0 instanceof Removed && v1.value0.value1.value1.value0.value1 instanceof NotForked) {
-                                return new Data_Tuple.Tuple(Removed.value, new Data_Tuple.Tuple(defaultDidMove, new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Lift(Task_Script_Syntax.Wildcard.value))) ]))));
-                            };
-                            if (v1.value0.value1.value1.value0.value0 instanceof NotRemoved && v1.value0.value1.value1.value0.value1 instanceof Forked) {
-                                return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, renderNewFork(new Task_Script_Annotation.Annotated(v.value0, v.value1))));
-                            };
                             if (v1.value1.value0.value0 instanceof Removed) {
                                 return new Data_Tuple.Tuple(Removed.value, new Data_Tuple.Tuple(defaultDidMove, v1.value1.value1.value1.value1));
                             };
@@ -1191,12 +1183,6 @@ var renderTask = function (g) {
                 if (v.value1 instanceof Task_Script_Syntax.Step && (v.value1.value2.value1 instanceof Task_Script_Syntax.Select && v.value1.value2.value1.value0.length === 1)) {
                     return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingleSelect(go)(v.value0)(v.value1.value0)(v.value1.value1)(new Data_Tuple.Tuple(v["value1"]["value2"]["value1"]["value0"][0].value0, new Data_Tuple.Tuple(v["value1"]["value2"]["value1"]["value0"][0].value1.value0, v["value1"]["value2"]["value1"]["value0"][0].value1.value1))))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)((function () {
-                            if (v1.value1.value0.value1.value1.value0.value0 instanceof Removed && v1.value1.value0.value1.value1.value0.value1 instanceof NotForked) {
-                                return new Data_Tuple.Tuple(Removed.value, new Data_Tuple.Tuple(defaultDidMove, new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Lift(Task_Script_Syntax.Wildcard.value))) ]))));
-                            };
-                            if (v1.value1.value0.value1.value1.value0.value0 instanceof NotRemoved && v1.value1.value0.value1.value1.value0.value1 instanceof Forked) {
-                                return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, renderNewFork(new Task_Script_Annotation.Annotated(v.value0, v.value1))));
-                            };
                             if (v1.value0 instanceof Doubled) {
                                 return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, Task_Script_Annotation.Annotated.create(v.value0)(Task_Script_Syntax.Step.create(v1.value1.value0.value1.value1.value1.value1.value1)(v1.value1.value1.value0.value1.value1)(Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select([ new Data_Tuple.Tuple(v1.value1.value0.value0.value0, new Data_Tuple.Tuple(v1.value1.value0.value0.value1, v1.value1.value1.value1.value1.value1)), new Data_Tuple.Tuple("Continue", new Data_Tuple.Tuple(Task_Script_Builder.always, Task_Script_Builder.item)) ]))))));
                             };
@@ -1277,12 +1263,6 @@ var renderTask = function (g) {
                     };
                     return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSelects(go)(v.value0)(v.value1.value0)(v.value1.value1)(v.value1.value2.value1.value0))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)((function () {
-                            if (v1.value0.value1.value0.value0 instanceof Removed && v1.value0.value1.value0.value1 instanceof NotForked) {
-                                return new Data_Tuple.Tuple(Removed.value, new Data_Tuple.Tuple(defaultDidMove, new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Lift(Task_Script_Syntax.Wildcard.value))) ]))));
-                            };
-                            if (v1.value0.value1.value0.value0 instanceof NotRemoved && v1.value0.value1.value0.value1 instanceof Forked) {
-                                return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, renderNewFork(new Task_Script_Annotation.Annotated(v.value0, v.value1))));
-                            };
                             if (v1.value1.value0.value0 instanceof Removed) {
                                 return new Data_Tuple.Tuple(Removed.value, new Data_Tuple.Tuple(defaultDidMove, subtask(v.value1.value2.value0)(v1.value0.value1.value1.value1.value0)(v1.value1.value1)));
                             };
@@ -1369,18 +1349,6 @@ var renderTask = function (g) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)(new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, Task_Script_Annotation.Annotated.create(v.value0)(new Task_Script_Syntax.Lift(e$prime)))));
                     });
                 };
-                if (v.value1 instanceof Task_Script_Syntax.Pair && v.value1.value0.length === 0) {
-                    return Preload.panic("invalid empty pair");
-                };
-                if (v.value1 instanceof Task_Script_Syntax.Choose && v.value1.value0.length === 0) {
-                    return Preload.panic("invalid empty choose");
-                };
-                if (v.value1 instanceof Task_Script_Syntax.Pair && v.value1.value0.length === 1) {
-                    return Preload.panic("invalid single pair, sequencing not implemented yet");
-                };
-                if (v.value1 instanceof Task_Script_Syntax.Choose && v.value1.value0.length === 1) {
-                    return Preload.panic("invalid single pair, sequencing not implemented yet");
-                };
                 if (v.value1 instanceof Task_Script_Syntax.Pair) {
                     return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderGroup(And.value)(go)(v.value1.value0))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)(new Data_Tuple.Tuple(getFirstUserOption(v1.value1.value1), new Data_Tuple.Tuple(defaultDidMove, (function () {
@@ -1425,8 +1393,8 @@ var renderTask = function (g) {
                 };
                 if (v.value1 instanceof Task_Script_Syntax.Hole) {
                     return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderWithOptions(new Data_Tuple.Tuple("??", v.value1.value0))(NotForked.value)(renderExecute(v.value0)("??")(v.value1.value0)))(function (v1) {
-                        var $873 = v1.value0.value0 === "??";
-                        if ($873) {
+                        var $840 = v1.value0.value0 === "??";
+                        if ($840) {
                             return Preload.done(Concur_Core_Types.widgetApplicative)(new Data_Tuple.Tuple(getFirstUserOption(v1.value1), new Data_Tuple.Tuple(defaultDidMove, (function () {
                                 var v2 = getSecondUserOption(v1.value1);
                                 if (v2 instanceof Forked) {
