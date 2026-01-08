@@ -144,9 +144,13 @@ renderTask g s t = Style.column
           Doubled -> NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Branch([e' ~ t2', Builder.always ~ Builder.item ]))
           NotDoubled -> case isremoved1' of
             Removed -> Removed ~ defaultDidMove ~ t2'
-            NotRemoved -> NotRemoved ~ case isremoved2' of 
-              Removed -> defaultDidMove ~ (Annotated a_t <| Step m' t1' t2')
-              NotRemoved -> case (didmove1' ~ t2') of
+            NotRemoved -> NotRemoved ~ case (isremoved2' ~ t2') of 
+   --           (Removed ~ Annotated a_c (Step m2' t3' t4'@(Annotated a_d (Branch [e2' ~ t5'])))) -> defaultDidMove ~ (Annotated a_t <| Step m' t1' t4')
+     --         (Removed ~ Annotated a_c (Step m2' t3' t4'@(Annotated a_d (Branch [bs'])))) -> defaultDidMove ~ (Annotated a_t <| Step m' t1' t4')
+       --       (Removed ~ Annotated a_c (Step m2' t3' t4'@(Annotated a_d (Select [l2' ~ e2' ~ t5'])))) -> defaultDidMove ~ (Annotated a_t <| Step m' t1' t4')
+         --     (Removed ~ Annotated a_c (Step m2' t3' t4'@(Annotated a_d (Select [bs'])))) -> defaultDidMove ~ (Annotated a_t <| Step m' t1' t4')
+              (Removed ~ _) -> defaultDidMove ~ (Annotated a_t <| Step m' t1' t2')
+              _ -> case (didmove1' ~ t2') of
                 ((MovedUp ~ NotMovedDown) ~ _) -> (MovedUp ~ NotMovedDown) ~ (Annotated a_t t)
                 ((NotMovedUp ~ MovedDown) ~ (Annotated a_c (Step m2' t3' t4'))) -> defaultDidMove ~ (Annotated a_t <| Step m2' t3' <| Annotated a_b <| Branch [e ~ Annotated a_c (Step m' t1' t4')] )
                 --((NotMovedUp ~ MovedDown) ~ _) -> panic "invalid move button press"
@@ -629,7 +633,7 @@ renderBranches render status match subtask branches =
       >-> fix3 (defaultDidMove ~ defaultOptions ~ NotGuarded ~ Hurry ~ match) (NotRemoved ~ defaultDidMove ~ subtask) branches
     where 
     mapping = (\arr -> arr
-      |> (if Array.length arr == 2 then identity else Array.filter isNotCondensed)
+      |> (Array.filter isNotCondensed)
       >-> removeIsCondensed) 
     appendNotCondensed (e ~ t) = NotCondensed ~ e ~ t
     isNotCondensed (c ~ _ ~ _) = c == NotCondensed
@@ -672,7 +676,7 @@ renderSelects render status match subtask branches =
     >-> fix3 (defaultDidMove ~ defaultOptions ~ NotGuarded ~ Delay ~ match) (NotRemoved ~ defaultDidMove ~ subtask) branches
   where 
   mapping = (\arr -> arr
-    |> (if Array.length arr == 2 then identity else Array.filter isNotCondensed)
+    |> (Array.filter isNotCondensed)
     >-> removeIsCondensed) 
   appendNotCondensed (l ~ e ~ t) = NotCondensed ~ l ~ e ~ t
   isNotCondensed (c ~ _ ~ _ ~ _) = c == NotCondensed
