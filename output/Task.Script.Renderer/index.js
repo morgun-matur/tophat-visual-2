@@ -177,6 +177,27 @@ var NotCondensed = (function () {
     NotCondensed.value = new NotCondensed();
     return NotCondensed;
 })();
+var FirstGroup = (function () {
+    function FirstGroup() {
+
+    };
+    FirstGroup.value = new FirstGroup();
+    return FirstGroup;
+})();
+var LastGroup = (function () {
+    function LastGroup() {
+
+    };
+    LastGroup.value = new LastGroup();
+    return LastGroup;
+})();
+var MiddleGroup = (function () {
+    function MiddleGroup() {
+
+    };
+    MiddleGroup.value = new MiddleGroup();
+    return MiddleGroup;
+})();
 var MovedUp = (function () {
     function MovedUp() {
 
@@ -233,7 +254,7 @@ var $$this = function (v) {
     if (v instanceof Or) {
         return Task_Script_Syntax.Choose.create;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 1016, column 1 - line 1016, column 43): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 1026, column 1 - line 1026, column 43): " + [ v.constructor.name ]);
 };
 var $$switch = function (dict) {
     return dict["switch"];
@@ -259,7 +280,7 @@ var style = function (v) {
     if (v instanceof New) {
         return Concur_Dom_Style.Filled.value;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 1034, column 1 - line 1034, column 23): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 1044, column 1 - line 1044, column 23): " + [ v.constructor.name ]);
 };
 var stroke = function (v) {
     if (v instanceof And) {
@@ -268,7 +289,7 @@ var stroke = function (v) {
     if (v instanceof Or) {
         return Concur_Dom_Style.Double.value;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 1024, column 1 - line 1024, column 24): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 1034, column 1 - line 1034, column 24): " + [ v.constructor.name ]);
 };
 var selectType = function (types) {
     return function (name) {
@@ -282,9 +303,6 @@ var selectRef = function (v) {
         };
         return Preload.todo()("unnamed references not supported");
     };
-};
-var reorder6 = function (v) {
-    return new Data_Tuple.Tuple(v.value1.value1.value1.value1.value0, new Data_Tuple.Tuple(v.value1.value1.value1.value1.value1, new Data_Tuple.Tuple(v.value0, new Data_Tuple.Tuple(v.value1.value0, new Data_Tuple.Tuple(v.value1.value1.value0, v.value1.value1.value1.value0)))));
 };
 var reorder4 = function (v) {
     return new Data_Tuple.Tuple(v.value1.value1.value0, new Data_Tuple.Tuple(v.value1.value1.value1, new Data_Tuple.Tuple(v.value0, v.value1.value0)));
@@ -300,14 +318,14 @@ var renderPossibleArgs = function (status) {
             return new Task_Script_Syntax.ARecord(Data_HashMap.fromArrayBy(Data_Hashable.hashableString)(Control_Category.identity(Control_Category.categoryFn))(Task_Script_Syntax.Variable.create)(labels));
         };
         var labels = Data_Array.sort(Data_Ord.ordString)(Data_HashMap.keys(Data_HashMap.filter((function () {
-            var $886 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
-            return function ($887) {
-                return $886(Task_Script_Type.isFunction($887));
+            var $900 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
+            return function ($901) {
+                return $900(Task_Script_Type.isFunction($901));
             };
         })())(Task_Script_Annotation.extractContext(status))));
         var action = function (label) {
-            var $152 = Data_HashMap.member(Data_Hashable.hashableString)(label)(v.value0);
-            if ($152) {
+            var $144 = Data_HashMap.member(Data_Hashable.hashableString)(label)(v.value0);
+            if ($144) {
                 return Concur_Dom_Input.Remove.value;
             };
             return Concur_Dom_Input.Add.value;
@@ -352,17 +370,17 @@ var renderContext = (function () {
     var go = function (v) {
         return v.value0 + (" : " + (Data_Show.show(Task_Script_Type["$_ShowFullType_49"])(v.value1) + "\x0a"));
     };
-    var $888 = Data_Foldable.foldMap(Data_Foldable.foldableArray)(Data_Monoid.monoidString)(go);
-    var $889 = Data_Array.sortBy(Data_Function.on(Data_Ord.compare(Data_Ord.ordString))(Data_Tuple.fst));
-    var $890 = Data_HashMap.toArrayBy(Data_Tuple.Tuple.create);
-    var $891 = Data_HashMap.filter((function () {
-        var $893 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
-        return function ($894) {
-            return $893(Task_Script_Type.isFunction($894));
+    var $902 = Data_Foldable.foldMap(Data_Foldable.foldableArray)(Data_Monoid.monoidString)(go);
+    var $903 = Data_Array.sortBy(Data_Function.on(Data_Ord.compare(Data_Ord.ordString))(Data_Tuple.fst));
+    var $904 = Data_HashMap.toArrayBy(Data_Tuple.Tuple.create);
+    var $905 = Data_HashMap.filter((function () {
+        var $907 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
+        return function ($908) {
+            return $907(Task_Script_Type.isFunction($908));
         };
     })());
-    return function ($892) {
-        return $888($889($890($891(Task_Script_Annotation.extractContext($892)))));
+    return function ($906) {
+        return $902($903($904($905(Task_Script_Annotation.extractContext($906)))));
     };
 })();
 var renderArg = function (sel) {
@@ -384,7 +402,7 @@ var other = function (v) {
     if (v instanceof Or) {
         return Task_Script_Syntax.Pair.create;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 1020, column 1 - line 1020, column 44): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 1030, column 1 - line 1030, column 44): " + [ v.constructor.name ]);
 };
 var isYes = function (v) {
     if (v instanceof Yes) {
@@ -435,7 +453,7 @@ var fix5 = function (_1) {
                         if (v instanceof Data_Either.Right && (v.value0 instanceof Data_Either.Right && (v.value0.value0 instanceof Data_Either.Right && (v.value0.value0.value0 instanceof Data_Either.Right && v.value0.value0.value0.value0 instanceof Data_Either.Right)))) {
                             return Data_Void.absurd(v.value0.value0.value0.value0.value0);
                         };
-                        throw new Error("Failed pattern match at Task.Script.Renderer (line 984, column 23 - line 990, column 64): " + [ v.constructor.name ]);
+                        throw new Error("Failed pattern match at Task.Script.Renderer (line 997, column 23 - line 1003, column 64): " + [ v.constructor.name ]);
                     };
                 };
             };
@@ -462,7 +480,7 @@ var fix4 = function (_1) {
                     if (v instanceof Data_Either.Right && (v.value0 instanceof Data_Either.Right && (v.value0.value0 instanceof Data_Either.Right && v.value0.value0.value0 instanceof Data_Either.Right))) {
                         return Data_Void.absurd(v.value0.value0.value0.value0);
                     };
-                    throw new Error("Failed pattern match at Task.Script.Renderer (line 976, column 20 - line 981, column 56): " + [ v.constructor.name ]);
+                    throw new Error("Failed pattern match at Task.Script.Renderer (line 989, column 20 - line 994, column 56): " + [ v.constructor.name ]);
                 };
             };
         };
@@ -484,15 +502,9 @@ var fix3 = function (_1) {
                 if (v instanceof Data_Either.Right && (v.value0 instanceof Data_Either.Right && v.value0.value0 instanceof Data_Either.Right)) {
                     return Data_Void.absurd(v.value0.value0.value0);
                 };
-                throw new Error("Failed pattern match at Task.Script.Renderer (line 969, column 16 - line 973, column 48): " + [ v.constructor.name ]);
+                throw new Error("Failed pattern match at Task.Script.Renderer (line 982, column 16 - line 986, column 48): " + [ v.constructor.name ]);
             };
         };
-    };
-};
-var renderSingleGroup = function (render) {
-    return function (v) {
-        var contents = Concur_Dom_Style.row([ Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(MoveLeft.value))(Data_Either_Nested.in2) ])([ Concur_Dom_Icon.arrow_left ]), Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(Condensed.value))(Data_Either_Nested.in1) ])([ Concur_Dom_Icon.minus_circle ]), Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(MoveRight.value))(Data_Either_Nested.in2) ])([ Concur_Dom_Icon.arrow_right ]) ]);
-        return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Concur_Dom_Input.popover(Concur_Dom_Style.Above.value)(contents)(Concur_Dom_Style.element([  ])([ Concur_Dom_Style.column([ Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)(Control_Plus.empty(Control_Plus.plusArray)) ]) ])), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(v.value1.value1))(Data_Either_Nested.in3), Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)(Control_Plus.empty(Control_Plus.plusArray)) ]))(fix3(NotCondensed.value)(v.value1.value0)(v.value1.value1));
     };
 };
 var fix2 = function (_1) {
@@ -507,7 +519,7 @@ var fix2 = function (_1) {
             if (v instanceof Data_Either.Right && v.value0 instanceof Data_Either.Right) {
                 return Data_Void.absurd(v.value0.value0);
             };
-            throw new Error("Failed pattern match at Task.Script.Renderer (line 963, column 14 - line 966, column 40): " + [ v.constructor.name ]);
+            throw new Error("Failed pattern match at Task.Script.Renderer (line 976, column 14 - line 979, column 40): " + [ v.constructor.name ]);
         };
     };
 };
@@ -519,7 +531,7 @@ var fix1 = function (_1) {
         if (v instanceof Data_Either.Right) {
             return _1;
         };
-        throw new Error("Failed pattern match at Task.Script.Renderer (line 958, column 11 - line 960, column 16): " + [ v.constructor.name ]);
+        throw new Error("Failed pattern match at Task.Script.Renderer (line 971, column 11 - line 973, column 16): " + [ v.constructor.name ]);
     };
 };
 var renderRemove = Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(Removed.value))(Data_Either_Nested.in1) ])([ Concur_Dom_Icon.window_close ]))(fix1(NotRemoved.value));
@@ -605,27 +617,27 @@ var catYes = Data_Array.concatMap(function (v) {
 var renderArgs = function (status) {
     return function (v) {
         var unselect = (function () {
-            var $895 = Data_HashMap.fromArray(Data_Hashable.hashableString);
-            var $896 = Data_Functor.map(Data_Functor.functorArray)(function (l) {
+            var $909 = Data_HashMap.fromArray(Data_Hashable.hashableString);
+            var $910 = Data_Functor.map(Data_Functor.functorArray)(function (l) {
                 return new Data_Tuple.Tuple(l, new Task_Script_Syntax.Variable(l));
             });
-            return function ($897) {
-                return Task_Script_Syntax.ARecord.create($895($896(catYes($897))));
+            return function ($911) {
+                return Task_Script_Syntax.ARecord.create($909($910(catYes($911))));
             };
         })();
         var check = function (label) {
             return (function () {
-                var $260 = Data_HashMap.member(Data_Hashable.hashableString)(label)(v.value0);
-                if ($260) {
+                var $246 = Data_HashMap.member(Data_Hashable.hashableString)(label)(v.value0);
+                if ($246) {
                     return Yes.create;
                 };
                 return No.create;
             })()(label);
         };
         var select = Data_Functor.map(Data_Functor.functorArray)(check)(Data_HashMap.keys(Data_HashMap.filter((function () {
-            var $898 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
-            return function ($899) {
-                return $898(Task_Script_Type.isFunction($899));
+            var $912 = Data_HeytingAlgebra.not(Data_HeytingAlgebra.heytingAlgebraBoolean);
+            return function ($913) {
+                return $912(Task_Script_Type.isFunction($913));
             };
         })())(Task_Script_Annotation.extractContext(status))));
         return Concur_Dom_Input.popover(Concur_Dom_Style.After.value)(Concur_Dom_Input.card([  ])([ Concur_Dom_Style.row([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur.traverse(Data_Monoid.monoidArray)(renderArg)(select))(unselect) ]) ])([  ]))(Concur_Dom_Style.column([ Data_Functor.voidLeft(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)([ Concur_Dom_Style.place(Concur_Dom_Style.After.value)(Concur_Dom_Style.Small.value)([ Concur_Dom_Style.row(renderLabels(Data_HashMap.keys(v.value0))) ]) ]))(v) ]));
@@ -655,35 +667,35 @@ var addLabels = function (dictFunctor) {
         return new Data_Tuple.Tuple("", v);
     });
 };
-var $dollar_SwitchPar_85 = new Switch(function (v) {
+var $dollar_SwitchPar_87 = new Switch(function (v) {
     if (v instanceof And) {
         return Or.value;
     };
     if (v instanceof Or) {
         return And.value;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 1068, column 1 - line 1070, column 18): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 1078, column 1 - line 1080, column 18): " + [ v.constructor.name ]);
 });
-var $dollar_SwitchIsGuarded_87 = new Switch(function (v) {
+var $dollar_SwitchIsGuarded_89 = new Switch(function (v) {
     if (v instanceof Guarded) {
         return NotGuarded.value;
     };
     if (v instanceof NotGuarded) {
         return Guarded.value;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 1077, column 1 - line 1079, column 30): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 1087, column 1 - line 1089, column 30): " + [ v.constructor.name ]);
 });
 var renderGuardButton = function (isguarded) {
-    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(Data_Either_Nested.in1($$switch($dollar_SwitchIsGuarded_87)(isguarded))) ])([ Concur_Dom_Icon.question ]) ]))(fix1(isguarded));
+    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(Data_Either_Nested.in1($$switch($dollar_SwitchIsGuarded_89)(isguarded))) ])([ Concur_Dom_Icon.question ]) ]))(fix1(isguarded));
 };
-var $dollar_SwitchIsForked_88 = new Switch(function (v) {
+var $dollar_SwitchIsForked_90 = new Switch(function (v) {
     if (v instanceof Forked) {
         return NotForked.value;
     };
     if (v instanceof NotForked) {
         return Forked.value;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 1081, column 1 - line 1083, column 28): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 1091, column 1 - line 1093, column 28): " + [ v.constructor.name ]);
 });
 var renderForked = function (isforked) {
     var forkedSymbol = (function () {
@@ -695,7 +707,7 @@ var renderForked = function (isforked) {
         };
         throw new Error("Failed pattern match at Task.Script.Renderer (line 399, column 18 - line 401, column 34): " + [ isforked.constructor.name ]);
     })();
-    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)($$switch($dollar_SwitchIsForked_88)(isforked)))(Data_Either_Nested.in1) ])([ forkedSymbol ]))(fix1(isforked));
+    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)($$switch($dollar_SwitchIsForked_90)(isforked)))(Data_Either_Nested.in1) ])([ forkedSymbol ]))(fix1(isforked));
 };
 var renderWithOptions = function (a) {
     return function (isforked) {
@@ -709,7 +721,7 @@ var renderWithOptions = function (a) {
         };
     };
 };
-var $dollar_SwitchCont_86 = new Switch(function (v) {
+var $dollar_SwitchCont_88 = new Switch(function (v) {
     if (v instanceof Hurry) {
         return Delay.value;
     };
@@ -719,7 +731,7 @@ var $dollar_SwitchCont_86 = new Switch(function (v) {
     if (v instanceof New) {
         return New.value;
     };
-    throw new Error("Failed pattern match at Task.Script.Renderer (line 1072, column 1 - line 1075, column 19): " + [ v.constructor.name ]);
+    throw new Error("Failed pattern match at Task.Script.Renderer (line 1082, column 1 - line 1085, column 19): " + [ v.constructor.name ]);
 });
 var renderStep = function (v) {
     return function (v1) {
@@ -743,7 +755,7 @@ var renderStep = function (v) {
                         var contents = Concur_Dom_Style.row(Data_Semigroup.append(Data_Semigroup.semigroupArray)(guardButton)([ Concur_Dom_Style.column([ Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onClick))(Data_Either_Nested.in1(new Data_Tuple.Tuple(MovedUp.value, NotMovedDown.value))) ])([ Concur_Dom_Icon.arrow_up ]), Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onClick))(Data_Either_Nested.in1(new Data_Tuple.Tuple(NotMovedUp.value, MovedDown.value))) ])([ Concur_Dom_Icon.arrow_down ]) ]), Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderForked(NotForked.value))(function (b) {
                             return Data_Either_Nested.in2(new Data_Tuple.Tuple(NotRemoved.value, b));
                         }) ]) ]));
-                        return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.voidLeft(Concur_Core_Types.widgetFunctor)(renderLine(labels))(Data_Either_Nested.in5(v4)), Concur_Dom_Input.popover(Concur_Dom_Style.After.value)(contents)(Concur_Dom_Input.popover(Concur_Dom_Style.Before.value)(Concur_Dom_Text.code("TopHat")(renderContext(v1)))(Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onClick))(Data_Either_Nested.in4($$switch($dollar_SwitchCont_86)(v3))), Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))(Data_Either_Nested.in4(New.value)) ])([ Concur_Dom_Style.triangle(style(v3))(Control_Plus.empty(Control_Plus.plusArray)) ]))) ]))(fix5(defaultDidMove)(defaultOptions)(v2)(v3)(v4));
+                        return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.voidLeft(Concur_Core_Types.widgetFunctor)(renderLine(labels))(Data_Either_Nested.in5(v4)), Concur_Dom_Input.popover(Concur_Dom_Style.After.value)(contents)(Concur_Dom_Input.popover(Concur_Dom_Style.Before.value)(Concur_Dom_Text.code("TopHat")(renderContext(v1)))(Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onClick))(Data_Either_Nested.in4($$switch($dollar_SwitchCont_88)(v3))), Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))(Data_Either_Nested.in4(New.value)) ])([ Concur_Dom_Style.triangle(style(v3))(Control_Plus.empty(Control_Plus.plusArray)) ]))) ]))(fix5(defaultDidMove)(defaultOptions)(v2)(v3)(v4));
                     };
                     return Preload.todo()("other matches in step rendering");
                 };
@@ -834,7 +846,7 @@ var renderSingleSelect = function (render) {
         };
     };
 };
-var $dollar_EqIsCondensed_89 = new Data_Eq.Eq(function (x) {
+var $dollar_EqIsCondensed_91 = new Data_Eq.Eq(function (x) {
     return function (y) {
         if (x instanceof Condensed && y instanceof Condensed) {
             return true;
@@ -854,7 +866,7 @@ var renderBranches = function (render) {
                         return new Data_Tuple.Tuple(v.value1.value0, v.value1.value1);
                     };
                     var isNotCondensed = function (v) {
-                        return Data_Eq.eq($dollar_EqIsCondensed_89)(v.value0)(NotCondensed.value);
+                        return Data_Eq.eq($dollar_EqIsCondensed_91)(v.value0)(NotCondensed.value);
                     };
                     var mapping = function (arr) {
                         return Data_Functor.mapFlipped(Data_Functor.functorArray)(Data_Array.filter(isNotCondensed)(arr))(removeIsCondensed);
@@ -862,59 +874,11 @@ var renderBranches = function (render) {
                     var appendNotCondensed = function (v) {
                         return new Data_Tuple.Tuple(NotCondensed.value, new Data_Tuple.Tuple(v.value0, v.value1));
                     };
-                    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(subtask))(Data_Either_Nested.in2), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStep(NotShow.value)(status)(NotGuarded.value)(Hurry.value)(match))(Data_Either_Nested.in1), Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))(Data_Either_Nested.in3(Data_Semigroup.append(Data_Semigroup.semigroupArray)(branches)([ new Data_Tuple.Tuple(Task_Script_Builder.always, Task_Script_Builder.item) ]))) ])([ Concur_Dom_Style.branch([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur.traverse(Data_Monoid.monoidArray)(renderBranch(function ($900) {
-                        return fixgo(render($900));
+                    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(subtask))(Data_Either_Nested.in2), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStep(NotShow.value)(status)(NotGuarded.value)(Hurry.value)(match))(Data_Either_Nested.in1), Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))(Data_Either_Nested.in3(Data_Semigroup.append(Data_Semigroup.semigroupArray)(branches)([ new Data_Tuple.Tuple(Task_Script_Builder.always, Task_Script_Builder.item) ]))) ])([ Concur_Dom_Style.branch([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur.traverse(Data_Monoid.monoidArray)(renderBranch(function ($914) {
+                        return fixgo(render($914));
                     }))(Data_Functor.map(Data_Functor.functorArray)(appendNotCondensed)(branches)))(mapping))(Data_Either_Nested.in3) ]) ]) ]))(fix3(new Data_Tuple.Tuple(defaultDidMove, new Data_Tuple.Tuple(defaultOptions, new Data_Tuple.Tuple(NotGuarded.value, new Data_Tuple.Tuple(Hurry.value, match)))))(new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, subtask)))(branches));
                 };
             };
-        };
-    };
-};
-var renderGroup = function (par) {
-    return function (render) {
-        return function (tasks) {
-            var isNotCondensed = function (v) {
-                return Data_Eq.eq($dollar_EqIsCondensed_89)(v.value0)(NotCondensed.value);
-            };
-            var extractTask = function (v) {
-                return v.value1.value1;
-            };
-            var mapping = function (arr) {
-                return Data_Functor.mapFlipped(Data_Functor.functorArray)((function () {
-                    var $354 = Data_Array.length(arr) === 2;
-                    if ($354) {
-                        return Control_Category.identity(Control_Category.categoryFn);
-                    };
-                    return Data_Array.filter(isNotCondensed);
-                })()(arr))(extractTask);
-            };
-            var appendNotCondensedStill = function (t) {
-                return new Data_Tuple.Tuple(NotCondensed.value, new Data_Tuple.Tuple(Still.value, t));
-            };
-            return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onClick))(other(par)(tasks)))(Data_Either_Nested.in1), Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))($$this(par)(Data_Semigroup.append(Data_Semigroup.semigroupArray)(tasks)([ Task_Script_Builder.item ]))))(Data_Either_Nested.in1) ])([ Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderWithOptions(Data_Unit.unit)(NotForked.value)(Concur_Dom_Style.element([  ])([ Concur_Dom_Style.column([ Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)([  ]) ]) ])))(Data_Either_Nested.in2), Concur_Dom_Style.group(stroke(par))([ Control_Bind.bind(Concur_Core_Types.widgetBind)(Concur.traverse(Data_Monoid.monoidArray)(renderSingleGroup(function ($901) {
-                return fixgo(render($901));
-            }))(Data_Functor.map(Data_Functor.functorArray)(appendNotCondensedStill)(tasks)))(function (rendered) {
-                var indexed = Data_Array.mapWithIndex(function (i) {
-                    return function (x) {
-                        return new Data_Tuple.Tuple(i, x);
-                    };
-                })(rendered);
-                var tasks$prime = Data_Array.foldl(function (acc) {
-                    return function (v) {
-                        if (v.value1.value1.value0 instanceof MoveLeft) {
-                            return swap(v.value0)(v.value0 - 1 | 0)(acc);
-                        };
-                        if (v.value1.value1.value0 instanceof MoveRight) {
-                            return swap(v.value0)(v.value0 + 1 | 0)(acc);
-                        };
-                        if (v.value1.value1.value0 instanceof Still) {
-                            return acc;
-                        };
-                        throw new Error("Failed pattern match at Task.Script.Renderer (line 769, column 21 - line 772, column 39): " + [ v.value1.value1.value0.constructor.name ]);
-                    };
-                })(rendered)(indexed);
-                return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Preload.done(Concur_Core_Types.widgetApplicative)(tasks$prime))(mapping))($$this(par)))(Data_Either_Nested.in1);
-            }) ]) ]) ]))(fix2($$this(par)(tasks))(new Data_Tuple.Tuple(Data_Unit.unit, defaultOptions)));
         };
     };
 };
@@ -927,7 +891,7 @@ var renderSelects = function (render) {
                         return new Data_Tuple.Tuple(v.value1.value0, new Data_Tuple.Tuple(v.value1.value1.value0, v.value1.value1.value1));
                     };
                     var isNotCondensed = function (v) {
-                        return Data_Eq.eq($dollar_EqIsCondensed_89)(v.value0)(NotCondensed.value);
+                        return Data_Eq.eq($dollar_EqIsCondensed_91)(v.value0)(NotCondensed.value);
                     };
                     var mapping = function (arr) {
                         return Data_Functor.mapFlipped(Data_Functor.functorArray)(Data_Array.filter(isNotCondensed)(arr))(removeIsCondensed);
@@ -935,11 +899,114 @@ var renderSelects = function (render) {
                     var appendNotCondensed = function (v) {
                         return new Data_Tuple.Tuple(NotCondensed.value, new Data_Tuple.Tuple(v.value0, new Data_Tuple.Tuple(v.value1.value0, v.value1.value1)));
                     };
-                    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(subtask))(Data_Either_Nested.in2), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStep(NotShow.value)(status)(NotGuarded.value)(Delay.value)(match))(Data_Either_Nested.in1), Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))(Data_Either_Nested.in3(Data_Semigroup.append(Data_Semigroup.semigroupArray)(branches)([ new Data_Tuple.Tuple("Continue", new Data_Tuple.Tuple(Task_Script_Builder.always, Task_Script_Builder.item)) ]))) ])([ Concur_Dom_Style.branch([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur.traverse(Data_Monoid.monoidArray)(renderSelect(function ($902) {
-                        return fixgo(render($902));
+                    return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(subtask))(Data_Either_Nested.in2), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderStep(NotShow.value)(status)(NotGuarded.value)(Delay.value)(match))(Data_Either_Nested.in1), Concur_Dom_Style.element([ Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))(Data_Either_Nested.in3(Data_Semigroup.append(Data_Semigroup.semigroupArray)(branches)([ new Data_Tuple.Tuple("Continue", new Data_Tuple.Tuple(Task_Script_Builder.always, Task_Script_Builder.item)) ]))) ])([ Concur_Dom_Style.branch([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur.traverse(Data_Monoid.monoidArray)(renderSelect(function ($915) {
+                        return fixgo(render($915));
                     }))(Data_Functor.map(Data_Functor.functorArray)(appendNotCondensed)(branches)))(mapping))(Data_Either_Nested.in3) ]) ]) ]))(fix3(new Data_Tuple.Tuple(defaultDidMove, new Data_Tuple.Tuple(defaultOptions, new Data_Tuple.Tuple(NotGuarded.value, new Data_Tuple.Tuple(Delay.value, match)))))(new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, subtask)))(branches));
                 };
             };
+        };
+    };
+};
+var $dollar_EqGroupPosition_92 = new Data_Eq.Eq(function (x) {
+    return function (y) {
+        if (x instanceof FirstGroup && y instanceof FirstGroup) {
+            return true;
+        };
+        if (x instanceof LastGroup && y instanceof LastGroup) {
+            return true;
+        };
+        if (x instanceof MiddleGroup && y instanceof MiddleGroup) {
+            return true;
+        };
+        return false;
+    };
+});
+var renderSingleGroup = function (pos) {
+    return function (render) {
+        return function (v) {
+            var contents = Concur_Dom_Style.row(Data_Semigroup.append(Data_Semigroup.semigroupArray)((function () {
+                var $354 = Data_Eq.notEq($dollar_EqGroupPosition_92)(pos)(FirstGroup.value);
+                if ($354) {
+                    return [ Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(MoveLeft.value))(Data_Either_Nested.in3) ])([ Concur_Dom_Icon.arrow_left ]) ];
+                };
+                return [  ];
+            })())(Data_Semigroup.append(Data_Semigroup.semigroupArray)([ Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(Condensed.value))(Data_Either_Nested.in2) ])([ Concur_Dom_Icon.minus_circle ]) ])((function () {
+                var $355 = Data_Eq.notEq($dollar_EqGroupPosition_92)(pos)(LastGroup.value);
+                if ($355) {
+                    return [ Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Concur_React_Props.onClick)(MoveRight.value))(Data_Either_Nested.in3) ])([ Concur_Dom_Icon.arrow_right ]) ];
+                };
+                return [  ];
+            })())));
+            return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.column([ Concur_Dom_Input.popover(Concur_Dom_Style.Above.value)(contents)(Concur_Dom_Style.element([  ])([ Concur_Dom_Style.column([ Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)(Control_Plus.empty(Control_Plus.plusArray)) ]) ])), Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(render(v.value1.value1.value1))(Data_Either_Nested.in4), Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)(Control_Plus.empty(Control_Plus.plusArray)) ]))(fix4(v.value0)(NotCondensed.value)(v.value1.value1.value0)(v.value1.value1.value1));
+        };
+    };
+};
+var traverseGroup = function (render) {
+    return function (tasks) {
+        var renderOne = function (v) {
+            var pos = (function () {
+                var $363 = v.value0 === 0;
+                if ($363) {
+                    return FirstGroup.value;
+                };
+                var $364 = v.value0 === (Data_Array.length(tasks) - 1 | 0);
+                if ($364) {
+                    return LastGroup.value;
+                };
+                return MiddleGroup.value;
+            })();
+            return renderSingleGroup(pos)(render)(new Data_Tuple.Tuple(v.value0, new Data_Tuple.Tuple(v.value1.value0, new Data_Tuple.Tuple(v.value1.value1.value0, v.value1.value1.value1))));
+        };
+        return Concur.traverse(Data_Monoid.monoidArray)(renderOne)(tasks);
+    };
+};
+var renderGroup = function (par) {
+    return function (render) {
+        return function (tasks) {
+            var isNotCondensed = function (v) {
+                return Data_Eq.eq($dollar_EqIsCondensed_91)(v.value1.value0)(NotCondensed.value);
+            };
+            var extractTask = function (v) {
+                return v.value1.value1.value1;
+            };
+            var mapping = function (arr) {
+                return Data_Functor.mapFlipped(Data_Functor.functorArray)((function () {
+                    var $385 = Data_Array.length(arr) === 2;
+                    if ($385) {
+                        return Control_Category.identity(Control_Category.categoryFn);
+                    };
+                    return Data_Array.filter(isNotCondensed);
+                })()(arr))(extractTask);
+            };
+            var appendIndexNotCondensedStill = Data_Array.mapWithIndex(function (i) {
+                return function (x) {
+                    return new Data_Tuple.Tuple(i, new Data_Tuple.Tuple(NotCondensed.value, new Data_Tuple.Tuple(Still.value, x)));
+                };
+            });
+            return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Concur_Dom_Style.element([ Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onClick))(other(par)(tasks)))(Data_Either_Nested.in1), Data_Functor.mapFlipped(Concur_Core_Props.functorProps)(Data_Functor.voidLeft(Concur_Core_Props.functorProps)(Data_Functor["void"](Concur_Core_Props.functorProps)(Concur_React_Props.onDoubleClick))($$this(par)(Data_Semigroup.append(Data_Semigroup.semigroupArray)(tasks)([ Task_Script_Builder.item ]))))(Data_Either_Nested.in1) ])([ Concur_Dom_Style.column([ Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(renderWithOptions(Data_Unit.unit)(NotForked.value)(Concur_Dom_Style.element([  ])([ Concur_Dom_Style.column([ Concur_Dom_Style.line(Concur_Dom_Style.Solid.value)([  ]) ]) ])))(Data_Either_Nested.in2), Concur_Dom_Style.group(stroke(par))([ Control_Bind.bind(Concur_Core_Types.widgetBind)(traverseGroup(function ($916) {
+                return fixgo(render($916));
+            })(appendIndexNotCondensedStill(tasks)))(function (rendered) {
+                var indexed = Data_Array.mapWithIndex(function (i) {
+                    return function (x) {
+                        return new Data_Tuple.Tuple(i, x);
+                    };
+                })(rendered);
+                var tasks$prime = Data_Array.foldl(function (acc) {
+                    return function (v) {
+                        if (v.value1.value1.value1.value0 instanceof MoveLeft) {
+                            return swap(v.value0)(v.value0 - 1 | 0)(acc);
+                        };
+                        if (v.value1.value1.value1.value0 instanceof MoveRight) {
+                            return swap(v.value0)(v.value0 + 1 | 0)(acc);
+                        };
+                        if (v.value1.value1.value1.value0 instanceof Still) {
+                            return acc;
+                        };
+                        throw new Error("Failed pattern match at Task.Script.Renderer (line 769, column 21 - line 772, column 39): " + [ v.value1.value1.value1.value0.constructor.name ]);
+                    };
+                })(rendered)(indexed);
+                return Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Data_Functor.mapFlipped(Concur_Core_Types.widgetFunctor)(Preload.done(Concur_Core_Types.widgetApplicative)(tasks$prime))(mapping))($$this(par)))(Data_Either_Nested.in1);
+            }) ]) ]) ]))(fix2($$this(par)(tasks))(new Data_Tuple.Tuple(Data_Unit.unit, defaultOptions)));
         };
     };
 };
@@ -1406,8 +1473,8 @@ var renderTask = function (g) {
                 };
                 if (v.value1 instanceof Task_Script_Syntax.Hole) {
                     return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderWithOptions(new Data_Tuple.Tuple("??", v.value1.value0))(NotForked.value)(renderExecute(v.value0)("??")(v.value1.value0)))(function (v1) {
-                        var $859 = v1.value0.value0 === "??";
-                        if ($859) {
+                        var $873 = v1.value0.value0 === "??";
+                        if ($873) {
                             return Preload.done(Concur_Core_Types.widgetApplicative)(new Data_Tuple.Tuple(getFirstUserOption(v1.value1), new Data_Tuple.Tuple(defaultDidMove, (function () {
                                 var v2 = getSecondUserOption(v1.value1);
                                 if (v2 instanceof Forked) {
@@ -1501,6 +1568,7 @@ module.exports = {
     renderGuardedSelect: renderGuardedSelect,
     renderGuardButton: renderGuardButton,
     renderGroup: renderGroup,
+    traverseGroup: traverseGroup,
     renderSingleGroup: renderSingleGroup,
     renderEditor: renderEditor,
     renderEnter: renderEnter,
@@ -1525,7 +1593,6 @@ module.exports = {
     fix5: fix5,
     reorder3: reorder3,
     reorder4: reorder4,
-    reorder6: reorder6,
     assoc: assoc,
     assoc4: assoc4,
     flat4: flat4,
@@ -1551,6 +1618,9 @@ module.exports = {
     Show: Show,
     NotShow: NotShow,
     Switch: Switch,
+    FirstGroup: FirstGroup,
+    LastGroup: LastGroup,
+    MiddleGroup: MiddleGroup,
     MoveLeft: MoveLeft,
     MoveRight: MoveRight,
     Still: Still,
@@ -1567,9 +1637,10 @@ module.exports = {
     swap: swap,
     addLabels: addLabels,
     removeLabels: removeLabels,
-    "$_SwitchPar_85": $dollar_SwitchPar_85,
-    "$_SwitchCont_86": $dollar_SwitchCont_86,
-    "$_SwitchIsGuarded_87": $dollar_SwitchIsGuarded_87,
-    "$_SwitchIsForked_88": $dollar_SwitchIsForked_88,
-    "$_EqIsCondensed_89": $dollar_EqIsCondensed_89
+    "$_SwitchPar_87": $dollar_SwitchPar_87,
+    "$_SwitchCont_88": $dollar_SwitchCont_88,
+    "$_SwitchIsGuarded_89": $dollar_SwitchIsGuarded_89,
+    "$_SwitchIsForked_90": $dollar_SwitchIsForked_90,
+    "$_EqIsCondensed_91": $dollar_EqIsCondensed_91,
+    "$_EqGroupPosition_92": $dollar_EqGroupPosition_92
 };

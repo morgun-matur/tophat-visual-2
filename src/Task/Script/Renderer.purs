@@ -762,10 +762,10 @@ renderGroup par render tasks =
       , Style.group (stroke par)
           [ do
               -- Traverse tasks, render each as a widget
-              rendered <- Concur.traverse (renderSingleGroup (fixgo << render)) (appendNotCondensedStill <-< tasks)
+              rendered <- traverseGroup (fixgo << render) (appendIndexNotCondensedStill tasks)
 
               let indexed = Array.mapWithIndex (\i x -> i ~ x) rendered
-              let tasks' = Array.foldl (\acc (i ~ (iscondensed ~ move ~ task)) ->
+              let tasks' = Array.foldl (\acc (i ~ (index ~ iscondensed ~ move ~ task)) ->
                     case move of
                       MoveLeft  -> swap i (i - 1) acc
                       MoveRight -> swap i (i + 1) acc
@@ -781,25 +781,38 @@ renderGroup par render tasks =
   mapping = (\arr -> arr
     |> (if Array.length arr == 2 then identity else Array.filter isNotCondensed)
     >-> extractTask) 
-  appendNotCondensedStill t = NotCondensed ~ Still ~ t
-  isNotCondensed (c ~ _ ~ _) = c == NotCondensed
-  extractTask (_ ~ _ ~ t) = t
+  appendIndexNotCondensedStill = Array.mapWithIndex (\i x -> i ~ NotCondensed ~ Still ~ x)
+  isNotCondensed (_ ~ c ~ _ ~ _) = c == NotCondensed
+  extractTask (_ ~ _ ~ _ ~ t) = t
 
-renderSingleGroup :: Renderer -> IsCondensed * Move * Checked Task -> Widget(IsCondensed * Move * Checked Task) 
-renderSingleGroup render (iscondensed ~ move ~ subtask) =
+traverseGroup :: Renderer -> Array(Index * IsCondensed * Move * Checked Task) -> Widget(Array(Index * IsCondensed * Move * Checked Task)) 
+traverseGroup render tasks = 
+  Concur.traverse renderOne tasks
+  where
+    renderOne (i ~ (iscondensed ~ (move ~ subtask))) =
+      let
+        pos =
+          if i == 0 then FirstGroup
+          else if i == Array.length tasks - 1 then LastGroup
+          else MiddleGroup
+      in
+        renderSingleGroup pos render (i ~ iscondensed ~ move ~ subtask)
+
+renderSingleGroup :: GroupPosition -> Renderer -> Index * IsCondensed * Move * Checked Task -> Widget(Index * IsCondensed * Move * Checked Task) 
+renderSingleGroup pos render (index ~ iscondensed ~ move ~ subtask) =
   Style.column
     [ Input.popover Above contents <| Style.element [] [Style.column [Style.line Solid empty]]
-    , render subtask >-> Either.in3
+    , render subtask >-> Either.in4
     , Style.line Solid empty
     ]
-    >-> fix3 NotCondensed move subtask
+    >-> fix4 index NotCondensed move subtask
   where
   contents = 
-    Style.row 
-      [ Style.element [Attr.onClick ->> MoveLeft >-> Either.in2] [Icon.arrow_left]
-      , Style.element [Attr.onClick ->> Condensed >-> Either.in1] [Icon.minus_circle]
-      , Style.element [Attr.onClick ->> MoveRight >-> Either.in2] [Icon.arrow_right]
-      ]
+    Style.row (
+      (if(pos /= FirstGroup) then [Style.element [Attr.onClick ->> MoveLeft >-> Either.in3] [Icon.arrow_left]] else []) ++
+      ([Style.element [Attr.onClick ->> Condensed >-> Either.in2] [Icon.minus_circle]]) ++
+      (if(pos /= LastGroup) then [Style.element [Attr.onClick ->> MoveRight >-> Either.in3] [Icon.arrow_right]] else [])
+    ) 
 
 ---- Editors ----
 
@@ -996,9 +1009,6 @@ reorder3 (a ~ b ~ c) = b ~ c ~ a
 reorder4 :: forall a b c d. a * b * c * d -> c * d * a * b
 reorder4 (a ~ b ~ c ~ d) = (c ~ d ~ a ~ b)
 
-reorder6 :: forall a b c d e f. a * b * c * d * e * f -> e * f * a * b * c * d
-reorder6 (a ~ b ~ c ~ d ~ e ~ f) = (e ~ f ~ a ~ b ~ c ~ d)
-
 assoc :: forall a b c. (a * b) * c -> a * (b * c)
 assoc ((a ~ b) ~ c) = a ~ b ~ c
 
@@ -1084,6 +1094,15 @@ instance Switch IsForked where
 
 derive instance Eq IsCondensed
 
+
+type Index = Int
+
+data GroupPosition 
+  = FirstGroup
+  | LastGroup
+  | MiddleGroup
+
+derive instance Eq GroupPosition  
 
 data Move 
   = MoveLeft
