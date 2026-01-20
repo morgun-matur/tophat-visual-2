@@ -114,7 +114,7 @@ renderTask g s t = Style.column
       (e' ~ (didmove1' ~ o' ~ isguarded' ~ c' ~ m')) ~ (isremoved1' ~ _ ~ t1') ~ (isremoved2' ~ didmove2' ~ t2') <- renderSingleUnguarded go a_t Hurry m t1 t2      
       done <| case o' of
         --(Removed ~ NotForked) -> Removed ~ defaultDidMove ~ Annotated a_t (Branch [ Constant (B true) ~ Annotated a_t (Lift Wildcard)]) 
-        (NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewFork (Annotated a_t t)
+        (NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewPair (Annotated a_t t)
         _ -> case isremoved1' of
           Removed -> Removed ~ defaultDidMove ~ t2'
           NotRemoved -> NotRemoved ~ case isremoved2' of 
@@ -139,7 +139,7 @@ renderTask g s t = Style.column
       isdoubled' ~ (e' ~ (didmove1' ~ o' ~ isguarded' ~ c' ~ m')) ~ (isremoved1' ~ _ ~ t1') ~ (isremoved2' ~ didmove2' ~ t2') <- renderSingleBranch go a_t m t1 (e ~ t2)       
       done <| case o' of
         --(Removed ~ NotForked) -> Removed ~ defaultDidMove ~ Annotated a_t (Branch [ Constant (B true) ~ Annotated a_t (Lift Wildcard)]) 
-        (NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewFork (Annotated a_t t)
+        (NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewPair (Annotated a_t t)
         _ -> case isdoubled' of 
           Doubled -> NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Branch([e' ~ t2', Builder.always ~ Builder.item ]))
           NotDoubled -> case isremoved1' of
@@ -170,7 +170,7 @@ renderTask g s t = Style.column
       (didmove1' ~ o' ~ _ ~ c' ~ m') ~ (isremoved1' ~ _ ~ t1') ~ bs' <- renderBranches go a_t m t1 bs
       done <| case o' of
         --(Removed ~ NotForked) -> Removed ~ defaultDidMove ~ Annotated a_t (Branch [ Constant (B true) ~ Annotated a_t (Lift Wildcard)]) 
-        (NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewFork (Annotated a_t t)
+        (NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewPair (Annotated a_t t)
         _ -> case isremoved1' of
           Removed -> Removed ~ defaultDidMove ~ (subtask a_b c' bs')
           NotRemoved -> case didmove1' of 
@@ -188,7 +188,7 @@ renderTask g s t = Style.column
       ( e' ~ (didmove1' ~ o' ~ isguarded' ~ c' ~ m')) ~ (isremoved1' ~ _ ~ t1') ~ (isremoved2' ~ didmove2' ~ t2') <- renderSingleUnguarded go a_t Delay m t1 t2
       done <| case o' of
         --(Removed ~ NotForked) -> Removed ~ defaultDidMove ~ Annotated a_t (Branch [ Constant (B true) ~ Annotated a_t (Lift Wildcard)]) 
-        (NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewFork (Annotated a_t t)
+        (NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewPair (Annotated a_t t)
         _ -> case isremoved1' of
           Removed -> Removed ~ defaultDidMove ~ t2'
           NotRemoved -> NotRemoved ~ case isremoved2' of 
@@ -213,7 +213,7 @@ renderTask g s t = Style.column
       isdoubled' ~ ((l' ~ e') ~ (didmove1' ~ o' ~ isguarded' ~ c' ~ m')) ~ (isremoved1' ~ _ ~ t1') ~ (isremoved2' ~ didmove2' ~ t2') <- renderSingleSelect go a_t m t1 (l ~ e ~ t2)
       done <| case o' of
         --(Removed ~ NotForked) -> Removed ~ defaultDidMove ~ Annotated a_t (Branch [ Constant (B true) ~ Annotated a_t (Lift Wildcard)]) 
-        (NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewFork (Annotated a_t t)
+        (NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewPair (Annotated a_t t)
         _ -> case isdoubled' of
           Doubled -> NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Select([l' ~ e' ~ t2', "Continue" ~ Builder.always ~ Builder.item ]))
           NotDoubled -> case isremoved1' of
@@ -240,7 +240,7 @@ renderTask g s t = Style.column
       (didmove1' ~ o' ~ _ ~ c' ~ m') ~ (isremoved1' ~ _ ~ t1') ~ bs' <- renderSelects go a_t m t1 bs
       done <| case o' of
         --(Removed ~ NotForked) -> Removed ~ defaultDidMove ~ Annotated a_t (Branch [ Constant (B true) ~ Annotated a_t (Lift Wildcard)]) 
-        (NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewFork (Annotated a_t t)
+        (NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewPair (Annotated a_t t)
         _ -> case isremoved1' of
           Removed -> Removed ~ defaultDidMove ~ (subtask a_b c' bs')
           NotRemoved -> case didmove1' of
@@ -274,13 +274,13 @@ renderTask g s t = Style.column
     Enter n -> do
       n' ~ o <- renderWithOptions n NotForked (renderEnter s n)
       done <| (getFirstUserOption o) ~ defaultDidMove ~ case getSecondUserOption o of 
-        Forked -> renderNewFork (Annotated a_t (Enter n'))
+        Forked -> renderNewPair (Annotated a_t (Enter n'))
         NotForked -> (Annotated a_t (Enter n'))
    
     Update e -> do
       e' ~ o <- renderWithOptions e NotForked (renderUpdate e)
       done <| (getFirstUserOption o) ~ defaultDidMove ~ case getSecondUserOption o of 
-        Forked ->  renderNewFork (Annotated a_t (Update e'))
+        Forked ->  renderNewPair (Annotated a_t (Update e'))
         NotForked -> (Annotated a_t (Update e'))
     
     Change e -> todo "change"
@@ -292,13 +292,13 @@ renderTask g s t = Style.column
     View e -> do
       e' ~ o <- renderWithOptions e NotForked (renderView e)
       done <| (getFirstUserOption o) ~ defaultDidMove ~ case getSecondUserOption o of
-        Forked -> renderNewFork (Annotated a_t (View e'))
+        Forked -> renderNewPair (Annotated a_t (View e'))
         NotForked -> (Annotated a_t (View e'))
     
     Watch e -> do
       e' ~ o <- renderWithOptions e NotForked (renderWatch a_t e)
       done <| (getFirstUserOption o) ~ defaultDidMove ~ case getSecondUserOption o of
-        Forked -> renderNewFork (Annotated a_t (Watch e'))
+        Forked -> renderNewPair (Annotated a_t (Watch e'))
         NotForked -> (Annotated a_t (Watch e'))
 
     ---- Combinators
@@ -310,31 +310,31 @@ renderTask g s t = Style.column
       done <| case t' of
         --(Pair [t'']) -> (getFirstUserOption o) ~ defaultDidMove ~ t''       --sequencing needs correct AST..
         _ -> (getFirstUserOption o) ~ defaultDidMove ~ case (getSecondUserOption o) of
-          Forked -> renderNewFork (Annotated a_t t')
+          Forked -> renderNewPair (Annotated a_t t')
           NotForked -> (Annotated a_t t')
     Choose ts -> do
       t' ~ (_ ~ o) <- renderGroup Or go ts
       done <| case t' of
         --(Choose [t'']) -> (getFirstUserOption o) ~ defaultDidMove ~ t''     --sequencingneeds correct AST..
         _ -> (getFirstUserOption o) ~ defaultDidMove ~ case (getSecondUserOption o) of
-          Forked -> renderNewFork (Annotated a_t t')
+          Forked -> renderNewPair (Annotated a_t t')
           NotForked -> (Annotated a_t t')
 
     ---- Extras
     Execute n as -> do
       (n' ~ as') ~ o <- renderWithOptions (n ~ as) NotForked (renderExecute a_t n as)
       done <| (getFirstUserOption o) ~ defaultDidMove ~ case getSecondUserOption o of
-        Forked -> renderNewFork (Annotated a_t (Execute n' as'))
+        Forked -> renderNewPair (Annotated a_t (Execute n' as'))
         NotForked -> (Annotated a_t (Execute n' as'))
     Hole as -> do
       (n' ~ as') ~ o <- renderWithOptions ("??" ~ as) NotForked (renderExecute a_t "??" as)
       if n' == "??" then
         done <| (getFirstUserOption o) ~ defaultDidMove ~ case getSecondUserOption o of
-          Forked -> renderNewFork (Annotated a_t (Hole as'))
+          Forked -> renderNewPair (Annotated a_t (Hole as'))
           NotForked -> (Annotated a_t (Hole as'))
       else
         done <| (getFirstUserOption o) ~ defaultDidMove ~ case getSecondUserOption o of
-          Forked -> renderNewFork (Annotated a_t (Execute n' as'))
+          Forked -> renderNewPair (Annotated a_t (Execute n' as'))
           NotForked -> (Annotated a_t (Execute n' as'))
 
     ---- Shares
@@ -349,8 +349,8 @@ renderTask g s t = Style.column
       done <| NotRemoved ~ defaultDidMove ~ (Annotated a_t (Share e'))
 
 ---- Parts ---------------------------------------------------------------------
-renderNewFork :: Checked Task -> Checked Task 
-renderNewFork (Annotated a_t task) = 
+renderNewPair :: Checked Task -> Checked Task 
+renderNewPair (Annotated a_t task) = 
   (Annotated a_t <| 
     Pair [
       Annotated a_t <| 

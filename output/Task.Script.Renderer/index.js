@@ -337,7 +337,7 @@ var renderPossibleArgs = function (status) {
     };
 };
 var renderNotes = Concur_Dom_Text.text("Editing matches (results) and expressions is currently not supported, as is adding fresh tasks to the library.");
-var renderNewFork = function (v) {
+var renderNewPair = function (v) {
     return Task_Script_Annotation.Annotated.create(v.value0)(new Task_Script_Syntax.Pair([ Task_Script_Annotation.Annotated.create(v.value0)(new Task_Script_Syntax.Step(Task_Script_Syntax.MIgnore.value, new Task_Script_Annotation.Annotated(v.value0, v.value1), Task_Script_Annotation.Annotated.create(v.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(new Task_Script_Syntax.Constant(new Task_Script_Syntax.B(true)), new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Lift(Task_Script_Syntax.Wildcard.value))) ])))), Task_Script_Builder.item ]));
 };
 var renderLabels = Data_Functor.map(Data_Functor.functorArray)(Concur_Dom_Input.chip(Concur_Dom_Style.Normal.value)(Concur_Dom_Input.None.value));
@@ -1036,7 +1036,7 @@ var renderTask = function (g) {
                     return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingleUnguarded(go)(v.value0)(Hurry.value)(v.value1.value0)(v.value1.value1)(v["value1"]["value2"]["value1"]["value0"][0].value1))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)((function () {
                             if (v1.value0.value1.value1.value0.value0 instanceof NotRemoved && v1.value0.value1.value1.value0.value1 instanceof Forked) {
-                                return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, renderNewFork(new Task_Script_Annotation.Annotated(v.value0, v.value1))));
+                                return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, renderNewPair(new Task_Script_Annotation.Annotated(v.value0, v.value1))));
                             };
                             if (v1.value1.value0.value0 instanceof Removed) {
                                 return new Data_Tuple.Tuple(Removed.value, new Data_Tuple.Tuple(defaultDidMove, v1.value1.value1.value1.value1));
@@ -1097,7 +1097,7 @@ var renderTask = function (g) {
                     return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingleBranch(go)(v.value0)(v.value1.value0)(v.value1.value1)(new Data_Tuple.Tuple(v["value1"]["value2"]["value1"]["value0"][0].value0, v["value1"]["value2"]["value1"]["value0"][0].value1)))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)((function () {
                             if (v1.value1.value0.value1.value1.value0.value0 instanceof NotRemoved && v1.value1.value0.value1.value1.value0.value1 instanceof Forked) {
-                                return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, renderNewFork(new Task_Script_Annotation.Annotated(v.value0, v.value1))));
+                                return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, renderNewPair(new Task_Script_Annotation.Annotated(v.value0, v.value1))));
                             };
                             if (v1.value0 instanceof Doubled) {
                                 return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, Task_Script_Annotation.Annotated.create(v.value0)(Task_Script_Syntax.Step.create(v1.value1.value0.value1.value1.value1.value1.value1)(v1.value1.value1.value0.value1.value1)(Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Branch([ new Data_Tuple.Tuple(v1.value1.value0.value0, v1.value1.value1.value1.value1.value1), new Data_Tuple.Tuple(Task_Script_Builder.always, Task_Script_Builder.item) ]))))));
@@ -1178,7 +1178,7 @@ var renderTask = function (g) {
                     return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderBranches(go)(v.value0)(v.value1.value0)(v.value1.value1)(v.value1.value2.value1.value0))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)((function () {
                             if (v1.value0.value1.value0.value0 instanceof NotRemoved && v1.value0.value1.value0.value1 instanceof Forked) {
-                                return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, renderNewFork(new Task_Script_Annotation.Annotated(v.value0, v.value1))));
+                                return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, renderNewPair(new Task_Script_Annotation.Annotated(v.value0, v.value1))));
                             };
                             if (v1.value1.value0.value0 instanceof Removed) {
                                 return new Data_Tuple.Tuple(Removed.value, new Data_Tuple.Tuple(defaultDidMove, subtask(v.value1.value2.value0)(v1.value0.value1.value1.value1.value0)(v1.value1.value1)));
@@ -1197,7 +1197,7 @@ var renderTask = function (g) {
                     return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingleUnguarded(go)(v.value0)(Delay.value)(v.value1.value0)(v.value1.value1)(v["value1"]["value2"]["value1"]["value0"][0].value1.value1))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)((function () {
                             if (v1.value0.value1.value1.value0.value0 instanceof NotRemoved && v1.value0.value1.value1.value0.value1 instanceof Forked) {
-                                return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, renderNewFork(new Task_Script_Annotation.Annotated(v.value0, v.value1))));
+                                return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, renderNewPair(new Task_Script_Annotation.Annotated(v.value0, v.value1))));
                             };
                             if (v1.value1.value0.value0 instanceof Removed) {
                                 return new Data_Tuple.Tuple(Removed.value, new Data_Tuple.Tuple(defaultDidMove, v1.value1.value1.value1.value1));
@@ -1258,7 +1258,7 @@ var renderTask = function (g) {
                     return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSingleSelect(go)(v.value0)(v.value1.value0)(v.value1.value1)(new Data_Tuple.Tuple(v["value1"]["value2"]["value1"]["value0"][0].value0, new Data_Tuple.Tuple(v["value1"]["value2"]["value1"]["value0"][0].value1.value0, v["value1"]["value2"]["value1"]["value0"][0].value1.value1))))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)((function () {
                             if (v1.value1.value0.value1.value1.value0.value0 instanceof NotRemoved && v1.value1.value0.value1.value1.value0.value1 instanceof Forked) {
-                                return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, renderNewFork(new Task_Script_Annotation.Annotated(v.value0, v.value1))));
+                                return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, renderNewPair(new Task_Script_Annotation.Annotated(v.value0, v.value1))));
                             };
                             if (v1.value0 instanceof Doubled) {
                                 return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, Task_Script_Annotation.Annotated.create(v.value0)(Task_Script_Syntax.Step.create(v1.value1.value0.value1.value1.value1.value1.value1)(v1.value1.value1.value0.value1.value1)(Task_Script_Annotation.Annotated.create(v.value1.value2.value0)(new Task_Script_Syntax.Select([ new Data_Tuple.Tuple(v1.value1.value0.value0.value0, new Data_Tuple.Tuple(v1.value1.value0.value0.value1, v1.value1.value1.value1.value1.value1)), new Data_Tuple.Tuple("Continue", new Data_Tuple.Tuple(Task_Script_Builder.always, Task_Script_Builder.item)) ]))))));
@@ -1341,7 +1341,7 @@ var renderTask = function (g) {
                     return Control_Bind.bind(Concur_Core_Types.widgetBind)(renderSelects(go)(v.value0)(v.value1.value0)(v.value1.value1)(v.value1.value2.value1.value0))(function (v1) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)((function () {
                             if (v1.value0.value1.value0.value0 instanceof NotRemoved && v1.value0.value1.value0.value1 instanceof Forked) {
-                                return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, renderNewFork(new Task_Script_Annotation.Annotated(v.value0, v.value1))));
+                                return new Data_Tuple.Tuple(NotRemoved.value, new Data_Tuple.Tuple(defaultDidMove, renderNewPair(new Task_Script_Annotation.Annotated(v.value0, v.value1))));
                             };
                             if (v1.value1.value0.value0 instanceof Removed) {
                                 return new Data_Tuple.Tuple(Removed.value, new Data_Tuple.Tuple(defaultDidMove, subtask(v.value1.value2.value0)(v1.value0.value1.value1.value1.value0)(v1.value1.value1)));
@@ -1370,7 +1370,7 @@ var renderTask = function (g) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)(new Data_Tuple.Tuple(getFirstUserOption(v1.value1), new Data_Tuple.Tuple(defaultDidMove, (function () {
                             var v2 = getSecondUserOption(v1.value1);
                             if (v2 instanceof Forked) {
-                                return renderNewFork(new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Enter(v1.value0)));
+                                return renderNewPair(new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Enter(v1.value0)));
                             };
                             if (v2 instanceof NotForked) {
                                 return new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Enter(v1.value0));
@@ -1384,7 +1384,7 @@ var renderTask = function (g) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)(new Data_Tuple.Tuple(getFirstUserOption(v1.value1), new Data_Tuple.Tuple(defaultDidMove, (function () {
                             var v2 = getSecondUserOption(v1.value1);
                             if (v2 instanceof Forked) {
-                                return renderNewFork(new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Update(v1.value0)));
+                                return renderNewPair(new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Update(v1.value0)));
                             };
                             if (v2 instanceof NotForked) {
                                 return new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Update(v1.value0));
@@ -1401,7 +1401,7 @@ var renderTask = function (g) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)(new Data_Tuple.Tuple(getFirstUserOption(v1.value1), new Data_Tuple.Tuple(defaultDidMove, (function () {
                             var v2 = getSecondUserOption(v1.value1);
                             if (v2 instanceof Forked) {
-                                return renderNewFork(new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.View(v1.value0)));
+                                return renderNewPair(new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.View(v1.value0)));
                             };
                             if (v2 instanceof NotForked) {
                                 return new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.View(v1.value0));
@@ -1415,7 +1415,7 @@ var renderTask = function (g) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)(new Data_Tuple.Tuple(getFirstUserOption(v1.value1), new Data_Tuple.Tuple(defaultDidMove, (function () {
                             var v2 = getSecondUserOption(v1.value1);
                             if (v2 instanceof Forked) {
-                                return renderNewFork(new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Watch(v1.value0)));
+                                return renderNewPair(new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Watch(v1.value0)));
                             };
                             if (v2 instanceof NotForked) {
                                 return new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Watch(v1.value0));
@@ -1434,7 +1434,7 @@ var renderTask = function (g) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)(new Data_Tuple.Tuple(getFirstUserOption(v1.value1.value1), new Data_Tuple.Tuple(defaultDidMove, (function () {
                             var v2 = getSecondUserOption(v1.value1.value1);
                             if (v2 instanceof Forked) {
-                                return renderNewFork(new Task_Script_Annotation.Annotated(v.value0, v1.value0));
+                                return renderNewPair(new Task_Script_Annotation.Annotated(v.value0, v1.value0));
                             };
                             if (v2 instanceof NotForked) {
                                 return new Task_Script_Annotation.Annotated(v.value0, v1.value0);
@@ -1448,7 +1448,7 @@ var renderTask = function (g) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)(new Data_Tuple.Tuple(getFirstUserOption(v1.value1.value1), new Data_Tuple.Tuple(defaultDidMove, (function () {
                             var v2 = getSecondUserOption(v1.value1.value1);
                             if (v2 instanceof Forked) {
-                                return renderNewFork(new Task_Script_Annotation.Annotated(v.value0, v1.value0));
+                                return renderNewPair(new Task_Script_Annotation.Annotated(v.value0, v1.value0));
                             };
                             if (v2 instanceof NotForked) {
                                 return new Task_Script_Annotation.Annotated(v.value0, v1.value0);
@@ -1462,7 +1462,7 @@ var renderTask = function (g) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)(new Data_Tuple.Tuple(getFirstUserOption(v1.value1), new Data_Tuple.Tuple(defaultDidMove, (function () {
                             var v2 = getSecondUserOption(v1.value1);
                             if (v2 instanceof Forked) {
-                                return renderNewFork(new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Execute(v1.value0.value0, v1.value0.value1)));
+                                return renderNewPair(new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Execute(v1.value0.value0, v1.value0.value1)));
                             };
                             if (v2 instanceof NotForked) {
                                 return new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Execute(v1.value0.value0, v1.value0.value1));
@@ -1478,7 +1478,7 @@ var renderTask = function (g) {
                             return Preload.done(Concur_Core_Types.widgetApplicative)(new Data_Tuple.Tuple(getFirstUserOption(v1.value1), new Data_Tuple.Tuple(defaultDidMove, (function () {
                                 var v2 = getSecondUserOption(v1.value1);
                                 if (v2 instanceof Forked) {
-                                    return renderNewFork(new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Hole(v1.value0.value1)));
+                                    return renderNewPair(new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Hole(v1.value0.value1)));
                                 };
                                 if (v2 instanceof NotForked) {
                                     return new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Hole(v1.value0.value1));
@@ -1489,7 +1489,7 @@ var renderTask = function (g) {
                         return Preload.done(Concur_Core_Types.widgetApplicative)(new Data_Tuple.Tuple(getFirstUserOption(v1.value1), new Data_Tuple.Tuple(defaultDidMove, (function () {
                             var v2 = getSecondUserOption(v1.value1);
                             if (v2 instanceof Forked) {
-                                return renderNewFork(new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Execute(v1.value0.value0, v1.value0.value1)));
+                                return renderNewPair(new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Execute(v1.value0.value0, v1.value0.value1)));
                             };
                             if (v2 instanceof NotForked) {
                                 return new Task_Script_Annotation.Annotated(v.value0, new Task_Script_Syntax.Execute(v1.value0.value0, v1.value0.value1));
@@ -1535,7 +1535,7 @@ module.exports = {
     renderNotes: renderNotes,
     fixgo: fixgo,
     renderTask: renderTask,
-    renderNewFork: renderNewFork,
+    renderNewPair: renderNewPair,
     renderWithOptions: renderWithOptions,
     renderRemove: renderRemove,
     renderForked: renderForked,
