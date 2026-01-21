@@ -88,7 +88,7 @@ renderTask g s t = Style.column
   ]
   where
   go :: Checked Task -> Widget (IsRemoved * DidMoveOptions * Checked Task)
-  go (Annotated a_t t) = case t of
+  go ct@(Annotated a_t t) = case t of
     ---- Steps
     -- NOTE:
     -- Be aware of the INVARIANT: Branch and Select need to be inside a Step.
@@ -100,159 +100,165 @@ renderTask g s t = Style.column
     -- for task types, see Syntax.purs
 
 
-    -- case following subtask::unguarded Branch of Lift. This is the end step of choose/pair combinators or final of functions
+    -- case following subtask::unguarded Branch of Lift. This is the end step of choose/pair combinators or final of taskflows
     Step m t1 orig@(Annotated a_b (Branch [ Constant (B true) ~ Annotated a_l (Lift e) ])) -> do
       c' ~ m' ~ (isremoved1' ~ didmove1' ~ t1') <- renderEnd go a_t m t1
-      done <| case isremoved1' of
-        Removed -> NotRemoved ~ defaultDidMove ~ (Annotated a_l (Lift e) )
-        NotRemoved -> NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| case c' of
-          New -> Builder.new orig
-          _ -> orig)
+      done <| case c' of
+        New -> NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Builder.new orig)
+        _ -> NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| orig)
 
     -- case following subtask::unguarded Branch of other
     Step m t1 orig@(Annotated a_b (Branch [ Constant (B true) ~ t2 ])) -> do
       (e' ~ (didmove1' ~ o' ~ isguarded' ~ c' ~ m')) ~ (isremoved1' ~ _ ~ t1') ~ (isremoved2' ~ didmove2' ~ t2') <- renderSingleUnguarded go a_t Hurry m t1 t2      
-      done <| case o' of
-        --(Removed ~ NotForked) -> Removed ~ defaultDidMove ~ Annotated a_t (Branch [ Constant (B true) ~ Annotated a_t (Lift Wildcard)]) 
-        (NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewPair (Annotated a_t t)
-        _ -> case isremoved1' of
-          Removed -> Removed ~ defaultDidMove ~ t2'
-          NotRemoved -> NotRemoved ~ case isremoved2' of 
-            Removed -> defaultDidMove ~ (Annotated a_t <| Step m' t1' t2')
-            NotRemoved -> case (didmove1' ~ t2') of
-              ((MovedUp ~ NotMovedDown) ~ _) -> (MovedUp ~ NotMovedDown) ~ (Annotated a_t t)
-              ((NotMovedUp ~ MovedDown) ~ (Annotated a_c (Step m2' t3' t4'))) -> defaultDidMove ~ (Annotated a_t <| Step m2' t3' <| Annotated a_c <| Branch [e' ~ Annotated a_b (Step m' t1' t4')] )
-              --((NotMovedUp ~ MovedDown) ~ _) -> panic "invalid move button press"
-              _ -> defaultDidMove ~ case (didmove2' ~ t2') of
-                ((MovedUp ~ NotMovedDown)) ~ (Annotated a_c (Step m2' t3' t4')) -> (Annotated a_t <| Step m2' t3' <| Annotated a_b <| Branch [Constant (B true) ~ Annotated a_c (Step m' t1' t4')] )
-                ((MovedUp ~ NotMovedDown) ~ _) -> panic "invalid move button press"
-                ((NotMovedUp ~ MovedDown) ~ _) -> panic "invalid move button case"
-                _ -> Annotated a_t (Step m' t1' <| case(c' ~ isguarded') of
-                  (Hurry ~ Guarded) -> Annotated a_b <| Branch [ Constant (B false) ~ t2' ]
-                  (Hurry ~ NotGuarded) -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
-                  (Delay ~ Guarded) -> Annotated a_b <| Select [ "Continue" ~ Constant (B false) ~ t2' ]
-                  (Delay ~ NotGuarded) -> Annotated a_b <| Select [ "Continue" ~ Constant (B true) ~ t2' ]
-                  (New ~ _) -> Builder.new orig)
+      
+      done <| case (snd o' ~ isremoved1' ~ didmove1' ~ isremoved2' ~ didmove2' ~ t2' ~ c' ~ isguarded') of
+        (Forked  ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _) -> 
+          NotRemoved ~ defaultDidMove ~ renderNewPair ct
+        (_ ~ Removed ~ _ ~ _ ~ _ ~ _ ~ _ ~ _) -> 
+          NotRemoved ~ defaultDidMove ~ t2'
+        (_ ~ _ ~ (MovedUp ~ NotMovedDown) ~ _ ~ _ ~ _ ~ _ ~ _) -> 
+          NotRemoved ~ (MovedUp ~ NotMovedDown) ~ ct
+        (_ ~ _ ~ (NotMovedUp ~ MovedDown) ~ _ ~ _ ~ (Annotated a_c (Step m2' t3' t4')) ~ _ ~ _) -> 
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m2' t3' <| Annotated a_c <| Branch [e' ~ Annotated a_b (Step m' t1' t4')])
+        (_ ~ _ ~ _ ~ Removed ~ _ ~ (Annotated a_b (Step m2' t3' (Annotated a_c (Branch bs')))) ~ _ ~ _) ->
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Branch bs')
+        (_ ~ _ ~ _ ~ Removed ~ _ ~ (Annotated a_b (Step m2' t3' (Annotated a_c (Select bs')))) ~ _ ~ _) ->
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Select bs')
+        (_ ~ _ ~ _ ~ _ ~ (MovedUp ~ NotMovedDown) ~ (Annotated a_c (Step m2' t3' t4')) ~ _ ~ _) -> 
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m2' t3' <| Annotated a_b <| Branch [e' ~ Annotated a_c (Step m' t1' t4')] )
+        (_ ~ _ ~ _ ~ _ ~ _ ~ _ ~ Delay ~ _) -> 
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Select [ "Continue" ~ e' ~ t2' ])
+        (_ ~ _ ~ _ ~ _ ~ _ ~ _ ~ New ~ _) -> 
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Builder.new orig)
+        (_ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ Guarded) -> 
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Branch [ Constant (B false) ~ t2' ])
+        _ ->
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Branch [e' ~ t2' ])
 
     -- case following subtask::guarded Branch with 1 branch
     Step m t1 orig@(Annotated a_b (Branch [ e ~ t2 ])) -> do
       isdoubled' ~ (e' ~ (didmove1' ~ o' ~ isguarded' ~ c' ~ m')) ~ (isremoved1' ~ _ ~ t1') ~ (isremoved2' ~ didmove2' ~ t2') <- renderSingleBranch go a_t m t1 (e ~ t2)       
-      done <| case o' of
-        --(Removed ~ NotForked) -> Removed ~ defaultDidMove ~ Annotated a_t (Branch [ Constant (B true) ~ Annotated a_t (Lift Wildcard)]) 
-        (NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewPair (Annotated a_t t)
-        _ -> case isdoubled' of 
-          Doubled -> NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Branch([e' ~ t2', Builder.always ~ Builder.item ]))
-          NotDoubled -> case isremoved1' of
-            Removed -> Removed ~ defaultDidMove ~ t2'
-            NotRemoved -> NotRemoved ~ case (isremoved2' ~ t2') of 
-   --           (Removed ~ Annotated a_c (Step m2' t3' t4'@(Annotated a_d (Branch [e2' ~ t5'])))) -> defaultDidMove ~ (Annotated a_t <| Step m' t1' t4')
-     --         (Removed ~ Annotated a_c (Step m2' t3' t4'@(Annotated a_d (Branch [bs'])))) -> defaultDidMove ~ (Annotated a_t <| Step m' t1' t4')
-       --       (Removed ~ Annotated a_c (Step m2' t3' t4'@(Annotated a_d (Select [l2' ~ e2' ~ t5'])))) -> defaultDidMove ~ (Annotated a_t <| Step m' t1' t4')
-         --     (Removed ~ Annotated a_c (Step m2' t3' t4'@(Annotated a_d (Select [bs'])))) -> defaultDidMove ~ (Annotated a_t <| Step m' t1' t4')
-              (Removed ~ _) -> defaultDidMove ~ (Annotated a_t <| Step m' t1' t2')
-              _ -> case (didmove1' ~ t2') of
-                ((MovedUp ~ NotMovedDown) ~ _) -> (MovedUp ~ NotMovedDown) ~ (Annotated a_t t)
-                ((NotMovedUp ~ MovedDown) ~ (Annotated a_c (Step m2' t3' t4'))) -> defaultDidMove ~ (Annotated a_t <| Step m2' t3' <| Annotated a_b <| Branch [e ~ Annotated a_c (Step m' t1' t4')] )
-                --((NotMovedUp ~ MovedDown) ~ _) -> panic "invalid move button press"
-                _ -> defaultDidMove ~ case (didmove2' ~ t2') of
-                  ((MovedUp ~ NotMovedDown)) ~ (Annotated a_c (Step m2' t3' t4')) -> (Annotated a_t <| Step m2' t3' <| Annotated a_b <| Branch [e ~ Annotated a_c (Step m' t1' t4')] )
-                  ((MovedUp ~ NotMovedDown) ~ _) -> panic "invalid move button press"
-                  ((NotMovedUp ~ MovedDown) ~ _) -> panic "invalid move button case"
-                  _ -> Annotated a_t (Step m' t1' <| case (c' ~ isguarded') of
-                    (Hurry ~ Guarded) -> Annotated a_b <| Branch [e' ~ t2']
-                    (Hurry ~ NotGuarded) -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
-                    (Delay ~ Guarded) -> Annotated a_b <| Select ["Continue" ~ e' ~ t2']
-                    (Delay ~ NotGuarded)-> Annotated a_b <| Select ["Continue" ~ Constant (B true) ~ t2' ]
-                    (New ~ _) -> Builder.new orig)
+
+      done <| case (snd o' ~ isdoubled' ~ isremoved1' ~ didmove1' ~ isremoved2' ~ didmove2' ~ t2' ~ c' ~ isguarded') of
+        (Forked ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _) -> 
+          NotRemoved ~ defaultDidMove ~ renderNewPair ct
+        (_ ~ Doubled ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _) -> 
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Branch([e' ~ t2', Constant (B true) ~ Builder.item ]))
+        (_ ~ _ ~ Removed ~ _ ~ _ ~ _ ~ _ ~ _ ~ _) -> 
+          NotRemoved ~ defaultDidMove ~ t2'
+        (_ ~ _ ~ _ ~ (MovedUp ~ NotMovedDown) ~ _ ~ _ ~ _ ~ _) -> 
+          NotRemoved ~ (MovedUp ~ NotMovedDown) ~ ct
+        (_ ~ _ ~ _ ~ (NotMovedUp ~ MovedDown) ~ _ ~ _ ~ (Annotated a_c (Step m2' t3' t4') ~ _ ~ _)) -> 
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m2' t3' <| Annotated a_c <| Branch [e' ~ Annotated a_b (Step m' t1' t4')])
+        (_ ~ _ ~ _ ~ _ ~ Removed ~ _ ~ (Annotated a_b (Step m2' t3' (Annotated a_c (Branch bs')))) ~ _ ~ _) ->
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Branch bs')
+        (_ ~ _ ~ _ ~ _ ~ Removed ~ _ ~ (Annotated a_b (Step m2' t3' (Annotated a_c (Select bs')))) ~ _ ~ _) ->
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Select bs')
+        (_ ~ _ ~ _ ~ _ ~ _ ~ (MovedUp ~ NotMovedDown) ~ (Annotated a_c (Step m2' t3' t4')) ~ _ ~ _) -> 
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m2' t3' <| Annotated a_b <| Branch [e' ~ Annotated a_c (Step m' t1' t4')] )
+        (_ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ Delay ~ _) -> 
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Select [ "Continue" ~ e' ~ t2' ])
+        (_ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ New ~ _) -> 
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Builder.new orig)
+        (_ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ NotGuarded) -> 
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Branch [ Constant (B true) ~ t2' ])
+        _ ->
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Branch [e' ~ t2' ])
 
     -- case following subtask::guarded Branch with more than 1 branch
     Step m t1 orig@(Annotated a_b (Branch bs)) -> do
       (didmove1' ~ o' ~ _ ~ c' ~ m') ~ (isremoved1' ~ _ ~ t1') ~ bs' <- renderBranches go a_t m t1 bs
-      done <| case o' of
-        --(Removed ~ NotForked) -> Removed ~ defaultDidMove ~ Annotated a_t (Branch [ Constant (B true) ~ Annotated a_t (Lift Wildcard)]) 
-        (NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewPair (Annotated a_t t)
-        _ -> case isremoved1' of
-          Removed -> Removed ~ defaultDidMove ~ (subtask a_b c' bs')
-          NotRemoved -> case didmove1' of 
-            (MovedUp ~ NotMovedDown) -> NotRemoved ~ (MovedUp ~ NotMovedDown) ~ (Annotated a_t t) 
-            --(NotMovedUp ~ MovedDown) -> do nothing, just ignore
-            _ -> NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| subtask a_b c' bs')
-      where
-      subtask a_b c' bs' = case c' of
-        Hurry -> Annotated a_b <| Branch bs'
-        Delay -> Annotated a_b <| Select (addLabels bs')
-        New -> Builder.new orig
+
+      done <| case (snd o' ~ isremoved1' ~ didmove1' ~ c') of
+        (Forked ~ _ ~ _ ~ _) -> 
+          NotRemoved ~ defaultDidMove ~ renderNewPair ct
+        (_ ~ Removed ~ _ ~ _) ->
+          Removed ~ defaultDidMove ~ ct
+        (_ ~ _ ~ (MovedUp ~ NotMovedDown) ~ _) -> 
+          NotRemoved ~ (MovedUp ~ NotMovedDown) ~ ct
+        (_ ~ _ ~ _ ~ Delay) ->
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Select (addLabels bs'))
+        (_ ~ _ ~ _ ~ New) ->
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Builder.new orig)
+        _ -> 
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Branch bs')
 
     -- case following subtask::unguarded Select
     Step m t1 orig@(Annotated a_b (Select [ "Continue" ~ Constant (B true) ~ t2 ])) -> do
       ( e' ~ (didmove1' ~ o' ~ isguarded' ~ c' ~ m')) ~ (isremoved1' ~ _ ~ t1') ~ (isremoved2' ~ didmove2' ~ t2') <- renderSingleUnguarded go a_t Delay m t1 t2
-      done <| case o' of
-        --(Removed ~ NotForked) -> Removed ~ defaultDidMove ~ Annotated a_t (Branch [ Constant (B true) ~ Annotated a_t (Lift Wildcard)]) 
-        (NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewPair (Annotated a_t t)
-        _ -> case isremoved1' of
-          Removed -> Removed ~ defaultDidMove ~ t2'
-          NotRemoved -> NotRemoved ~ case isremoved2' of 
-            Removed -> defaultDidMove ~ (Annotated a_t <| Step m' t1' t2')
-            NotRemoved -> case (didmove1' ~ t2') of
-              ((MovedUp ~ NotMovedDown) ~ _) -> (MovedUp ~ NotMovedDown) ~ (Annotated a_t t)
-              ((NotMovedUp ~ MovedDown) ~ (Annotated a_c (Step m2' t3' t4'))) -> defaultDidMove ~ (Annotated a_t <| Step m2' t3' <| Annotated a_b <| Select ["Continue" ~ Constant (B true) ~ Annotated a_c (Step m' t1' t4')] )
-              --((NotMovedUp ~ MovedDown) ~ _) -> panic "invalid move button press"
-              _ -> defaultDidMove ~ case (didmove2' ~ t2') of
-                ((MovedUp ~ NotMovedDown)) ~ (Annotated a_c (Step m2' t3' t4')) -> (Annotated a_t <| Step m2' t3' <| Annotated a_b <| Select ["Continue" ~ Constant (B true) ~ Annotated a_c (Step m' t1' t4')] )
-                ((MovedUp ~ NotMovedDown) ~ _) -> panic "invalid move button press"
-                ((NotMovedUp ~ MovedDown) ~ _) -> panic "invalid move button case"
-                _ -> Annotated a_t (Step m' t1' <| case (c' ~ isguarded') of
-                  (Hurry ~ Guarded) -> Annotated a_b <| Branch [ Constant (B false) ~ t2' ]
-                  (Hurry ~ NotGuarded) -> Annotated a_b <| Branch [ Constant (B true) ~ t2' ]
-                  (Delay ~ Guarded) -> Annotated a_b <| Select [ "Continue" ~ Constant (B false) ~ t2' ]
-                  (Delay ~ NotGuarded) -> Annotated a_b <| Select [ "Continue" ~ Constant (B true) ~ t2' ]
-                  (New ~ _) -> Builder.new orig)
+      
+      done <| case (snd o' ~ isremoved1' ~ didmove1' ~ isremoved2' ~ didmove2' ~ t2' ~ c' ~ isguarded') of
+        (Forked ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _) -> 
+          NotRemoved ~ defaultDidMove ~ renderNewPair ct
+        (_ ~ Removed ~ _ ~ _ ~ _ ~ _ ~ _ ~ _) -> 
+          NotRemoved ~ defaultDidMove ~ t2'
+        (_ ~ _ ~ (MovedUp ~ NotMovedDown) ~ _ ~ _ ~ _ ~ _ ~ _) -> 
+          NotRemoved ~ (MovedUp ~ NotMovedDown) ~ ct
+        (_ ~ _ ~ (NotMovedUp ~ MovedDown) ~ _ ~ _ ~ (Annotated a_c (Step m2' t3' t4')) ~ _ ~ _) -> 
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m2' t3' <| Annotated a_c <| Select ["Continue" ~ e' ~ Annotated a_b (Step m' t1' t4')])
+        (_ ~ _ ~ _ ~ Removed ~ _ ~ (Annotated a_b (Step m2' t3' (Annotated a_c (Branch bs')))) ~ _ ~ _) ->
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Branch bs')
+        (_ ~ _ ~ _ ~ Removed ~ _ ~ (Annotated a_b (Step m2' t3' (Annotated a_c (Select bs')))) ~ _ ~ _) ->
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Select bs')
+        (_ ~ _ ~ _ ~ _ ~ (MovedUp ~ NotMovedDown) ~ (Annotated a_c (Step m2' t3' t4')) ~ _ ~ _) -> 
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m2' t3' <| Annotated a_b <| Select ["Continue" ~ e' ~ Annotated a_c (Step m' t1' t4')] )
+        (_ ~ _ ~ _ ~ _ ~ _ ~ _ ~ Hurry ~ _) -> 
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Branch [ e' ~ t2' ])
+        (_ ~ _ ~ _ ~ _ ~ _ ~ _ ~ New ~ _) -> 
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Builder.new orig)
+        (_ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ Guarded) -> 
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Select ["Stop" ~ Constant (B false) ~ t2' ])
+        _ ->
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Select ["Continue" ~ e' ~ t2' ])
 
     --case following subtask::guarded Select with 1 branch
     Step m t1 orig@(Annotated a_b (Select [l ~ e ~ t2])) -> do
       isdoubled' ~ ((l' ~ e') ~ (didmove1' ~ o' ~ isguarded' ~ c' ~ m')) ~ (isremoved1' ~ _ ~ t1') ~ (isremoved2' ~ didmove2' ~ t2') <- renderSingleSelect go a_t m t1 (l ~ e ~ t2)
-      done <| case o' of
-        --(Removed ~ NotForked) -> Removed ~ defaultDidMove ~ Annotated a_t (Branch [ Constant (B true) ~ Annotated a_t (Lift Wildcard)]) 
-        (NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewPair (Annotated a_t t)
-        _ -> case isdoubled' of
-          Doubled -> NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Select([l' ~ e' ~ t2', "Continue" ~ Builder.always ~ Builder.item ]))
-          NotDoubled -> case isremoved1' of
-            Removed -> Removed ~ defaultDidMove ~ t2'
-            NotRemoved -> NotRemoved ~ case isremoved2' of 
-              Removed -> defaultDidMove ~ (Annotated a_t <| Step m' t1' t2')
-              NotRemoved -> case (didmove1' ~ t2') of
-                ((MovedUp ~ NotMovedDown) ~ _) -> (MovedUp ~ NotMovedDown) ~ (Annotated a_t t)
-                ((NotMovedUp ~ MovedDown) ~ (Annotated a_c (Step m2' t3' t4'))) -> defaultDidMove ~ (Annotated a_t <| Step m2' t3' <| Annotated a_b <| Select [l ~ e ~ Annotated a_c (Step m' t1' t4')] )
-                --((NotMovedUp ~ MovedDown) ~ _) -> panic "invalid move button press"
-                _ -> defaultDidMove ~ case (didmove2' ~ t2') of
-                  ((MovedUp ~ NotMovedDown)) ~ (Annotated a_c (Step m2' t3' t4')) -> (Annotated a_t <| Step m2' t3' <| Annotated a_b <| Select [l ~ e ~ Annotated a_c (Step m' t1' t4')] )
-                  ((MovedUp ~ NotMovedDown) ~ _) -> panic "invalid move button press"
-                  ((NotMovedUp ~ MovedDown) ~ _) -> panic "invalid move button case"
-                  _ -> Annotated a_t (Step m' t1' <| case (c' ~ isguarded') of
-                    (Hurry ~ Guarded) -> Annotated a_b <| Branch ([e' ~ t2'])
-                    (Hurry ~ NotGuarded) -> Annotated a_b <| Branch ([Constant (B true) ~ t2' ])
-                    (Delay ~ Guarded) -> Annotated a_b <| Select [l' ~ e' ~ t2']
-                    (Delay ~ NotGuarded) -> Annotated a_b <| Select [l' ~ Constant (B true) ~ t2' ]
-                    (New ~ _) -> Builder.new orig)
-                
+      
+      done <| case (snd o' ~ isdoubled' ~ isremoved1' ~ didmove1' ~ isremoved2' ~ didmove2' ~ t2' ~ c' ~ isguarded') of
+        (Forked ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _) -> 
+          NotRemoved ~ defaultDidMove ~ renderNewPair ct
+        (_ ~ Doubled ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _) -> 
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Select([l' ~ e' ~ t2', "Stop" ~ Constant (B false) ~ Builder.item ]))
+        (_ ~ _ ~ Removed ~ _ ~ _ ~ _ ~ _ ~ _ ~ _) -> 
+          NotRemoved ~ defaultDidMove ~ t2'
+        (_ ~ _ ~ _ ~ (MovedUp ~ NotMovedDown) ~ _ ~ _ ~ _ ~ _) -> 
+          NotRemoved ~ (MovedUp ~ NotMovedDown) ~ ct
+        (_ ~ _ ~ _ ~ (NotMovedUp ~ MovedDown) ~ _ ~ _ ~ (Annotated a_c (Step m2' t3' t4') ~ _ ~ _)) -> 
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m2' t3' <| Annotated a_c <| Select [l' ~ e' ~ Annotated a_b (Step m' t1' t4')])
+        (_ ~ _ ~ _ ~ _ ~ Removed ~ _ ~ (Annotated a_b (Step m2' t3' (Annotated a_c (Branch bs')))) ~ _ ~ _) ->
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Branch bs')
+        (_ ~ _ ~ _ ~ _ ~ Removed ~ _ ~ (Annotated a_b (Step m2' t3' (Annotated a_c (Select bs')))) ~ _ ~ _) ->
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Select bs')
+        (_ ~ _ ~ _ ~ _ ~ _ ~ (MovedUp ~ NotMovedDown) ~ (Annotated a_c (Step m2' t3' t4')) ~ _ ~ _) -> 
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m2' t3' <| Annotated a_b <| Select [l' ~ e' ~ Annotated a_c (Step m' t1' t4')] )
+        (_ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ Hurry ~ _) -> 
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Branch [ e' ~ t2' ])
+        (_ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ New ~ _) -> 
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Builder.new orig)
+        (_ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ NotGuarded) -> 
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Select ["Continue" ~ Constant (B true) ~ t2' ])
+        _ ->
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Select [l' ~ e' ~ t2' ])
+
     --case following subtask::guarded Select with more than 1 branch
     Step m t1 orig@(Annotated a_b (Select bs)) -> do
       (didmove1' ~ o' ~ _ ~ c' ~ m') ~ (isremoved1' ~ _ ~ t1') ~ bs' <- renderSelects go a_t m t1 bs
-      done <| case o' of
-        --(Removed ~ NotForked) -> Removed ~ defaultDidMove ~ Annotated a_t (Branch [ Constant (B true) ~ Annotated a_t (Lift Wildcard)]) 
-        (NotRemoved ~ Forked) -> NotRemoved ~ defaultDidMove ~ renderNewPair (Annotated a_t t)
-        _ -> case isremoved1' of
-          Removed -> Removed ~ defaultDidMove ~ (subtask a_b c' bs')
-          NotRemoved -> case didmove1' of
-            (MovedUp ~ NotMovedDown) -> NotRemoved ~ (MovedUp ~ NotMovedDown) ~ (Annotated a_t t)
-            --(NotMovedUp ~ MovedDown) -> do nothing, just ignore
-            _ -> NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| subtask a_b c' bs')
-      where 
-      subtask a_b c' bs' = case c' of
-        Hurry -> Annotated a_b <| Branch (removeLabels bs')
-        Delay -> Annotated a_b <| Select bs'
-        New -> Builder.new orig
-
+      
+      done <| case (snd o' ~ isremoved1' ~ didmove1' ~ c') of
+        (Forked ~ _ ~ _ ~ _) -> 
+          NotRemoved ~ defaultDidMove ~ renderNewPair ct
+        (_ ~ Removed ~ _ ~ _) ->
+          Removed ~ defaultDidMove ~ ct
+        (_ ~ _ ~ (MovedUp ~ NotMovedDown) ~ _) -> 
+          NotRemoved ~ (MovedUp ~ NotMovedDown) ~ ct
+        (_ ~ _ ~ _ ~ Hurry) ->
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Branch (removeLabels bs'))
+        (_ ~ _ ~ _ ~ New) ->
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Builder.new orig)
+        _ -> 
+          NotRemoved ~ defaultDidMove ~ (Annotated a_t <| Step m' t1' <| Annotated a_b <| Select bs')
+      
     Step _ _ _ -> panic "invalid single step"
     -- m' ~ t1' ~ t2' <- renderSingle Hurry go m t1 t2
     -- done <| Annotated a_t (Step m' t1' t2')

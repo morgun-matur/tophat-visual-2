@@ -4,7 +4,7 @@ import Preload hiding (pair)
 
 import Data.HashMap as HashMap
 import Task.Script.Annotation (Checked)
-import Task.Script.Builder (branch, enter, execute, lift, pair, hole, cont, end, match, step, view)
+import Task.Script.Builder (branch, enter, execute, lift, pair, hole, cont, end, match, step, view, item)
 import Task.Script.Context (Context, Typtext, recordOf', recordOf, taskOf, (:->))
 import Task.Script.Syntax (Arguments(..), Constant(..), Expression(..), Match(..), Task)
 import Task.Script.Type (BasicType(..), PrimType(..))
@@ -88,6 +88,7 @@ tasks =
   from
     [ "request subsidy" ~ (from [] ~ request_subsidy)
     , "request subsidy partial" ~ (from [] ~ request_subsidy_partial)
+    , "empty step" ~ (from [] ~ item)
     ]
 
 {-
